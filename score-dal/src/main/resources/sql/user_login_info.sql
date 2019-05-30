@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `user_login`;
-CREATE TABLE `user_login` (
+DROP TABLE IF EXISTS `user_login_info`;
+CREATE TABLE `user_login_info` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `gmt_create`   datetime DEFAULT NULL,
   `gmt_modified` datetime DEFAULT NULL,

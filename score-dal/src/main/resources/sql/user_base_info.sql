@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `user_info`;
-CREATE TABLE `user_info` (
+DROP TABLE IF EXISTS `user_base_info`;
+CREATE TABLE `user_base_info` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `gmt_create`   datetime DEFAULT NULL,
   `gmt_modified` datetime DEFAULT NULL,
