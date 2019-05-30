@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinemo.score.dal.user.mapper.UserInfoMapper">
+    <resultMap type="userInfoDO" id="value">
+        <id column="id" property="id" javaType="java.lang.Long" jdbcType="BIGINT" />
+        <result column="name" property="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="age" property="age" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="table">
+        user_info
+    </sql>
+    <sql id="columns">
+        id, name, age
+    </sql>
+    <sql id="columns_view">
+        name, age
+    </sql>
+    <sql id="conditions">
+        <choose>
+            <when test="id!=null">
+                id = #{id, jdbcType=BIGINT}
+            </when>
+            <otherwise>
+                <if test="name!=null">
+                    and name = #{name, jdbcType=VARCHAR}
+                </if>
+                <if test="age!=null">
+                    and age = #{age, jdbcType=INTEGER}
+                </if>
+            </otherwise>
+        </choose>
+    </sql>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="userInfoDO">
+        insert into
+        <include refid="table"/>
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="name!=null">
+                name,
+            </if>
+            <if test="age!=null">
+                age,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="id!=null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name!=null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="age!=null">
+                #{age,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="find" parameterType="userInfoQuery" resultMap="value">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <where>
+            <include refid="conditions"/>
+        </where>
+        <if test="orderByEnable and orderByList != null and orderByList.size() > 0">
+            order by
+            <foreach collection="orderByList" item="orderBy" separator=",">
+                #{orderBy.column} #{orderBy.sort}
+            </foreach>
+        </if>
+        <if test="pageEnable">
+            limit #{startRow}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="count" parameterType="userInfoQuery" resultType="long">
+        select count(*) from
+        <include refid="table"/>
+        <where>
+            <include refid="conditions"/>
+        </where>
+    </select>
+
+    <select id="get" parameterType="userInfoQuery" resultMap="value">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <where>
+            <include refid="conditions"/>
+        </where>
+        limit 1
+    </select>
+
+    <update id="update" parameterType="userInfoDO">
+        update
+        <include refid="table"/>
+        <set>
+            <if test="name!=null">
+                name = #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="age!=null">
+                age = #{age, jdbcType=INTEGER},
+            </if>
+        </set>
+        <where>
+            <if test="id!=null">
+                id = #{id, jdbcType=BIGINT}
+            </if>
+        </where>
+    </update>
+    <delete id="delete" parameterType="userInfoDO">
+        delete from
+        <include refid="table"/>
+        <where>
+            <if test="id!=null">
+                id = #{id, jdbcType=BIGINT}
+            </if>
+        </where>
+    </delete>
+</mapper>

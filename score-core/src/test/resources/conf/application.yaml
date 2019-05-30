@@ -1,0 +1,64 @@
+# ************************* 自定义配置 *************************
+shinemo:
+  application:
+    env: 0
+# *** 应用编码 ***
+    charset: "utf-8"
+# *** 应用域名 ***
+    domain: "http://app.e.uban360.net"
+# *** logback自定义配置 ***
+  log:
+    home: "/data/logs/score"
+    level: "debug"
+    access.max.history: 3
+    access.max.file.size: "100MB"
+    error.max.history: 7
+    error.max.file.size: "100MB"
+    info.max.history: 3
+    info.max.file.size: "100MB"
+    application.max.history: 3
+    application.max.file.size: "100MB"
+    sql.max.history: 7
+    sql.max.file.size: "100MB"
+    access.pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{64}.%method:%line - %msg%n"
+    error.pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{64}.%method:%line - %msg%n"
+    info.pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{64}.%method:%line - %msg%n"
+    application.pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{64}.%method:%line - %msg%n"
+    sql.pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{64}.%method:%line - %msg%n"
+    console.pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{64}.%method:%line - %msg%n"
+    history.suffix: ".log"
+  notification-email:
+    - "luozh@shinemo.com"
+
+# ************************* 第三方配置 *************************
+spring:
+  profiles:
+    active: "dev"
+  application:
+    name: "score"
+# *** datasource配置 ***
+  datasource:
+    url: "jdbc:mysql://127.0.0.1:3306/test?autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=10&amp;characterEncoding=UTF8&amp;allowMultiQueries=true"
+#    url: "jdbc:log4jdbc:mysql://127.0.0.1:3306/test?autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=10&amp;characterEncoding=UTF8&amp;allowMultiQueries=true"
+    username: "test"
+    password: "tiger"
+    driver-class-name: "com.mysql.jdbc.Driver"
+#    driver-class-name: "net.sf.log4jdbc.DriverSpy"
+    type: "com.alibaba.druid.pool.DruidDataSource"
+    filters: "stat"
+    max-active: 20
+    initial-size: 1
+    max-wait: 60000
+    min-idle: 1
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    validation-query: "select 1 from dual"
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    pool-prepared-statements: true
+    max-open-prepared-statements: 20
+# *** mybatis配置 ***
+mybatis:
+  mapper-locations: "classpath*:mapper/*.xml"
+  config-location: "classpath:mybatis-config.xml"
