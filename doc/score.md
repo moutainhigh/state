@@ -1,6 +1,9 @@
 #评分系统技术方案
 
 
+##系统架构图
+![系统架构图](image/framework.png)
+
 ##系统流程图
 ![系统流程图](image/score.png)
 
@@ -29,6 +32,7 @@ CREATE TABLE `user_login_info` (
   `status` int  NOT NULL COMMENT '删除状态 1-正常 0-删除',
   `uid`   bigint not null comment 'user_info表的主键id',
   `device_id` varchar(256) not null comment '设备id',
+  `ip` varchar(256) not null comment 'ip',
   `biz_token` varchar(256) not null comment '业务token',
   `last_login_time` datetime DEFAULT NULL comment '最后登录时间',
   PRIMARY KEY (`id`),
