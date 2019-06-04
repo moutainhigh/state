@@ -1,0 +1,196 @@
+= 咪咕评分系统http接口
+:icons: font
+:source-highlighter: coderay
+:coderay-css: class
+:toc: left
+:toc-title: 目录
+
+<<<
+
+include::./preface.adoc[]
+
+<<<
+
+
+[[userLogin]]
+== 1. 用户登录
+* 接口名称： 支付接口
+* 接口地址： `ygw/muic/login`
+* 请求方式： `get`
+* Request请求说明
+** `Header` ：
+*** `HTTP Header` 限制：
+
+** 请求说明
+[source,json]
+----
+{
+	"mobile":"18390236566",
+	"mToken":"gjwogjwiejgiwjeigjw"//解析如下
+}
+----
+
+** mToken解析
+[source,json]
+----
+{
+	"mobile":"18390236566",
+	"thirdUid":"abc",
+	"userPortrait":"http://***.img",//用户头像
+	"gender":1//1-男 2-女
+	"deviceId":"abcd",//设备id
+	"clientVersion":"version_1",//客户端版本号
+	"clientIp":"10.0.14.45"//客户端ip
+	"extend":"agwgwe",//扩展信息
+}
+----
+
+** 返回结果：
+*** 成功示例：
++
+其他属性请看 link:#preface[0. 前言]
++
+[source,json]
+----
+
+{
+	code: 0,
+	success：true
+}
+----
+*** 失败示例：
++
+请看 link:#preface[0. 前言]
+
+
+[[comment]]
+== 2. 用户评分
+* 接口名称： 支付接口
+* 接口地址： `ygw/score/submitScore`
+* 请求方式： `get`
+* Request请求说明
+** `Header` ：
+*** `HTTP Header` 限制：
+
+** 请求说明
+[source,json]
+----
+{
+	"movie_id":12345,//外部电影id
+	"movie_name":"战狼",
+	"extend":""//电影扩展信息
+	"contend:"我觉得电影很好看",//电影评论
+	"score":80,//传分数*10
+}
+----
+** 返回结果：
+*** 成功示例：
++
+其他属性请看 link:#preface[0. 前言]
++
+[source,json]
+----
+
+{
+	code: 0,
+	success：true
+	data:{
+		"movie_id":12345
+	}
+}
+----
+*** 失败示例：
++
+请看 link:#preface[0. 前言]
+
+
+
+[[getMovieScore]]
+== 3. 获取电影评分
+* 接口名称： 支付接口
+* 接口地址： `ygw/score/getMovieScore`
+* 请求方式： `get`
+* Request请求说明
+** `Header` ：
+*** `HTTP Header` 限制：
+
+** 请求说明
+[source,json]
+----
+{
+	"movie_id":12345,//外部电影id
+}
+----
+** 返回结果：
+*** 成功示例：
++
+其他属性请看 link:#preface[0. 前言]
++
+[source,json]
+----
+
+{
+	code: 0,
+	success：true
+	data:{
+		"movie_id":12345,
+		"score":78,//分数要除以10
+		"weight":1800,//权重(人数),
+	}
+}
+----
+*** 失败示例：
++
+请看 link:#preface[0. 前言]
+
+
+
+[[getMyScore]]
+== 4. 获取我的评分
+* 接口名称： 支付接口
+* 接口地址： `ygw/score/getMyScore`
+* 请求方式： `get`
+* Request请求说明
+** `Header` ：
+*** `HTTP Header` 限制：
+
+** 请求说明
+[source,json]
+----
+{
+	"movie_id":12345,//传入电影id时返回针对单个电影的评分以及评论
+}
+----
+** 返回结果：
+*** 成功示例：
++
+其他属性请看 link:#preface[0. 前言]
++
+[source,json]
+----
+
+{
+	code: 0,
+	success：true
+	data:{
+		"count":"3",//总共评论了几部电影
+		"movie_id":12345,
+		"score":78,//分数要除以10
+		"contend":"我觉得很好看",
+	}
+}
+----
+*** 失败示例：
++
+请看 link:#preface[0. 前言]
+
+
+
+
+
+
+
+
+
+
+

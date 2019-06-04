@@ -1,0 +1,98 @@
+= 咪咕前端交互文档
+:icons: font
+:source-highlighter: coderay
+:coderay-css: class
+:toc: left
+:toc-title: 目录
+
+<<<
+
+include::./preface.adoc[]
+
+<<<
+
+== 1. 用户举报
+* 接口名称： 用户举报
+* 接口地址： `ygw/mgsuggest/user/report`
+* 请求方式： `POST`
+* 请求参数:
+[source,json]
+----
+{
+    "from_id": 12, //必传
+    "to_id": 11, //必传
+    "comment_id": 13 //必传
+}
+----
+** 返回结果：
+*** 成功示例：
+[source,json]
+----
+{
+
+}
+----
+
+== 2. 问题反馈选项列表
+* 接口名称： 问题反馈选项列表
+* 接口地址： `ygw/mgsuggest/problem/items`
+* 请求方式： `POST`
+* 请求参数: 
+    无
+** 返回结果：
+*** 成功示例：
+[source,json]
+----
+[
+    {
+        id: 11,
+        name: "登录问题",
+        children:[
+            {
+                id: 12,
+                name: "验证码登录失败"
+            },
+            {
+                id: 13,
+                name: "切换账号登录失败"
+            }
+        ]
+    }
+]
+----
+
+== 3. 问题反馈
+* 接口名称： 问题反馈
+* 接口地址： `ygw/mgsuggest/problem/commit`
+* 请求方式： `POST`
+* 请求参数: 
+[source,json]
+----
+{
+    "user_id": 12, //用户id 必传
+    "commit_id": 11, //选项id 必传
+    "context": "", //评论内容 
+    "email" : "" 
+}
+----
+** 返回结果：
+*** 成功示例：
+[source,json]
+----
+[
+    {
+        id: 11,
+        name: "登录问题",
+        children:[
+            {
+                id: 12,
+                name: "验证码登录失败"
+            },
+            {
+                id: 13,
+                name: "切换账号登录失败"
+            }
+        ]
+    }
+]
+----

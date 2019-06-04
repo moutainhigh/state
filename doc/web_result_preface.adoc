@@ -1,0 +1,48 @@
+[[preface]]
+== 0. 前言
+* 接口前缀：
++
+[caption="表. ", cols="^1,^2", options="header,unbreakable"]
+.接口域名
+|===
+|环境     |URL
+|生产环境 | `https://admin.jituancaiyun.com`
+|测试环境 | `http://admin.jituancaiyun.net`
+|===
+* 接口返回：
+** 如果文档里某些属性值为 `null` ，则不会返回， `{}` 表示是一个对象
+** `success` 为 `true` 时， `code` 必为 `200`
+** 成功返回示例：
++
+不同接口的成功返回只有 `data` 不同，后面的文档只会详细描述 `data` 属性
++
+[source,json]
+----
+{
+    "success" : true,
+    "code"    : 0,
+    "msg"     : null,
+    "data"    : {}
+}
+----
+** 错误返回示例：
++
+不同接口的错误返回格式一致，后面的文档不再赘述
++
+[source,json]
+----
+{
+    "success" : false,
+    "code"    : 10040,
+    "msg"     : "您的企业账户余额不足，请联系管理员充值",
+    "data"    : null
+}
+----
+** `HTTP Header` ：
++
+[caption="表. ", cols="^1,^2", options="header,unbreakable"]
+.Header键值
+|===
+|名称          |值
+|Content-Type | `application/json;charset=utf-8`
+|===
