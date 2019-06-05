@@ -6,11 +6,10 @@
 ## 1. 用户登录
 * 接口名称： 支付接口
 * 接口地址： `ygw/muic/login`
-* 请求方式： `get`
+* 请求方式： `post`
 * 请求说明
 ````
 {
-    "mobile":"18390236566",
     "mToken":"gjwogjwiejgiwjeigjw"//解析如下
 }
 ````
@@ -20,6 +19,7 @@
 {
     "mobile":"18390236566",
     "thirdUid":"abc",
+    "userName":"张三",
     "userPortrait":"http://*.img",//用户头像
     "gender":1//1-男 2-女
     "deviceId":"abcd",//设备id
@@ -43,18 +43,19 @@
 
 ## 2. 用户评分
 * 接口名称： 支付接口
-* 接口地址： `ygw/score/submitScore`
+* 接口地址： `ygw/score/submit`
 * 请求方式： `post`
 * 请求说明
 
 ````
 {
-    "movieId":12345,//外部电影id
-    "movieName":"战狼",
-    "extend":""//电影扩展信息
-    "contend:"我觉得电影很好看",//电影评论
-    "score":80,
-    "netType":
+    "videoId":12345,//外部电影id
+    "videoType":1,//1-电影 2-电视剧 3-小视频
+    "videoName":"战狼",
+    "extend":""//扩展信息(例如海报)
+    "comment:"我觉得电影很好看",//电影评论
+    "score":8,
+    "netType":"wifi"
 }
 ````
 
@@ -67,7 +68,7 @@
     code: 0,
     success：true
     data:{
-        "movieId":12345
+        "videoId":12345
     }
 }
 ````
@@ -76,12 +77,12 @@
 ## 3. 获取电影评分
 * 接口名称： 支付接口
 * 接口地址： `ygw/score/getMovieScore`
-* 请求方式： `get`
+* 请求方式： `post`
 * 请求说明
 
 ````
 {
-    "movie_id":12345,//外部电影id
+    "videoId":12345,//外部电影id
 }
 ````
 
@@ -94,7 +95,7 @@
     code: 0,
     success：true
     data:{
-        "movieId":12345,
+        "videoId":12345,
         "score":7.8,
         "weight":1800,//权重(人数),
     }
@@ -105,11 +106,11 @@
 ## 4. 获取我的评分
 * 接口名称： 支付接口
 * 接口地址： `ygw/score/getMyScore`
-* 请求方式： `get`
+* 请求方式： `post`
 
 ````
 {
-    "movieId":12345,//传入电影id时返回针对单个电影的评分以及评论
+    "videoId":12345,//传入电影id时返回针对单个电影的评分以及评论
 }
 ````
 
@@ -122,10 +123,18 @@
     code: 0,
     success：true
     data:{
-        "count":"3",//总共评论了几部电影
+        "number":"3",//第几部电影
         "movieId":12345,
         "score":7.8,
-        "contend":"我觉得很好看",
+        "comment":[
+            {
+                "uuid":"abc",
+                "contend":"很好看"
+            },
+            {
+                "contend":"我又觉得不好看了"
+            }
+        ]
     }
 }
 ````
@@ -342,17 +351,63 @@
 ````
 
 
-## 13. 获取信用分
+## 13. 是否有权限评分
 * 接口名称： 获取信用分
-* 接口地址： `ygw/muic/getCreditScore`
+* 接口地址： `ygw/muic/havePower`
 * 请求方式： `get`
 
 ````
 {
     "code": 200,
     "success": true,
-    "data":{
-        creditScore:10000
-    }
+    "data":true//true有 false 没有
 }
 ````
+
+
+
+## 14. 更新用户信息
+* 接口名称： 支付接口
+* 接口地址： `ygw/muic/uptUserInfo`
+* 请求方式： `post`
+* 请求说明
+````
+{
+    "userName":"张三",
+    "userPortrait":"http://*.img",//用户头像
+    "gender":1//1-男 2-女
+    "extend":"agwgwe",//个人扩展信息
+}
+````
+
+* 返回结果：
+* 成功示例：
+````
+
+{
+    code: 0,
+    success：true
+}
+````
+
+
+## 15. 查看所有头像
+* 接口名称： 支付接口
+* 接口地址： `ygw/muic/findAllPic`
+* 请求方式： `post`
+* 请求说明
+````
+{
+    "gender":1//0-所有 1-男 2-女 
+}
+````
+
+* 返回结果：
+* 成功示例:
+````
+
+{
+    code: 0,
+    success：true
+    data:["http://a.png","http://b.png"]
+}
