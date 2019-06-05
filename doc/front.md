@@ -76,13 +76,13 @@
 
 ## 3. 获取电影评分
 * 接口名称： 支付接口
-* 接口地址： `ygw/score/getMovieScore`
+* 接口地址： `ygw/score/getVideoScore`
 * 请求方式： `post`
 * 请求说明
 
 ````
 {
-    "videoId":12345,//外部电影id
+    "videoId":12345,//外部音频id
 }
 ````
 
