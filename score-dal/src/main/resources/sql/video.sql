@@ -12,7 +12,7 @@ CREATE TABLE `video` (
   `score`  bigint DEFAULT null comment '当前电影分数',
   `weight` bigint DEFAULT null comment '当前权重',
   `yesterday_score` bigint DEFAULT null comment '昨日分数',
-  `yesterday_weight` bigint DEFAULT null comment '昨日分数',
+  `yesterday_weight` bigint DEFAULT null comment '昨日权重',
   `extend` text DEFAULT null comment '视频扩展信息',
   `version` bigint not null comment '版本',
   `flag`  bigint DEFAULT 0 comment '标位 1-是否支持评分',
