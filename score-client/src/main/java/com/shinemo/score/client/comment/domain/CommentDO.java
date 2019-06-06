@@ -47,7 +47,7 @@ public class CommentDO extends BaseDO {
 	/**
 	* 手机号码
 	*/
-	private Long mobile;
+	private String mobile;
 	/**
 	* 用户名称
 	*/

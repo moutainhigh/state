@@ -5,6 +5,8 @@ import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 
+import java.util.List;
+
 /**
  * 评论服务
  *
@@ -37,5 +39,10 @@ public interface CommentService {
      * @return 查询评论列表
      */
     ListVO<CommentDO> findByQuery(CommentQuery query);
+
+    /**
+     * @return 查询出所有匹配的评论id
+     */
+    List<Long> findIdsByQuery(CommentQuery query);
 
 }

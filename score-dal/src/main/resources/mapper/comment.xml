@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shinemo.score.dal.mapper.CommentMapper">
+<mapper namespace="com.shinemo.score.dal.comment.mapper.CommentMapper">
 
 	<!-- 结果集对应关系 -->
 	<resultMap id="result" type="com.shinemo.score.client.comment.domain.CommentDO" >
@@ -40,14 +40,12 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-					<if test="gmtCreate != null">and gmt_create = #{gmtCreate}</if>
-					<if test="gmtModified != null">and gmt_modified = #{gmtModified}</if>
-					<if test="status != null">and status = #{status}</if>
-					<if test="videoId != null">and video_id = #{videoId}</if>
-					<if test="videoType != null">and video_type = #{videoType}</if>
+                    <if test="uid != null">and uid = #{uid}</if>
+                    <if test="videoId != null">and video_id = #{videoId}</if>
+                    <if test="videoType != null">and video_type = #{videoType}</if>
+                    <if test="status != null">and status = #{status}</if>
 					<if test="content != null">and content = #{content}</if>
 					<if test="likeNum != null">and like_num = #{likeNum}</if>
-					<if test="uid != null">and uid = #{uid}</if>
 					<if test="mobile != null">and mobile = #{mobile}</if>
 					<if test="name != null">and name = #{name}</if>
 					<if test="avatarUrl != null">and avatar_url = #{avatarUrl}</if>
@@ -99,12 +97,22 @@
         <include refid="conditions"/>
     </select>
 
-	<!-- 删除 -->
-    <delete id="delete" parameterType="com.shinemo.score.client.comment.query.CommentQuery">
-        delete from
+    <select id="findIds" resultType="java.lang.Long">
+        select
+        <include refid="columns"/>
+        from
         <include refid="table"/>
-        where id = #{id}
-    </delete>
+        <include refid="conditions"/>
+        <if test="orderByEnable and orderByList != null and orderByList.size() > 0">
+            order by
+            <foreach collection="orderByList" item="orderBy" separator=",">
+                ${orderBy.column} ${orderBy.sort}
+            </foreach>
+        </if>
+        <if test="pageEnable">
+            limit #{startRow}, #{pageSize}
+        </if>
+    </select>
 
 	<!-- 插入 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
@@ -269,6 +277,6 @@
             </if>
         </set>
         WHERE
-        id = #{id}
+        id = #{id} and version=#{version}
     </update>
 </mapper>
