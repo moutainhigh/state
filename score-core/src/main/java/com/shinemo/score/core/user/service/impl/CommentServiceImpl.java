@@ -7,6 +7,7 @@ import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
+import com.shinemo.score.core.cache.CommentCache;
 import com.shinemo.score.core.user.service.CommentService;
 import com.shinemo.score.dal.comment.wrapper.CommentWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author wenchao.li
@@ -28,6 +30,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Resource
     private CommentWrapper commentWrapper;
+    @Resource
+    private CommentCache commentCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -50,20 +54,26 @@ public class CommentServiceImpl implements CommentService {
             throw new BizException(insertRs.getError());
         }
 
-        //TODO:缓存
+        // 缓存
+        commentCache.put(insertRs.getValue());
 
         return insertRs.getValue();
     }
 
     @Override
-    public CommentDO getById(Long commentId) {
-
-        //TODO:缓存中取
+    public CommentDO getById(Long commentId) throws ExecutionException {
 
         Assert.notNull(commentId, "commentId not be null");
-        CommentQuery query = new CommentQuery();
-        query.setId(commentId);
-        return getByQuery(query);
+
+        // 先走缓存
+        CommentDO cache = commentCache.get(commentId);
+
+        if (cache != null) {
+            log.info("load comment from cache,id:{}", commentId);
+            return cache;
+        }
+
+        return getByIdFromDB(commentId);
     }
 
     @Override
@@ -94,6 +104,15 @@ public class CommentServiceImpl implements CommentService {
         if (!idListRs.hasValue()) {
             throw new BizException(idListRs.getError());
         }
+
         return idListRs.getValue().getRows();
+    }
+
+    @Override
+    public CommentDO getByIdFromDB(Long commentId) {
+        Assert.notNull(commentId, "commentId not be null");
+        CommentQuery query = new CommentQuery();
+        query.setId(commentId);
+        return getByQuery(query);
     }
 }

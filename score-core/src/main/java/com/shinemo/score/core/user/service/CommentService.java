@@ -6,6 +6,7 @@ import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 评论服务
@@ -27,7 +28,7 @@ public interface CommentService {
      * @param commentId 评论id
      * @return 根据评论id查找评论
      */
-    CommentDO getById(Long commentId);
+    CommentDO getById(Long commentId) throws ExecutionException;
 
     /**
      * @return 查询评论
@@ -45,4 +46,5 @@ public interface CommentService {
      */
     List<Long> findIdsByQuery(CommentQuery query);
 
+    CommentDO getByIdFromDB(Long commentId);
 }
