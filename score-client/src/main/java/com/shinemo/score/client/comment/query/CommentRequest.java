@@ -2,8 +2,11 @@ package com.shinemo.score.client.comment.query;
 
 
 import com.shinemo.client.common.BaseDO;
+import com.shinemo.score.client.reply.domain.ReplyDO;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * @author wenchao.li
@@ -12,6 +15,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommentRequest extends BaseDO {
+
+    private Long commentId;
     /**
      * 删除状态 1-正常 0-删除
      */
@@ -29,9 +34,9 @@ public class CommentRequest extends BaseDO {
      */
     private String content;
     /**
-     * 赞数量
+     * 赞数量操作 1.添加 2.删除
      */
-    private Long likeNum;
+    private Integer likeAction;
     /**
      * 用户id
      */
@@ -67,7 +72,7 @@ public class CommentRequest extends BaseDO {
     /**
      * 最近的回复(最近3条)
      */
-    private String historyReply;
+    private List<ReplyDO> historyReply;
     /**
      * 版本号
      */

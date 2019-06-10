@@ -3,32 +3,32 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shinemo.score.dal.comment.mapper.CommentMapper">
 
-	<!-- 结果集对应关系 -->
-	<resultMap id="result" type="com.shinemo.score.client.comment.domain.CommentDO" >
-		<id column="id" property="id"/>
-		<result property="gmtCreate" column="gmt_create"/>
-		<result property="gmtModified" column="gmt_modified"/>
-		<result property="status" column="status"/>
-		<result property="videoId" column="video_id"/>
-		<result property="videoType" column="video_type"/>
-		<result property="content" column="content"/>
-		<result property="likeNum" column="like_num"/>
-		<result property="uid" column="uid"/>
-		<result property="mobile" column="mobile"/>
-		<result property="name" column="name"/>
-		<result property="avatarUrl" column="avatar_url"/>
-		<result property="device" column="device"/>
-		<result property="netType" column="net_type"/>
-		<result property="sort" column="sort"/>
-		<result property="extend" column="extend"/>
-		<result property="historyReply" column="history_reply"/>
-		<result property="version" column="version"/>
-	</resultMap>
+    <!-- 结果集对应关系 -->
+    <resultMap id="result" type="com.shinemo.score.client.comment.domain.CommentDO">
+        <id column="id" property="id"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="status" column="status"/>
+        <result property="videoId" column="video_id"/>
+        <result property="videoType" column="video_type"/>
+        <result property="content" column="content"/>
+        <result property="likeNum" column="like_num"/>
+        <result property="uid" column="uid"/>
+        <result property="mobile" column="mobile"/>
+        <result property="name" column="name"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="device" column="device"/>
+        <result property="netType" column="net_type"/>
+        <result property="sort" column="sort"/>
+        <result property="extend" column="extend"/>
+        <result property="historyReply" column="history_reply"/>
+        <result property="version" column="version"/>
+    </resultMap>
 
-	<!-- 数据库字段 -->
-	<sql id="columns">
-		id, gmt_create, gmt_modified, status, video_id, video_type, content, like_num, uid, mobile, name, avatar_url, device, net_type, sort, extend, history_reply, version
-	</sql>
+    <!-- 数据库字段 -->
+    <sql id="columns">
+        id, gmt_create, gmt_modified, status, video_id, video_type, content, like_num, uid, mobile, name, avatar_url, device, net_type, sort, extend, history_reply, version
+    </sql>
 
     <sql id="table">
         comment
@@ -44,24 +44,24 @@
                     <if test="videoId != null">and video_id = #{videoId}</if>
                     <if test="videoType != null">and video_type = #{videoType}</if>
                     <if test="status != null">and status = #{status}</if>
-					<if test="content != null">and content = #{content}</if>
-					<if test="likeNum != null">and like_num = #{likeNum}</if>
-					<if test="mobile != null">and mobile = #{mobile}</if>
-					<if test="name != null">and name = #{name}</if>
-					<if test="avatarUrl != null">and avatar_url = #{avatarUrl}</if>
-					<if test="device != null">and device = #{device}</if>
-					<if test="netType != null">and net_type = #{netType}</if>
-					<if test="sort != null">and sort = #{sort}</if>
-					<if test="extend != null">and extend = #{extend}</if>
-					<if test="historyReply != null">and history_reply = #{historyReply}</if>
-					<if test="version != null">and version = #{version}</if>
+                    <if test="content != null">and content = #{content}</if>
+                    <if test="likeNum != null">and like_num = #{likeNum}</if>
+                    <if test="mobile != null">and mobile = #{mobile}</if>
+                    <if test="name != null">and name = #{name}</if>
+                    <if test="avatarUrl != null">and avatar_url = #{avatarUrl}</if>
+                    <if test="device != null">and device = #{device}</if>
+                    <if test="netType != null">and net_type = #{netType}</if>
+                    <if test="sort != null">and sort = #{sort}</if>
+                    <if test="extend != null">and extend = #{extend}</if>
+                    <if test="historyReply != null">and history_reply = #{historyReply}</if>
+                    <if test="version != null">and version = #{version}</if>
                 </otherwise>
             </choose>
         </where>
     </sql>
 
 
-	<!-- 查询结果集 -->
+    <!-- 查询结果集 -->
     <select id="find" resultMap="result"
             parameterType="com.shinemo.score.client.comment.query.CommentQuery">
         select
@@ -80,7 +80,7 @@
         </if>
     </select>
 
-	<!-- 查询某条记录 -->
+    <!-- 查询某条记录 -->
     <select id="get" resultMap="result" parameterType="com.shinemo.score.client.comment.query.CommentQuery">
         select
         <include refid="columns"/>
@@ -90,7 +90,7 @@
         limit 1
     </select>
 
-	<!-- 统计查询结果数量 -->
+    <!-- 统计查询结果数量 -->
     <select id="count" resultType="long" parameterType="com.shinemo.score.client.comment.query.CommentQuery">
         select count(*) from
         <include refid="table"/>
@@ -114,114 +114,114 @@
         </if>
     </select>
 
-	<!-- 插入 -->
+    <!-- 插入 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="com.shinemo.score.client.comment.domain.CommentDO">
         insert into
         <include refid="table"/>
         <trim prefix="(" suffix=")" suffixOverrides=",">
-                    <if test="id != null">
-						id,
-					</if>
-					gmt_create,
-					gmt_modified,
-                    <if test="status != null">
-						status,
-					</if>
-                    <if test="videoId != null">
-						video_id,
-					</if>
-                    <if test="videoType != null">
-						video_type,
-					</if>
-                    <if test="content != null">
-						content,
-					</if>
-                    <if test="likeNum != null">
-						like_num,
-					</if>
-                    <if test="uid != null">
-						uid,
-					</if>
-                    <if test="mobile != null">
-						mobile,
-					</if>
-                    <if test="name != null">
-						name,
-					</if>
-                    <if test="avatarUrl != null">
-						avatar_url,
-					</if>
-                    <if test="device != null">
-						device,
-					</if>
-                    <if test="netType != null">
-						net_type,
-					</if>
-                    <if test="sort != null">
-						sort,
-					</if>
-                    <if test="extend != null">
-						extend,
-					</if>
-                    <if test="historyReply != null">
-						history_reply,
-					</if>
-                    <if test="version != null">
-						version,
-					</if>
+            <if test="id != null">
+                id,
+            </if>
+            gmt_create,
+            gmt_modified,
+            <if test="status != null">
+                status,
+            </if>
+            <if test="videoId != null">
+                video_id,
+            </if>
+            <if test="videoType != null">
+                video_type,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="likeNum != null">
+                like_num,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="avatarUrl != null">
+                avatar_url,
+            </if>
+            <if test="device != null">
+                device,
+            </if>
+            <if test="netType != null">
+                net_type,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="extend != null">
+                extend,
+            </if>
+            <if test="historyReply != null">
+                history_reply,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-                    <if test="id != null">
-						#{id, jdbcType=BIGINT},
-                    </if>
-                    now(),
-                    now(),
-                    <if test="status != null">
-						#{status, jdbcType=INTEGER},
-                    </if>
-                    <if test="videoId != null">
-						#{videoId, jdbcType=VARCHAR},
-                    </if>
-                    <if test="videoType != null">
-						#{videoType, jdbcType=INTEGER},
-                    </if>
-                    <if test="content != null">
-						#{content, jdbcType=LONGVARCHAR},
-                    </if>
-                    <if test="likeNum != null">
-						#{likeNum, jdbcType=BIGINT},
-                    </if>
-                    <if test="uid != null">
-						#{uid, jdbcType=BIGINT},
-                    </if>
-                    <if test="mobile != null">
-						#{mobile, jdbcType=BIGINT},
-                    </if>
-                    <if test="name != null">
-						#{name, jdbcType=VARCHAR},
-                    </if>
-                    <if test="avatarUrl != null">
-						#{avatarUrl, jdbcType=VARCHAR},
-                    </if>
-                    <if test="device != null">
-						#{device, jdbcType=VARCHAR},
-                    </if>
-                    <if test="netType != null">
-						#{netType, jdbcType=VARCHAR},
-                    </if>
-                    <if test="sort != null">
-						#{sort, jdbcType=INTEGER},
-                    </if>
-                    <if test="extend != null">
-						#{extend, jdbcType=LONGVARCHAR},
-                    </if>
-                    <if test="historyReply != null">
-						#{historyReply, jdbcType=LONGVARCHAR},
-                    </if>
-                    <if test="version != null">
-						#{version, jdbcType=BIGINT},
-                    </if>
+            <if test="id != null">
+                #{id, jdbcType=BIGINT},
+            </if>
+            now(),
+            now(),
+            <if test="status != null">
+                #{status, jdbcType=INTEGER},
+            </if>
+            <if test="videoId != null">
+                #{videoId, jdbcType=VARCHAR},
+            </if>
+            <if test="videoType != null">
+                #{videoType, jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                #{content, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="likeNum != null">
+                #{likeNum, jdbcType=BIGINT},
+            </if>
+            <if test="uid != null">
+                #{uid, jdbcType=BIGINT},
+            </if>
+            <if test="mobile != null">
+                #{mobile, jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="avatarUrl != null">
+                #{avatarUrl, jdbcType=VARCHAR},
+            </if>
+            <if test="device != null">
+                #{device, jdbcType=VARCHAR},
+            </if>
+            <if test="netType != null">
+                #{netType, jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort, jdbcType=INTEGER},
+            </if>
+            <if test="extend != null">
+                #{extend, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="historyReply != null">
+                #{historyReply, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="version != null">
+                #{version, jdbcType=BIGINT},
+            </if>
         </trim>
     </insert>
 
@@ -273,7 +273,7 @@
                 history_reply = #{historyReply, jdbcType=LONGVARCHAR},
             </if>
             <if test="version != null">
-                version = #{version, jdbcType=BIGINT}
+                version = version + 1
             </if>
         </set>
         WHERE

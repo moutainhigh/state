@@ -25,6 +25,11 @@ public interface CommentService {
     CommentDO create(CommentRequest request);
 
     /**
+     * 更新
+     */
+    void update(CommentRequest request) throws ExecutionException;
+
+    /**
      * @param commentId 评论id
      * @return 根据评论id查找评论
      */
@@ -33,7 +38,7 @@ public interface CommentService {
     /**
      * @return 查询评论
      */
-    CommentDO getByQuery(CommentQuery query);
+    CommentDO getByQuery(CommentQuery query) throws ExecutionException;
 
 
     /**
@@ -46,5 +51,8 @@ public interface CommentService {
      */
     List<Long> findIdsByQuery(CommentQuery query);
 
+    /**
+     * @return 根据commentId直接走db查询
+     */
     CommentDO getByIdFromDB(Long commentId);
 }

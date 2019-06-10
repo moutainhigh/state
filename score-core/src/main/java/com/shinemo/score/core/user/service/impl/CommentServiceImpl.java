@@ -3,7 +3,9 @@ package com.shinemo.score.core.user.service.impl;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.comment.domain.CommentDO;
+import com.shinemo.score.client.comment.domain.LikeTypeEnum;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
@@ -18,7 +20,6 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author wenchao.li
@@ -43,6 +44,7 @@ public class CommentServiceImpl implements CommentService {
         Assert.hasText(request.getMobile(), "mobile not be empty");
         Assert.notNull(request.getVideoType(), "videoType not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");
+        Assert.hasText(request.getName(), "name not be empty");
 
 
         CommentDO commentDO = new CommentDO();
@@ -54,14 +56,34 @@ public class CommentServiceImpl implements CommentService {
             throw new BizException(insertRs.getError());
         }
 
+        CommentDO comment = getByIdFromDB(insertRs.getValue().getId());
         // 缓存
-        commentCache.put(insertRs.getValue());
+        commentCache.put(comment);
 
-        return insertRs.getValue();
+        return comment;
     }
 
     @Override
-    public CommentDO getById(Long commentId) throws ExecutionException {
+    public void update(CommentRequest request) {
+
+        Assert.notNull(request.getCommentId(), "commentId not be null");
+
+        boolean upSucc = doUpdate(request);
+        int retryTimes = 10;
+
+        while (!upSucc && retryTimes > 0) {
+            upSucc = doUpdate(request);
+            retryTimes--;
+        }
+
+        if (upSucc) {
+            // 更新成功refresh缓存
+            commentCache.refresh(request.getCommentId());
+        }
+    }
+
+    @Override
+    public CommentDO getById(Long commentId) {
 
         Assert.notNull(commentId, "commentId not be null");
 
@@ -79,6 +101,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDO getByQuery(CommentQuery query) {
 
+        log.info("load comment from mysql db,query:{}", query);
+        if (query.getId() != null) {
+            // 有id先走缓存
+            return getById(query.getId());
+        }
         Result<CommentDO> commentRs = commentWrapper.get(query, ScoreErrors.COMMENT_NOT_EXIST);
         if (!commentRs.hasValue()) {
             throw new BizException(commentRs.getError());
@@ -114,5 +141,28 @@ public class CommentServiceImpl implements CommentService {
         CommentQuery query = new CommentQuery();
         query.setId(commentId);
         return getByQuery(query);
+    }
+
+    private boolean doUpdate(CommentRequest request) {
+
+        CommentDO oldDO = getById(request.getCommentId());
+
+        CommentDO commentDO = new CommentDO();
+        commentDO.setId(request.getCommentId());
+        commentDO.setVersion(oldDO.getVersion());
+        commentDO.setHistoryReply(GsonUtil.toJson(request.getHistoryReply()));
+
+        if (request.getLikeAction() != null) {
+            if (LikeTypeEnum.ADD.getId() == request.getLikeAction()) {
+                commentDO.setLikeNum(oldDO.getLikeNum() + 1);
+            }
+            if (LikeTypeEnum.REMOVE.getId() == request.getLikeAction()) {
+                commentDO.setLikeNum(oldDO.getLikeNum() - 1);
+            }
+        }
+        Result<CommentDO> updateRs = commentWrapper.update(commentDO);
+
+
+        return updateRs.hasValue();
     }
 }
