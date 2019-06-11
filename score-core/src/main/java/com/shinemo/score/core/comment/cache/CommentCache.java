@@ -3,7 +3,7 @@ package com.shinemo.score.core.comment.cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.shinemo.power.redis.service.RedisService;
+import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.core.comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,25 +32,25 @@ public class CommentCache {
     private final static Integer COMMENT_KEY_EXPIRE = 60 * 60 * 24;
 
     private final LoadingCache<Long, CommentDO> cache = CacheBuilder.newBuilder()
-            .expireAfterWrite(6, TimeUnit.HOURS).initialCapacity(100).build(new CacheLoader<Long, CommentDO>() {
-                public CommentDO load(Long key) {
-                    return commentService.getByIdFromDB(key);
-                }
-            });
+            .expireAfterWrite(6, TimeUnit.HOURS).initialCapacity(100)
+            .build(
+                    new CacheLoader<Long, CommentDO>() {
+                        public CommentDO load(Long key) {
+                            // 先走redis
+                            CommentDO comment = redisService.get(keyFormat(key), CommentDO.class);
+                            if (comment != null) {
+                                return comment;
+                            }
+                            // 最终走db
+                            return commentService.getByIdFromDB(key);
+                        }
+                    });
 
 
     public CommentDO get(Long key) {
         try {
             // 没get到，会走guava loader
-            CommentDO comment = cache.get(key);
-            if (comment == null) {
-                // 走redis
-                comment = redisService.get(keyFormat(key), CommentDO.class);
-                if (comment != null) {
-                    cache.put(comment.getId(), comment);
-                }
-            }
-            return comment;
+            return cache.get(key);
         } catch (Exception e) {
             log.error("[commentCache] get cache has ex", e);
             return null;
