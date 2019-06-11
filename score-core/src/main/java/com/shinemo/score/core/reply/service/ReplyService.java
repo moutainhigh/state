@@ -1,4 +1,4 @@
-package com.shinemo.score.core.user.service;
+package com.shinemo.score.core.reply.service;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.score.client.reply.domain.ReplyDO;

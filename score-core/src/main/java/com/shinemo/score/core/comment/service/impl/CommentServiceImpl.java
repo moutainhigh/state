@@ -1,4 +1,4 @@
-package com.shinemo.score.core.user.service.impl;
+package com.shinemo.score.core.comment.service.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
@@ -9,8 +9,8 @@ import com.shinemo.score.client.comment.domain.LikeTypeEnum;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
-import com.shinemo.score.core.cache.CommentCache;
-import com.shinemo.score.core.user.service.CommentService;
+import com.shinemo.score.core.comment.cache.CommentCache;
+import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.dal.comment.wrapper.CommentWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;

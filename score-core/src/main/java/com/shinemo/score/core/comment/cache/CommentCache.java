@@ -1,11 +1,11 @@
-package com.shinemo.score.core.cache;
+package com.shinemo.score.core.comment.cache;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.shinemo.power.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CommentDO;
-import com.shinemo.score.core.user.service.CommentService;
+import com.shinemo.score.core.comment.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.shinemo.score.core.user.service.impl;
+package com.shinemo.score.core.reply.service.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
@@ -7,7 +7,7 @@ import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.client.reply.query.ReplyRequest;
-import com.shinemo.score.core.user.service.ReplyService;
+import com.shinemo.score.core.reply.service.ReplyService;
 import com.shinemo.score.dal.reply.wrapper.ReplyWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;

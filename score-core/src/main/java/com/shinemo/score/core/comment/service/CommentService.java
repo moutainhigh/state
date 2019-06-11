@@ -1,4 +1,4 @@
-package com.shinemo.score.core.user.service;
+package com.shinemo.score.core.comment.service;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.score.client.comment.domain.CommentDO;
@@ -27,18 +27,18 @@ public interface CommentService {
     /**
      * 更新
      */
-    void update(CommentRequest request) throws ExecutionException;
+    void update(CommentRequest request);
 
     /**
      * @param commentId 评论id
      * @return 根据评论id查找评论
      */
-    CommentDO getById(Long commentId) throws ExecutionException;
+    CommentDO getById(Long commentId);
 
     /**
      * @return 查询评论
      */
-    CommentDO getByQuery(CommentQuery query) throws ExecutionException;
+    CommentDO getByQuery(CommentQuery query);
 
 
     /**
