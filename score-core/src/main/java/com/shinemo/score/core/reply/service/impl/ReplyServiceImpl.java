@@ -1,5 +1,6 @@
 package com.shinemo.score.core.reply.service.impl;
 
+import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
@@ -7,6 +8,7 @@ import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.client.reply.query.ReplyRequest;
+import com.shinemo.score.core.async.event.AfterReplyEvent;
 import com.shinemo.score.core.reply.service.ReplyService;
 import com.shinemo.score.dal.reply.wrapper.ReplyWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,8 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Resource
     private ReplyWrapper replyWrapper;
+    @Resource
+    private InternalEventBus internalEventBus;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -48,6 +52,13 @@ public class ReplyServiceImpl implements ReplyService {
             throw new BizException(insertRs.getError());
         }
 
+        // 异步更新评论
+        internalEventBus.post(
+                AfterReplyEvent
+                        .builder()
+                        .commentId(request.getCommentId())
+                        .build());
+
         return insertRs.getValue();
     }
 
@@ -66,6 +77,10 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public ListVO<ReplyDO> findByQuery(ReplyQuery query) {
-        return null;
+        Result<ListVO<ReplyDO>> listRs = replyWrapper.find(query);
+        if (!listRs.hasValue()) {
+            throw new BizException(listRs.getError());
+        }
+        return listRs.getValue();
     }
 }

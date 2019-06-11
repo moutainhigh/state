@@ -1,5 +1,6 @@
 package com.shinemo.score.core.configuration;
 
+import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.score.dal.configuration.ShineMoProperties;
 import com.shinemo.client.mail.SendMailService;
 import com.shinemo.client.mail.SendMailServiceWrapper;
@@ -111,5 +112,10 @@ public class CoreConfiguration {
         sendMailServiceWrapper.setApplicationName(applicationName);
         sendMailServiceWrapper.setEmails(shineMoProperties.getNotificationEmail());
         return sendMailServiceWrapper;
+    }
+
+    @Bean
+    public InternalEventBus internalEventBus(){
+        return new InternalEventBus();
     }
 }

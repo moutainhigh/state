@@ -1,5 +1,6 @@
 package com.shinemo.score.core.configuration;
 
+import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.user.facade.UserInfoFacadeService;
 import com.shinemo.jce.spring.AaceProviderBean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +32,15 @@ public class ProviderConfiguration {
         aaceProviderBean.setInterfaceName(UserInfoFacadeService.class.getName());
         aaceProviderBean.setTarget(userInfoFacadeService);
         // aaceProviderBean.setRpcType(RpcType.ACE.getName());
+        return aaceProviderBean;
+    }
+
+    @Bean(initMethod="init")
+    @DependsOn("commentFacadeService")
+    public AaceProviderBean providerCommentFacadeService(@Qualifier("commentFacadeService") CommentFacadeService commentFacadeService) {
+        AaceProviderBean aaceProviderBean = new AaceProviderBean();
+        aaceProviderBean.setInterfaceName(CommentFacadeService.class.getName());
+        aaceProviderBean.setTarget(commentFacadeService);
         return aaceProviderBean;
     }
 }

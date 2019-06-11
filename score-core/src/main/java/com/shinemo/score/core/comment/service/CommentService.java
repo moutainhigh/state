@@ -6,7 +6,6 @@ import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 评论服务
@@ -19,13 +18,14 @@ public interface CommentService {
 
     /**
      * 创建评论
-     *
+     * 会更新缓存
      * @param request
      */
     CommentDO create(CommentRequest request);
 
     /**
      * 更新
+     * 会更新缓存
      */
     void update(CommentRequest request);
 

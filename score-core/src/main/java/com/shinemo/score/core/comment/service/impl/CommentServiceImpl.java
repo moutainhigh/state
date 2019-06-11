@@ -1,5 +1,6 @@
 package com.shinemo.score.core.comment.service.impl;
 
+import com.shinemo.client.common.Errors;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
@@ -57,9 +58,8 @@ public class CommentServiceImpl implements CommentService {
         }
 
         CommentDO comment = getByIdFromDB(insertRs.getValue().getId());
-        // 缓存
+        // 加入缓存
         commentCache.put(comment);
-
         return comment;
     }
 
@@ -79,6 +79,9 @@ public class CommentServiceImpl implements CommentService {
         if (upSucc) {
             // 更新成功refresh缓存
             commentCache.refresh(request.getCommentId());
+        } else {
+            // 重试10次后还没更新成功，系统繁忙
+            throw new BizException(Errors.FAILURE);
         }
     }
 

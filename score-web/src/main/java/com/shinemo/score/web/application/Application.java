@@ -12,9 +12,9 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  * @date 2018-05-29
  */
 @SpringBootApplication(scanBasePackages = {
-        "com.shinemo.score.dal.configuration",
-        "com.shinemo.score.core.configuration",
-        "com.shinemo.score.web.configuration",
+        "com.shinemo.score.dal",
+        "com.shinemo.score.core",
+        "com.shinemo.score.web",
 })
 public class Application extends SpringBootServletInitializer {
 
