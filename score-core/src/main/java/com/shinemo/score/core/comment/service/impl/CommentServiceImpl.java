@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author wenchao.li
@@ -127,7 +126,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Long> findIdsByQuery(CommentQuery query) {
+    public ListVO<Long> findIdsByQuery(CommentQuery query) {
 
         query.setPageEnable(false);
         Result<ListVO<Long>> idListRs = commentWrapper.findIds(query);
@@ -135,7 +134,7 @@ public class CommentServiceImpl implements CommentService {
             throw new BizException(idListRs.getError());
         }
 
-        return idListRs.getValue().getRows();
+        return idListRs.getValue();
     }
 
     @Override

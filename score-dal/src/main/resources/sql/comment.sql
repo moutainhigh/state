@@ -5,7 +5,6 @@ CREATE TABLE `comment`
   `gmt_create`    datetime     NOT NULL,
   `gmt_modified`  datetime     NOT NULL,
   `status`        int          NOT NULL COMMENT '删除状态 1-正常 0-删除',
-  ``
   `video_id`      varchar(128) not null comment '外部电影id',
   `video_type`    int          NOT NULL COMMENT '视频类型',
   `content`       varchar(255) NOT NULL COMMENT '评论内容',

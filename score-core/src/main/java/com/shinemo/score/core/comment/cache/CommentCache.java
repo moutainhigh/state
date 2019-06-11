@@ -32,7 +32,7 @@ public class CommentCache {
     private final static Integer COMMENT_KEY_EXPIRE = 60 * 60 * 24;
 
     private final LoadingCache<Long, CommentDO> cache = CacheBuilder.newBuilder()
-            .expireAfterWrite(6, TimeUnit.HOURS).initialCapacity(100)
+            .expireAfterWrite(5, TimeUnit.SECONDS).initialCapacity(100)
             .build(
                     new CacheLoader<Long, CommentDO>() {
                         public CommentDO load(Long key) {

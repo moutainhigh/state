@@ -23,4 +23,11 @@ public interface LikeService {
      * @return 根据评论id查找赞记录
      */
     ListVO<LikeDO> findByQuery(LikeQuery query);
+
+
+    /**
+     * 判断用户是否赞过某个评论
+     * 只走缓存
+     */
+    boolean isLike(Long commentId, Long uid);
 }

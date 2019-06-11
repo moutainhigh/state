@@ -19,6 +19,7 @@ public interface CommentService {
     /**
      * 创建评论
      * 会更新缓存
+     *
      * @param request
      */
     CommentDO create(CommentRequest request);
@@ -31,7 +32,7 @@ public interface CommentService {
 
     /**
      * @param commentId 评论id
-     * @return 根据评论id查找评论
+     * @return 根据评论id查找评论, 会先走缓存
      */
     CommentDO getById(Long commentId);
 
@@ -49,7 +50,7 @@ public interface CommentService {
     /**
      * @return 查询出所有匹配的评论id
      */
-    List<Long> findIdsByQuery(CommentQuery query);
+    ListVO<Long> findIdsByQuery(CommentQuery query);
 
     /**
      * @return 根据commentId直接走db查询

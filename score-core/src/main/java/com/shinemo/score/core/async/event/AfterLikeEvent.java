@@ -13,5 +13,7 @@ public class AfterLikeEvent {
 
     private Long commentId;
 
+    private Long uid;
+
     private Integer likeAction;
 }

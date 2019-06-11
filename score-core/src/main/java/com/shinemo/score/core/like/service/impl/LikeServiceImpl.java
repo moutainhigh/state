@@ -10,6 +10,7 @@ import com.shinemo.score.client.like.domain.LikeDO;
 import com.shinemo.score.client.like.query.LikeQuery;
 import com.shinemo.score.client.like.query.LikeRequest;
 import com.shinemo.score.core.async.event.AfterLikeEvent;
+import com.shinemo.score.core.comment.cache.CommentLikeCache;
 import com.shinemo.score.core.like.service.LikeService;
 import com.shinemo.score.dal.like.wrapper.LikeWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class LikeServiceImpl implements LikeService {
 
     @Resource
     private InternalEventBus internalEventBus;
+
+    @Resource
+    private CommentLikeCache commentLikeCache;
 
     @Override
     public LikeDO create(LikeRequest request) {
@@ -116,6 +120,15 @@ public class LikeServiceImpl implements LikeService {
             throw new BizException(likeRs.getError());
         }
         return likeRs.getValue();
+    }
+
+    @Override
+    public boolean isLike(Long commentId, Long uid) {
+
+        Assert.notNull(commentId, "commentId not be empty");
+        Assert.notNull(uid, "uid not be empty");
+
+        return commentLikeCache.isLike(commentId, uid);
     }
 
     // 异步更新评论
