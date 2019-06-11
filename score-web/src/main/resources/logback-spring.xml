@@ -133,6 +133,12 @@
     </appender>
 
     <springProfile name="dev">
+        <logger name="mapper" level="DEBUG"/>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.mybatis" level="WARN"/>
+        <logger name="io.netty" level="WARN"/>
+        <logger name="org.apache.ibatis" level="WARN"/>
+        <logger name="org.hibernate" level="WARN"/>
         <root>
             <appender-ref ref="CONSOLE" level="${log.level}"/>
         </root>

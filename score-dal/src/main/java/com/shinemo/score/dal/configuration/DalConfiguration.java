@@ -19,9 +19,9 @@ import javax.sql.DataSource;
 @Configuration
 @MapperScan(basePackages = {
         "com.shinemo.score.dal.user.mapper",
-})
-@ComponentScan(basePackages = {
-        "com.shinemo.score.dal.user.wrapper",
+        "com.shinemo.score.dal.like.mapper",
+        "com.shinemo.score.dal.reply.mapper",
+        "com.shinemo.score.dal.comment.mapper",
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DalConfiguration {
@@ -37,7 +37,7 @@ public class DalConfiguration {
      * @date 2018-05-29
      **/
     @Bean(initMethod = "init", destroyMethod = "close")
-    public DataSource dataSource() {
+    public DruidDataSource dataSource() {
         ShineMoProperties.Application application = shineMoProperties.getApplication();
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setDbName(application.getDatabaseName());

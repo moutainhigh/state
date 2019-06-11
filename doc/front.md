@@ -147,7 +147,7 @@
 * 请求说明
 ````
 {
-    "movieId":12345, // 电影id
+    "videoId":12345, // 电影id
     "pageSize":20, // 一页的数量
     "currentPage":1, // 第几页
 }
@@ -179,6 +179,7 @@
                               "replyId":3232, // 回复id
                               "content":"啊哈哈哈哈", // 回复内容
                               "userName":"",// 用户名称
+                              "userPortrait":"http://*.img",//用户头像
                         }]
                     },
         ]
@@ -227,6 +228,7 @@
                         "gmtCreate":"2056-08-27 09:35:57.467",// 创建时间
                         "content":"啊哈哈哈哈", // 评论内容
                         "userName":"",// 用户名称
+                        "userPortrait":"http://*.img",//用户头像
                     },
         ]
     }
