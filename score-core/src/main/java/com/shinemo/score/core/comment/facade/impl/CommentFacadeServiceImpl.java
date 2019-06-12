@@ -2,6 +2,7 @@ package com.shinemo.score.core.comment.facade.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
@@ -44,7 +45,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     }
 
     @Override
-    public Result<ListVO<CommentVO>> findListVO(CommentQuery query) {
+    public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
         if (extend != null) {
@@ -67,6 +68,6 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             }
             list.add(commentVO);
         }
-        return Result.success(ListVO.list(list, idsRs.getTotalCount(), idsRs.getCurrentPage(), idsRs.getPageSize()));
+        return WebResult.success(ListVO.list(list, idsRs.getTotalCount(), idsRs.getCurrentPage(), idsRs.getPageSize()));
     }
 }

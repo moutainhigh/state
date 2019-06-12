@@ -11,9 +11,11 @@ import com.shinemo.score.client.like.query.LikeRequest;
  */
 public interface LikeService {
 
-    LikeDO create(LikeRequest request);
-
-    LikeDO update(LikeRequest request);
+    /**
+     * 创建或更新点赞记录
+     * 会更新评论的缓存
+     */
+    LikeDO createOrSave(LikeRequest request);
 
     LikeDO getByCommentIdAndUid(Long commentId, Long uid);
 
