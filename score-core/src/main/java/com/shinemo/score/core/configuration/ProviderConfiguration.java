@@ -4,7 +4,6 @@ import com.shinemo.my.redis.domain.RedisSentinelNode;
 import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.my.redis.service.impl.RedisServiceImpl;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
-import com.shinemo.score.client.user.facade.UserInfoFacadeService;
 import com.shinemo.jce.spring.AaceProviderBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,23 +20,6 @@ import org.springframework.context.annotation.DependsOn;
 @Configuration
 public class ProviderConfiguration {
 
-    /**
-     * UserInfoFacadeService 提供 jce 方式调用
-     *
-     * @param userInfoFacadeService
-     * @return com.shinemo.jce.spring.AaceProviderBean
-     * @author zhangyan
-     * @date 2018-05-29
-     **/
-    @Bean(initMethod = "init")
-    @DependsOn("userInfoFacadeService")
-    public AaceProviderBean providerUserInfoFacadeService(@Qualifier("userInfoFacadeService") UserInfoFacadeService userInfoFacadeService) {
-        AaceProviderBean aaceProviderBean = new AaceProviderBean();
-        aaceProviderBean.setInterfaceName(UserInfoFacadeService.class.getName());
-        aaceProviderBean.setTarget(userInfoFacadeService);
-        // aaceProviderBean.setRpcType(RpcType.ACE.getName());
-        return aaceProviderBean;
-    }
 
     @Bean(initMethod = "init")
     @DependsOn("commentFacadeService")

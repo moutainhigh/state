@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinemo.score.dal.mapper.VideoMapper">
+
+	<!-- 结果集对应关系 -->
+	<resultMap id="result" type="com.shinemo.score.client.domain.Video" >
+		<id column="id" property="id"/>
+		<result property="gmtCreate" column="gmt_create"/>
+		<result property="gmtModified" column="gmt_modified"/>
+		<result property="status" column="status"/>
+		<result property="videoId" column="video_id"/>
+		<result property="videoType" column="video_type"/>
+		<result property="videoName" column="video_name"/>
+		<result property="initScore" column="init_score"/>
+		<result property="initWeight" column="init_weight"/>
+		<result property="score" column="score"/>
+		<result property="weight" column="weight"/>
+		<result property="yesterdayScore" column="yesterday_score"/>
+		<result property="yesterdayWeight" column="yesterday_weight"/>
+		<result property="extend" column="extend"/>
+		<result property="version" column="version"/>
+		<result property="flag" column="flag"/>
+	</resultMap>
+
+	<!-- 数据库字段 -->
+	<sql id="columns">
+		id, gmt_create, gmt_modified, status, video_id, video_type, video_name, init_score, init_weight, score, weight, yesterday_score, yesterday_weight, extend, version, flag
+	</sql>
+
+    <sql id="table">
+        video
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="conditions">
+        <where>
+            <choose>
+                <when test="id != null">and id = #{id}</when>
+                <otherwise>
+					<if test="gmtCreate != null">and gmt_create = #{gmtCreate}</if>
+					<if test="gmtModified != null">and gmt_modified = #{gmtModified}</if>
+					<if test="status != null">and status = #{status}</if>
+					<if test="videoId != null">and video_id = #{videoId}</if>
+					<if test="videoType != null">and video_type = #{videoType}</if>
+					<if test="videoName != null">and video_name = #{videoName}</if>
+					<if test="initScore != null">and init_score = #{initScore}</if>
+					<if test="initWeight != null">and init_weight = #{initWeight}</if>
+					<if test="score != null">and score = #{score}</if>
+					<if test="weight != null">and weight = #{weight}</if>
+					<if test="yesterdayScore != null">and yesterday_score = #{yesterdayScore}</if>
+					<if test="yesterdayWeight != null">and yesterday_weight = #{yesterdayWeight}</if>
+					<if test="extend != null">and extend = #{extend}</if>
+					<if test="version != null">and version = #{version}</if>
+					<if test="flag != null">and flag = #{flag}</if>
+                </otherwise>
+            </choose>
+        </where>
+    </sql>
+
+
+	<!-- 查询结果集 -->
+    <select id="find" resultMap="result"
+            parameterType="com.shinemo.score.client.query.VideoQuery">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <include refid="conditions"/>
+        <if test="orderByEnable and orderByList != null and orderByList.size() > 0">
+            order by
+            <foreach collection="orderByList" item="orderBy" separator=",">
+                ${orderBy.column} ${orderBy.sort}
+            </foreach>
+        </if>
+        <if test="pageEnable">
+            limit #{startRow}, #{pageSize}
+        </if>
+    </select>
+
+	<!-- 查询某条记录 -->
+    <select id="get" resultMap="result" parameterType="com.shinemo.score.client.query.VideoQuery">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <include refid="conditions"/>
+        limit 1
+    </select>
+
+	<!-- 统计查询结果数量 -->
+    <select id="count" resultType="long" parameterType="com.shinemo.score.client.query.VideoQuery">
+        select count(*) from
+        <include refid="table"/>
+        <include refid="conditions"/>
+    </select>
+
+	<!-- 删除 -->
+    <delete id="delete" parameterType="com.shinemo.score.client.query.VideoQuery">
+        delete from
+        <include refid="table"/>
+        where id = #{id}
+    </delete>
+
+	<!-- 插入 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.shinemo.score.client.domain.Video">
+        insert into
+        <include refid="table"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="id != null">
+						id,
+					</if>
+					gmt_create,
+					gmt_modified,
+                    <if test="status != null">
+						status,
+					</if>
+                    <if test="videoId != null">
+						video_id,
+					</if>
+                    <if test="videoType != null">
+						video_type,
+					</if>
+                    <if test="videoName != null">
+						video_name,
+					</if>
+                    <if test="initScore != null">
+						init_score,
+					</if>
+                    <if test="initWeight != null">
+						init_weight,
+					</if>
+                    <if test="score != null">
+						score,
+					</if>
+                    <if test="weight != null">
+						weight,
+					</if>
+                    <if test="yesterdayScore != null">
+						yesterday_score,
+					</if>
+                    <if test="yesterdayWeight != null">
+						yesterday_weight,
+					</if>
+                    <if test="extend != null">
+						extend,
+					</if>
+                    <if test="version != null">
+						version,
+					</if>
+                    <if test="flag != null">
+						flag,
+					</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="id != null">
+						#{id, jdbcType=BIGINT},
+                    </if>
+                    now(),
+                    now(),
+                    <if test="status != null">
+						#{status, jdbcType=INTEGER},
+                    </if>
+                    <if test="videoId != null">
+						#{videoId, jdbcType=VARCHAR},
+                    </if>
+                    <if test="videoType != null">
+						#{videoType, jdbcType=INTEGER},
+                    </if>
+                    <if test="videoName != null">
+						#{videoName, jdbcType=VARCHAR},
+                    </if>
+                    <if test="initScore != null">
+						#{initScore, jdbcType=BIGINT},
+                    </if>
+                    <if test="initWeight != null">
+						#{initWeight, jdbcType=BIGINT},
+                    </if>
+                    <if test="score != null">
+						#{score, jdbcType=BIGINT},
+                    </if>
+                    <if test="weight != null">
+						#{weight, jdbcType=BIGINT},
+                    </if>
+                    <if test="yesterdayScore != null">
+						#{yesterdayScore, jdbcType=BIGINT},
+                    </if>
+                    <if test="yesterdayWeight != null">
+						#{yesterdayWeight, jdbcType=BIGINT},
+                    </if>
+                    <if test="extend != null">
+						#{extend, jdbcType=LONGVARCHAR},
+                    </if>
+                    <if test="version != null">
+						#{version, jdbcType=BIGINT},
+                    </if>
+                    <if test="flag != null">
+						#{flag, jdbcType=BIGINT},
+                    </if>
+        </trim>
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.shinemo.score.client.domain.Video">
+        UPDATE video
+        <set>
+            gmt_modified = now(),
+            <if test="status != null">
+                status = #{status, jdbcType=INTEGER},
+            </if>
+            <if test="videoId != null">
+                video_id = #{videoId, jdbcType=VARCHAR},
+            </if>
+            <if test="videoType != null">
+                video_type = #{videoType, jdbcType=INTEGER},
+            </if>
+            <if test="videoName != null">
+                video_name = #{videoName, jdbcType=VARCHAR},
+            </if>
+            <if test="initScore != null">
+                init_score = #{initScore, jdbcType=BIGINT},
+            </if>
+            <if test="initWeight != null">
+                init_weight = #{initWeight, jdbcType=BIGINT},
+            </if>
+            <if test="score != null">
+                score = #{score, jdbcType=BIGINT},
+            </if>
+            <if test="weight != null">
+                weight = #{weight, jdbcType=BIGINT},
+            </if>
+            <if test="yesterdayScore != null">
+                yesterday_score = #{yesterdayScore, jdbcType=BIGINT},
+            </if>
+            <if test="yesterdayWeight != null">
+                yesterday_weight = #{yesterdayWeight, jdbcType=BIGINT},
+            </if>
+            <if test="extend != null">
+                extend = #{extend, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version, jdbcType=BIGINT},
+            </if>
+            <if test="flag != null">
+                flag = #{flag, jdbcType=BIGINT}
+            </if>
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+</mapper>

@@ -1,6 +1,6 @@
 package com.shinemo.score.test.core.user.service;
 
-import com.shinemo.score.core.user.service.UserInfoService;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
@@ -33,18 +33,5 @@ import javax.annotation.Resource;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserInfoServiceTest {
 
-    @Resource
-    private UserInfoService userInfoService;
 
-    /**
-     * 测试是否注入对象
-     *
-     * @return void
-     * @author zhangyan
-     * @date 2018-05-29
-     **/
-    @Test
-    public void test(){
-        System.out.println(userInfoService);
-    }
 }

@@ -1,6 +1,6 @@
 package com.shinemo.score.test.core.user.facade;
 
-import com.shinemo.score.client.user.facade.UserInfoFacadeService;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
@@ -34,18 +34,5 @@ import javax.annotation.Resource;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserInfoFacadeServiceTest {
 
-    @Resource
-    private UserInfoFacadeService userInfoFacadeService;
 
-    /**
-     * 测试是否注入对象
-     *
-     * @return void
-     * @author zhangyan
-     * @date 2018-05-29
-     **/
-    @Test
-    public void test(){
-        System.out.println(userInfoFacadeService);
-    }
 }
