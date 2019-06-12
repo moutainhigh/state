@@ -12,6 +12,7 @@ import com.shinemo.score.dal.configuration.ShineMoProperties;
 import com.shinemo.score.dal.video.wrapper.VideoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 
@@ -29,6 +30,8 @@ public class VideoServiceImpl implements VideoService{
     @Override
     public Result<VideoDO> initVideo(ScoreRequest request){
 
+        Assert.hasText(request.getVideoId(),"videoId is null");
+        Assert.hasText(request.getVideoName(),"videoName is null");
         VideoQuery query = new VideoQuery();
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoWrapper.get(query);
@@ -36,7 +39,15 @@ public class VideoServiceImpl implements VideoService{
             return rs;
         }
         VideoDO videoDO = initVideoDO(request);
-        return videoWrapper.insert(videoDO);//TODO 考虑并发
+        try {
+            videoWrapper.insert(videoDO);
+        } catch (Exception e) {//并发初始化会异常 再查询一次
+            log.info("[initVideo] sameInsert",e);
+            return videoWrapper.get(query);
+        }
+        return Result.success(videoDO);
+
+
     }
 
     @Override

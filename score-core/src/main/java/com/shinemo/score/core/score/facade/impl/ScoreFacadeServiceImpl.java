@@ -51,11 +51,10 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         if(FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE) && request.getScore()!=null && request.getScore()>0){
             ScoreDO scoreDomain = initScoreDO(request,rs.getValue().getId());
             Result<ScoreDO> rt = scoreService.insertScore(scoreDomain);
+            if(!rt.hasValue()){
+                return WebResult.error(rt.getError());
+            }
         }
-
-
-
-
         CommentParam param = initCommentParam(request,rs.getValue().getId());
         Result<Void> commentRs = commentFacadeService.submit(param);
         if (!commentRs.isSuccess()) {
@@ -70,6 +69,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         scoreDomain.setStatus(DeleteStatusEnum.NORMAL.getId());
         scoreDomain.setUid(UserExtend.getUserId());
         scoreDomain.setVideoId(id);
+        scoreDomain.setExtend(request.getExtend());
         return scoreDomain;
     }
 

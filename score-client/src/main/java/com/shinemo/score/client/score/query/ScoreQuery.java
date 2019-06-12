@@ -26,7 +26,7 @@ public class ScoreQuery extends QueryBase {
     /**
     * 视频表的主键id
     */
-	private String videoId;
+	private Long videoId;
     /**
     * 评分
     */
