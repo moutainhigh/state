@@ -6,6 +6,7 @@ import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
+import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import com.shinemo.score.client.video.domain.VideoDO;
@@ -40,14 +41,14 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
         Assert.notNull(request,"request is null");
         Result<VideoDO> rs = videoService.initVideo(request);
-        //插入评分
         if(!rs.hasValue()){
             log.error("[initVideo] error:{}",rs);
             return WebResult.error(rs.getError());
         }
         //评分 或者更新评分
         if(FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE) && request.getScore()!=null && request.getScore()>0){
-
+            ScoreDO scoreDomain = new ScoreDO();
+            Result<ScoreDO> rt = scoreService.insertScore(scoreDomain);
         }
 
 
