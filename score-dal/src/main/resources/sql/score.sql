@@ -4,7 +4,7 @@ CREATE TABLE `score` (
   `gmt_create`   datetime DEFAULT NULL,
   `gmt_modified` datetime DEFAULT NULL,
   `status` int  NOT NULL COMMENT '删除状态 1-正常 0-删除',
-  `video_id` varchar(128) not null comment '视频表的主键id',
+  `video_id` bigint not null comment '视频表的主键id',
   `score` int(4) not null comment '评分',
   `uid`   bigint not null comment '用户id',
   `extend` text DEFAULT null comment '扩展字段',

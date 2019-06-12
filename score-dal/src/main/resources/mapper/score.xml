@@ -144,7 +144,7 @@
     <update id="update" parameterType="com.shinemo.score.client.score.domain.ScoreDO">
         UPDATE score
         <set>
-            gmt_modified = now(),
+            gmt_modified = now(),version=version+1
             <if test="status != null">
                 status = #{status, jdbcType=INTEGER},
             </if>
@@ -165,6 +165,6 @@
             </if>
         </set>
         WHERE
-        id = #{id}
+        id = #{id} and version = #{version}
     </update>
 </mapper>

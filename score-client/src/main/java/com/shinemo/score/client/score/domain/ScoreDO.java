@@ -27,7 +27,7 @@ public class ScoreDO extends BaseDO {
 	/**
 	* 视频表的主键id
 	*/
-	private String videoId;
+	private Long videoId;
 	/**
 	* 评分
 	*/
