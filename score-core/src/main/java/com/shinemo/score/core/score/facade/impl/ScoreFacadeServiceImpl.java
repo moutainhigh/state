@@ -30,11 +30,13 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     @Override
     public WebResult<Void> submitScore(ScoreRequest request) {
 
-        Assert.notNull(request, "request is null");
-        Result<VideoDO> video = videoService.initVideo(request);
+        Assert.notNull(request,"request is null");
+        Result<VideoDO> rs = videoService.initVideo(request);
+        //插入评分
 
 
-        CommentParam param = initCommentParam(request);
+
+        CommentParam param = initCommentParam(request,rs.getValue().getId());
         Result<Void> commentRs = commentFacadeService.createCommentOrReply(param);
         if (!commentRs.isSuccess()) {
             throw new BizException(commentRs.getError());
@@ -42,12 +44,12 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         return WebResult.success();
     }
 
-    private CommentParam initCommentParam(ScoreRequest request) {
+    private CommentParam initCommentParam(ScoreRequest request,Long videoId) {
         CommentParam param = new CommentParam();
         param.setComment(request.getComment());
         param.setCommentId(request.getCommentId());
         param.setNetType(request.getNetType());
-        param.setVideoId(999L);
+        param.setVideoId(videoId);
         param.setVideoType(request.getFlag());
         param.setExtend(request.getExtend());
         return param;
