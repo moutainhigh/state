@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shinemo.score.dal.mapper.VideoMapper">
+<mapper namespace="com.shinemo.score.dal.video.mapper.VideoMapper">
 
 	<!-- 结果集对应关系 -->
-	<resultMap id="result" type="com.shinemo.score.client.domain.Video" >
+	<resultMap id="result" type="com.shinemo.score.client.video.domain.VideoDO" >
 		<id column="id" property="id"/>
 		<result property="gmtCreate" column="gmt_create"/>
 		<result property="gmtModified" column="gmt_modified"/>
@@ -38,21 +38,11 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-					<if test="gmtCreate != null">and gmt_create = #{gmtCreate}</if>
-					<if test="gmtModified != null">and gmt_modified = #{gmtModified}</if>
 					<if test="status != null">and status = #{status}</if>
 					<if test="videoId != null">and video_id = #{videoId}</if>
 					<if test="videoType != null">and video_type = #{videoType}</if>
 					<if test="videoName != null">and video_name = #{videoName}</if>
-					<if test="initScore != null">and init_score = #{initScore}</if>
-					<if test="initWeight != null">and init_weight = #{initWeight}</if>
-					<if test="score != null">and score = #{score}</if>
-					<if test="weight != null">and weight = #{weight}</if>
-					<if test="yesterdayScore != null">and yesterday_score = #{yesterdayScore}</if>
-					<if test="yesterdayWeight != null">and yesterday_weight = #{yesterdayWeight}</if>
-					<if test="extend != null">and extend = #{extend}</if>
 					<if test="version != null">and version = #{version}</if>
-					<if test="flag != null">and flag = #{flag}</if>
                 </otherwise>
             </choose>
         </where>
@@ -61,7 +51,7 @@
 
 	<!-- 查询结果集 -->
     <select id="find" resultMap="result"
-            parameterType="com.shinemo.score.client.query.VideoQuery">
+            parameterType="com.shinemo.score.client.video.query.VideoQuery">
         select
         <include refid="columns"/>
         from
@@ -79,7 +69,7 @@
     </select>
 
 	<!-- 查询某条记录 -->
-    <select id="get" resultMap="result" parameterType="com.shinemo.score.client.query.VideoQuery">
+    <select id="get" resultMap="result" parameterType="com.shinemo.score.client.video.query.VideoQuery">
         select
         <include refid="columns"/>
         from
@@ -89,14 +79,14 @@
     </select>
 
 	<!-- 统计查询结果数量 -->
-    <select id="count" resultType="long" parameterType="com.shinemo.score.client.query.VideoQuery">
+    <select id="count" resultType="long" parameterType="com.shinemo.score.client.video.query.VideoQuery">
         select count(*) from
         <include refid="table"/>
         <include refid="conditions"/>
     </select>
 
 	<!-- 删除 -->
-    <delete id="delete" parameterType="com.shinemo.score.client.query.VideoQuery">
+    <delete id="delete" parameterType="com.shinemo.score.client.video.query.VideoQuery">
         delete from
         <include refid="table"/>
         where id = #{id}
@@ -104,7 +94,7 @@
 
 	<!-- 插入 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.shinemo.score.client.domain.Video">
+            parameterType="com.shinemo.score.client.video.domain.VideoDO">
         insert into
         <include refid="table"/>
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -202,7 +192,7 @@
     </insert>
 
     <!-- 更新 -->
-    <update id="update" parameterType="com.shinemo.score.client.domain.Video">
+    <update id="update" parameterType="com.shinemo.score.client.video.domain.VideoDO">
         UPDATE video
         <set>
             gmt_modified = now(),

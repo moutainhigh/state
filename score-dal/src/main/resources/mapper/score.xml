@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shinemo.score.dal.mapper.ScoreMapper">
+<mapper namespace="com.shinemo.score.dal.score.mapper.ScoreMapper">
 
 	<!-- 结果集对应关系 -->
-	<resultMap id="result" type="com.shinemo.score.client.domain.Score" >
+	<resultMap id="result" type="com.shinemo.score.client.score.domain.ScoreDO" >
 		<id column="id" property="id"/>
 		<result property="gmtCreate" column="gmt_create"/>
 		<result property="gmtModified" column="gmt_modified"/>
@@ -31,14 +31,9 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-					<if test="gmtCreate != null">and gmt_create = #{gmtCreate}</if>
-					<if test="gmtModified != null">and gmt_modified = #{gmtModified}</if>
 					<if test="status != null">and status = #{status}</if>
 					<if test="videoId != null">and video_id = #{videoId}</if>
-					<if test="score != null">and score = #{score}</if>
 					<if test="uid != null">and uid = #{uid}</if>
-					<if test="extend != null">and extend = #{extend}</if>
-					<if test="version != null">and version = #{version}</if>
                 </otherwise>
             </choose>
         </where>
@@ -47,7 +42,7 @@
 
 	<!-- 查询结果集 -->
     <select id="find" resultMap="result"
-            parameterType="com.shinemo.score.client.query.ScoreQuery">
+            parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select
         <include refid="columns"/>
         from
@@ -65,7 +60,7 @@
     </select>
 
 	<!-- 查询某条记录 -->
-    <select id="get" resultMap="result" parameterType="com.shinemo.score.client.query.ScoreQuery">
+    <select id="get" resultMap="result" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select
         <include refid="columns"/>
         from
@@ -75,14 +70,14 @@
     </select>
 
 	<!-- 统计查询结果数量 -->
-    <select id="count" resultType="long" parameterType="com.shinemo.score.client.query.ScoreQuery">
+    <select id="count" resultType="long" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select count(*) from
         <include refid="table"/>
         <include refid="conditions"/>
     </select>
 
 	<!-- 删除 -->
-    <delete id="delete" parameterType="com.shinemo.score.client.query.ScoreQuery">
+    <delete id="delete" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         delete from
         <include refid="table"/>
         where id = #{id}
@@ -90,7 +85,7 @@
 
 	<!-- 插入 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.shinemo.score.client.domain.Score">
+            parameterType="com.shinemo.score.client.score.domain.ScoreDO">
         insert into
         <include refid="table"/>
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -146,7 +141,7 @@
     </insert>
 
     <!-- 更新 -->
-    <update id="update" parameterType="com.shinemo.score.client.domain.Score">
+    <update id="update" parameterType="com.shinemo.score.client.score.domain.ScoreDO">
         UPDATE score
         <set>
             gmt_modified = now(),
