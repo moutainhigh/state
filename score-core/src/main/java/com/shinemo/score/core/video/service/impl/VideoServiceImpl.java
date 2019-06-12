@@ -36,7 +36,7 @@ public class VideoServiceImpl implements VideoService{
             return rs;
         }
         VideoDO videoDO = initVideoDO(request);
-        return videoWrapper.insert(videoDO);//TODO 并发
+        return videoWrapper.insert(videoDO);//TODO 考虑并发
     }
 
     private VideoDO initVideoDO(ScoreRequest request) {
