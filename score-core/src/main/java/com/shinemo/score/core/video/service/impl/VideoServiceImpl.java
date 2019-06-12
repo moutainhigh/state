@@ -39,6 +39,11 @@ public class VideoServiceImpl implements VideoService{
         return videoWrapper.insert(videoDO);//TODO 考虑并发
     }
 
+    @Override
+    public Result<VideoDO> getVideo(VideoQuery query) {
+        return videoWrapper.get(query);
+    }
+
     private VideoDO initVideoDO(ScoreRequest request) {
         VideoDO videoDO = new VideoDO();
         videoDO.setExtend(request.getExtend());
