@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
 
         Assert.hasText(request.getContent(), "内容不能为空");
         Assert.isTrue(request.getContent().length() <= 50, "内容长度不能超过50字");
-        Assert.hasText(request.getVideoId(), "videoId not be empty");
+        Assert.notNull(request.getVideoId(), "videoId not be empty");
         Assert.hasText(request.getMobile(), "mobile not be empty");
         Assert.notNull(request.getVideoType(), "videoType not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");

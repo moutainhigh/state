@@ -37,7 +37,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
 
         CommentParam param = initCommentParam(request,rs.getValue().getId());
-        Result<Void> commentRs = commentFacadeService.createCommentOrReply(param);
+        Result<Void> commentRs = commentFacadeService.submit(param);
         if (!commentRs.isSuccess()) {
             throw new BizException(commentRs.getError());
         }
@@ -47,11 +47,9 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     private CommentParam initCommentParam(ScoreRequest request,Long videoId) {
         CommentParam param = new CommentParam();
         param.setComment(request.getComment());
-        param.setCommentId(request.getCommentId());
         param.setNetType(request.getNetType());
         param.setVideoId(videoId);
         param.setVideoType(request.getFlag());
-        param.setExtend(request.getExtend());
         return param;
     }
 }

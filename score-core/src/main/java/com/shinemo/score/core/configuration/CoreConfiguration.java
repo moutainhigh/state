@@ -22,10 +22,6 @@ import javax.annotation.Resource;
  * @date 2018-05-29
  */
 @Configuration
-@ComponentScan(basePackages = {
-        "com.shinemo.score.core.user.service",
-        "com.shinemo.score.core.user.facade",
-})
 public class CoreConfiguration {
 
     @Resource

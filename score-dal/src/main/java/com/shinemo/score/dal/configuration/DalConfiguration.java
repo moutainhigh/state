@@ -18,10 +18,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @MapperScan(basePackages = {
-        "com.shinemo.score.dal.user.mapper",
-        "com.shinemo.score.dal.like.mapper",
-        "com.shinemo.score.dal.reply.mapper",
-        "com.shinemo.score.dal.comment.mapper",
+        "com.shinemo.score.dal",
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DalConfiguration {

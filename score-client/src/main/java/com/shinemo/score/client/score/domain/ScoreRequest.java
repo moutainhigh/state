@@ -17,7 +17,4 @@ public class ScoreRequest extends BaseDO {
     private Integer score;
     private String netType;
 
-    // 该值存在则回复
-    private Long commentId;
-
 }
