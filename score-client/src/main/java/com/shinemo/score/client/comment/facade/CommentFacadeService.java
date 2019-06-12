@@ -2,6 +2,7 @@ package com.shinemo.score.client.comment.facade;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.common.WebResult;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.query.CommentQuery;
@@ -18,5 +19,5 @@ public interface CommentFacadeService {
     /**
      * @return 评论列表, 客户端用
      */
-    Result<ListVO<CommentVO>> findListVO(CommentQuery query);
+    WebResult<ListVO<CommentVO>> findListVO(CommentQuery query);
 }

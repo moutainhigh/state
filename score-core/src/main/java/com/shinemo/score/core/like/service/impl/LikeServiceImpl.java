@@ -37,31 +37,7 @@ public class LikeServiceImpl implements LikeService {
     private CommentLikeCache commentLikeCache;
 
     @Override
-    public LikeDO create(LikeRequest request) {
-
-        Assert.notNull(request.getCommentId(), "commentId not be empty");
-        Assert.notNull(request.getLikeAction(), "likeAction not be empty");
-        Assert.notNull(request.getUid(), "uid not be empty");
-
-        LikeDO likeDO = new LikeDO();
-        likeDO.setCommentId(request.getCommentId());
-        likeDO.setType(request.getLikeAction());
-        likeDO.setUid(request.getUid());
-
-        Result<LikeDO> insertRs = likeWrapper.insert(likeDO);
-        if (!insertRs.hasValue()) {
-            log.error("[create_like] has error,request:{},rs:{}", request, insertRs);
-            throw new BizException(insertRs.getError());
-        }
-
-        // 异步更新评论
-        refreshComment(request.getCommentId(), request.getLikeAction());
-
-        return insertRs.getValue();
-    }
-
-    @Override
-    public LikeDO update(LikeRequest request) {
+    public LikeDO createOrSave(LikeRequest request) {
 
         Assert.notNull(request.getCommentId(), "commentId not be empty");
         Assert.notNull(request.getLikeAction(), "likeAction not be empty");
@@ -69,25 +45,43 @@ public class LikeServiceImpl implements LikeService {
 
         LikeDO oldDO = getByCommentIdAndUid(request.getCommentId(), request.getUid());
 
-        if (oldDO.getType().equals(LikeTypeEnum.ADD.getId())) {
-            throw new BizException(ScoreErrors.DO_NOT_REPEAT_OPERATE.getCode(), "请勿重复点赞");
-        } else if (oldDO.getType().equals(LikeTypeEnum.REMOVE.getId())) {
-            throw new BizException(ScoreErrors.DO_NOT_REPEAT_OPERATE.getCode(), "您还未点赞");
-        }
+        LikeDO result;
+        // 不存在创建
+        if (oldDO == null) {
+            LikeDO likeDO = new LikeDO();
+            likeDO.setCommentId(request.getCommentId());
+            likeDO.setType(request.getLikeAction());
+            likeDO.setUid(request.getUid());
 
-        LikeDO likeDO = new LikeDO();
-        likeDO.setId(oldDO.getId());
-        likeDO.setType(request.getLikeAction());
+            Result<LikeDO> insertRs = likeWrapper.insert(likeDO);
+            if (!insertRs.hasValue()) {
+                log.error("[create_like] has error,request:{},rs:{}", request, insertRs);
+                throw new BizException(insertRs.getError());
+            }
+            result = insertRs.getValue();
+        } else {
+            // 否则进行更新
+            if (oldDO.getType().equals(LikeTypeEnum.ADD.getId())) {
+                throw new BizException(ScoreErrors.DO_NOT_REPEAT_OPERATE.getCode(), "请勿重复点赞");
+            } else if (oldDO.getType().equals(LikeTypeEnum.REMOVE.getId())) {
+                throw new BizException(ScoreErrors.DO_NOT_REPEAT_OPERATE.getCode(), "您还未点赞");
+            }
 
-        Result<LikeDO> updateRs = likeWrapper.update(likeDO);
-        if (!updateRs.hasValue()) {
-            throw new BizException(updateRs.getError());
+            LikeDO likeDO = new LikeDO();
+            likeDO.setId(oldDO.getId());
+            likeDO.setType(request.getLikeAction());
+
+            Result<LikeDO> updateRs = likeWrapper.update(likeDO);
+            if (!updateRs.hasValue()) {
+                throw new BizException(updateRs.getError());
+            }
+            result = updateRs.getValue();
         }
 
         // 异步更新评论
         refreshComment(request.getCommentId(), request.getLikeAction());
 
-        return updateRs.getValue();
+        return result;
     }
 
     @Override
