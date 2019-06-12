@@ -60,7 +60,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
                 return WebResult.error(rt.getError());
             }
         }
-        CommentParam param = initCommentParam(request,rs.getValue().getId());
+        CommentParam param = initCommentParam(request);
         Result<Void> commentRs = commentFacadeService.submit(param);
         if (!commentRs.isSuccess()) {
             throw new BizException(commentRs.getError());

@@ -14,6 +14,7 @@ public interface ScoreErrors {
     ErrorInfo DO_NOT_REPEAT_LIKE = new ErrorInfo(100003L, "DO_NOT_REPEAT_LIKE", "请勿重复点赞");
     ErrorInfo HAS_NOT_LIKE = new ErrorInfo(100004L, "HAS_NOT_LIKE", "您还未点赞");
     ErrorInfo VIDEO_NOT_EXIST = new ErrorInfo(100005L, "VIDEO_NOT_EXIST", "视频不存在");
+    ErrorInfo DO_NOT_REPEAT_OPERATE = new ErrorInfo(100006L, "DO_NOT_REPEAT_OPERATE", "请勿重复操作");
 
 
 }
