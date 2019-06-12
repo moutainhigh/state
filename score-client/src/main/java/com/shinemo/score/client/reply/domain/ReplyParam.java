@@ -1,4 +1,4 @@
-package com.shinemo.score.client.comment.query;
+package com.shinemo.score.client.reply.domain;
 
 import lombok.Data;
 
@@ -7,10 +7,11 @@ import lombok.Data;
  * @since 2019-06-12
  */
 @Data
-public class CommentParam {
+public class ReplyParam {
+
+    private Long commentId;
 
     private String comment;
-    private Long videoId;
+
     private String netType;
-    private Integer videoType;
 }

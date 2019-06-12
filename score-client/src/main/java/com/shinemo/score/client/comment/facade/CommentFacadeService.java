@@ -22,5 +22,5 @@ public interface CommentFacadeService {
      */
     WebResult<ListVO<CommentVO>> findListVO(CommentQuery query);
 
-    Result<Void> createCommentOrReply(CommentParam param);
+    Result<Void> submit(CommentParam param);
 }

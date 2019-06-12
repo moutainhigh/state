@@ -12,10 +12,8 @@ import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
-import com.shinemo.score.client.reply.query.ReplyRequest;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
-import com.shinemo.score.core.reply.service.ReplyService;
 import com.shinemo.ygw.client.migu.UserExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +38,6 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     private CommentService commentService;
     @Resource
     private LikeService likeService;
-    @Resource
-    private ReplyService replyService;
 
     @Override
     public Result<CommentDO> getById(Long commentId) {
@@ -55,6 +51,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
+        logger.info("[findListVO] query:{},token:{}", query, extend);
+
         if (extend != null) {
             query.setUid(extend.getUid());
         }
@@ -80,47 +78,28 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Void> createCommentOrReply(CommentParam param) {
-
-        Assert.hasText(param.getComment(), "comment not be empty");
+    public Result<Void> submit(CommentParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
+        logger.info("[submit] param:{},token:{}", param, extend);
+
         Assert.notNull(extend, "您尚未登录");
+        Assert.hasText(param.getComment(), "comment not be empty");
         Assert.notNull(extend.getUid(), "uid not be empty");
+        Assert.notNull(param.getVideoId(), "videoId not be empty");
 
-        // 回复
-        if (param.getCommentId() != null) {
+        // 评论
+        CommentRequest request = new CommentRequest();
+        request.setNetType(param.getNetType());
+        request.setVideoType(param.getVideoType());
+        request.setAvatarUrl(extend.getUserPortrait());
+        request.setContent(param.getComment());
+        request.setDevice(extend.getDeviceModel());
+        request.setVideoId(param.getVideoId());
+        request.setName(extend.getUserName());
+        request.setUid(extend.getUid());
+        commentService.create(request);
 
-            ReplyRequest request = new ReplyRequest();
-            request.setNetType(param.getNetType());
-            request.setAvatarUrl(extend.getUserPortrait());
-            request.setDevice(extend.getDeviceModel());
-            request.setCommentId(param.getCommentId());
-            request.setExtend(param.getExtend());
-            request.setName(extend.getUserName());
-            request.setUid(extend.getUid());
-            request.setContent(param.getComment());
-
-            replyService.create(request);
-
-        } else {
-
-            Assert.notNull(param.getVideoId(), "videoId not be empty");
-
-            // 评论
-            CommentRequest request = new CommentRequest();
-            request.setNetType(param.getNetType());
-            request.setVideoType(param.getVideoType());
-            request.setAvatarUrl(extend.getUserPortrait());
-            request.setContent(param.getComment());
-            request.setDevice(extend.getDeviceModel());
-            request.setVideoId(param.getVideoId());
-            request.setExtend(param.getExtend());
-            request.setName(extend.getUserName());
-            request.setUid(extend.getUid());
-            commentService.create(request);
-
-        }
         return Result.success();
     }
 }
