@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ScoreRequest extends BaseDO{
+public class ScoreRequest extends BaseDO {
 
     private String videoId;
     private Integer flag;
@@ -16,5 +16,8 @@ public class ScoreRequest extends BaseDO{
     private String comment;
     private Integer score;
     private String netType;
+
+    // 该值存在则回复
+    private Long commentId;
 
 }
