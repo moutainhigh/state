@@ -40,6 +40,19 @@ public class ShineMoProperties {
     private List<String> notificationEmail;
 
     /**
+     * 初始化权重
+     */
+    @NotNull
+    private Long initWeight;
+
+    /**
+     * 初始化分数
+     */
+    @NotNull
+    private Long initScore;
+
+
+    /**
      * 应用相关配置
      *
      * @author zhangyan

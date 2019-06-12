@@ -2,6 +2,7 @@ package com.shinemo.score.client.video.domain;
 
 import java.util.Date;
 
+import com.shinemo.client.common.FlagHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -72,4 +73,16 @@ public class VideoDO extends BaseDO {
 	* 标位 1-是否支持评分
 	*/
 	private Long flag;
+
+
+	private FlagHelper flagHelper = FlagHelper.build();
+
+
+	public void addVideoFlag(VideoFlag flag){
+		this.flagHelper.add(flag);
+	}
+
+	public void removeVideoFlag(VideoFlag flag){
+		this.flagHelper.remove(flag);
+	}
 }

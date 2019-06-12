@@ -7,7 +7,10 @@ import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
+import com.shinemo.score.client.video.domain.VideoDO;
+import com.shinemo.score.core.video.service.VideoService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 
@@ -21,9 +24,14 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     @Resource
     private CommentFacadeService commentFacadeService;
 
+    @Resource
+    private VideoService videoService;
+
     @Override
     public WebResult<Void> submitScore(ScoreRequest request) {
 
+        Assert.notNull(request,"request is null");
+        Result<VideoDO> video = videoService.initVideo(request);
 
 
 
