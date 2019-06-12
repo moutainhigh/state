@@ -11,8 +11,6 @@
     </settings>
 
     <typeAliases>
-        <package name="com.shinemo.score.client.user.domain"/>
-        <package name="com.shinemo.score.client.user.query"/>
     </typeAliases>
 
     <typeHandlers>

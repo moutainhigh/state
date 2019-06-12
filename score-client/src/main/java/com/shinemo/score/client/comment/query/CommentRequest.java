@@ -22,9 +22,9 @@ public class CommentRequest extends BaseDO {
      */
     private Integer status;
     /**
-     * 外部视频id
+     * 视频id
      */
-    private String videoId;
+    private Long videoId;
     /**
      * 视频类型
      */

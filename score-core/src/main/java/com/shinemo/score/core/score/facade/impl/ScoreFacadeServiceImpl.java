@@ -30,9 +30,8 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     @Override
     public WebResult<Void> submitScore(ScoreRequest request) {
 
-        Assert.notNull(request,"request is null");
+        Assert.notNull(request, "request is null");
         Result<VideoDO> video = videoService.initVideo(request);
-
 
 
         CommentParam param = initCommentParam(request);
@@ -48,7 +47,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         param.setComment(request.getComment());
         param.setCommentId(request.getCommentId());
         param.setNetType(request.getNetType());
-        param.setVideoId(request.getVideoId());
+        param.setVideoId(999L);
         param.setVideoType(request.getFlag());
         param.setExtend(request.getExtend());
         return param;

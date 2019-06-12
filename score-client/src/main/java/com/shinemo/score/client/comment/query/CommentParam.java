@@ -11,7 +11,7 @@ public class CommentParam {
 
     private Long commentId;
     private String comment;
-    private String videoId;
+    private Long videoId;
     private String netType;
     private Integer videoType;
     private String extend;
