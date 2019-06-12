@@ -98,9 +98,7 @@
     </select>
 
     <select id="findIds" resultType="java.lang.Long">
-        select
-        <include refid="columns"/>
-        from
+        select id from
         <include refid="table"/>
         <include refid="conditions"/>
         <if test="orderByEnable and orderByList != null and orderByList.size() > 0">

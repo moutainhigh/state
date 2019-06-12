@@ -1,7 +1,6 @@
 package com.shinemo.score.client.reply.facade;
 
 import com.shinemo.client.common.WebResult;
-import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyParam;
 
 
@@ -11,5 +10,5 @@ import com.shinemo.score.client.reply.domain.ReplyParam;
  */
 public interface ReplyFacadeService {
 
-    WebResult<ReplyDO> submit(ReplyParam replyParam);
+    WebResult<Void> submit(ReplyParam replyParam);
 }

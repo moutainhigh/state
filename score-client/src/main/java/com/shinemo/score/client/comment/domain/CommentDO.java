@@ -28,7 +28,7 @@ public class CommentDO extends BaseDO {
     /**
      * 视频id
      */
-    private Long videoId;
+    private String videoId;
     /**
      * 视频类型
      */

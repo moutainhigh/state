@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -103,11 +104,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDO getByQuery(CommentQuery query) {
 
-        log.info("load comment from mysql db,query:{}", query);
         if (query.getId() != null) {
             // 有id先走缓存
             return getById(query.getId());
         }
+        log.info("load comment from mysql db,query:{}", query);
         Result<CommentDO> commentRs = commentWrapper.get(query, ScoreErrors.COMMENT_NOT_EXIST);
         if (!commentRs.hasValue()) {
             throw new BizException(commentRs.getError());
@@ -140,9 +141,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDO getByIdFromDB(Long commentId) {
         Assert.notNull(commentId, "commentId not be null");
+
         CommentQuery query = new CommentQuery();
         query.setId(commentId);
-        return getByQuery(query);
+        log.info("load comment from mysql db,commentId:{}", commentId);
+        Result<CommentDO> commentRs = commentWrapper.get(query, ScoreErrors.COMMENT_NOT_EXIST);
+        if (!commentRs.hasValue()) {
+            throw new BizException(commentRs.getError());
+        }
+        return commentRs.getValue();
     }
 
     private boolean doUpdate(CommentRequest request) {
@@ -152,8 +159,9 @@ public class CommentServiceImpl implements CommentService {
         CommentDO commentDO = new CommentDO();
         commentDO.setId(request.getCommentId());
         commentDO.setVersion(oldDO.getVersion());
-        commentDO.setHistoryReply(GsonUtil.toJson(request.getHistoryReply()));
-
+        if (!StringUtils.isEmpty(request.getHistoryReply())) {
+            commentDO.setHistoryReply(GsonUtil.toJson(request.getHistoryReply()));
+        }
         if (request.getLikeAction() != null) {
             if (LikeTypeEnum.ADD.getId() == request.getLikeAction()) {
                 commentDO.setLikeNum(oldDO.getLikeNum() + 1);

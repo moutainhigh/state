@@ -17,8 +17,6 @@ import com.shinemo.client.common.QueryBase;
 @Setter
 public class CommentQuery extends QueryBase {
 	private Long id;
-	private Date gmtCreate;
-	private Date gmtModified;
     /**
     * 删除状态 1-正常 0-删除
     */
@@ -79,4 +77,6 @@ public class CommentQuery extends QueryBase {
     * 版本号
     */
 	private Long version;
+
+	private Long commentId;
 }

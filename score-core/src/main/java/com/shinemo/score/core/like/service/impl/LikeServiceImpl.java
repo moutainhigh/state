@@ -61,11 +61,14 @@ public class LikeServiceImpl implements LikeService {
             result = insertRs.getValue();
         } else {
             // 否则进行更新
-            if (oldDO.getType().equals(LikeTypeEnum.ADD.getId())) {
-                throw new BizException(ScoreErrors.DO_NOT_REPEAT_OPERATE.getCode(), "请勿重复点赞");
-            } else if (oldDO.getType().equals(LikeTypeEnum.REMOVE.getId())) {
-                throw new BizException(ScoreErrors.DO_NOT_REPEAT_OPERATE.getCode(), "您还未点赞");
+            if (request.getLikeAction().equals(oldDO.getType())) {
+                if (request.getLikeAction().equals(LikeTypeEnum.ADD.getId())) {
+                    throw new BizException(ScoreErrors.DO_NOT_REPEAT_LIKE);
+                } else if (oldDO.getType().equals(LikeTypeEnum.REMOVE.getId())) {
+                    throw new BizException(ScoreErrors.HAS_NOT_LIKE);
+                }
             }
+
 
             LikeDO likeDO = new LikeDO();
             likeDO.setId(oldDO.getId());
@@ -79,7 +82,7 @@ public class LikeServiceImpl implements LikeService {
         }
 
         // 异步更新评论
-        refreshComment(request.getCommentId(), request.getLikeAction());
+        refreshComment(request.getCommentId(), request.getLikeAction(), request.getUid());
 
         return result;
     }
@@ -102,7 +105,7 @@ public class LikeServiceImpl implements LikeService {
 
         Result<LikeDO> likeRs = likeWrapper.get(likeQuery, ScoreErrors.LIKE_LOG_NOT_EXIST);
         if (!likeRs.hasValue()) {
-            throw new BizException(likeRs.getError());
+            return null;
         }
         return likeRs.getValue();
     }
@@ -126,10 +129,11 @@ public class LikeServiceImpl implements LikeService {
     }
 
     // 异步更新评论
-    private void refreshComment(Long commentId, Integer likeAction) {
+    private void refreshComment(Long commentId, Integer likeAction, Long uid) {
         internalEventBus.post(
                 AfterLikeEvent.builder()
                         .commentId(commentId)
+                        .uid(uid)
                         .likeAction(likeAction)
                         .build()
         );

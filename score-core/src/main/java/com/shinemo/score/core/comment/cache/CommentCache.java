@@ -59,7 +59,7 @@ public class CommentCache {
 
     public void put(CommentDO commentDO) {
 
-        redisService.set(keyFormat(commentDO.getId()), CommentDO.class, COMMENT_KEY_EXPIRE);
+        redisService.set(keyFormat(commentDO.getId()), commentDO, COMMENT_KEY_EXPIRE);
         cache.put(commentDO.getId(), commentDO);
     }
 
