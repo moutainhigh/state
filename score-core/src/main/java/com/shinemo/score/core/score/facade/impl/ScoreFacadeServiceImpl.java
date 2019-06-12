@@ -25,6 +25,17 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     public WebResult<Void> submitScore(ScoreRequest request) {
 
 
+
+
+        CommentParam param = initCommentParam(request);
+        Result<Void> commentRs = commentFacadeService.createCommentOrReply(param);
+        if (!commentRs.isSuccess()) {
+            throw new BizException(commentRs.getError());
+        }
+        return WebResult.success();
+    }
+
+    private CommentParam initCommentParam(ScoreRequest request) {
         CommentParam param = new CommentParam();
         param.setComment(request.getComment());
         param.setCommentId(request.getCommentId());
@@ -32,11 +43,6 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         param.setVideoId(request.getVideoId());
         param.setVideoType(request.getFlag());
         param.setExtend(request.getExtend());
-
-        Result<Void> commentRs = commentFacadeService.createCommentOrReply(param);
-        if (!commentRs.isSuccess()) {
-            throw new BizException(commentRs.getError());
-        }
-        return WebResult.success();
+        return param;
     }
 }
