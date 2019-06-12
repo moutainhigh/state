@@ -45,6 +45,7 @@ public class VideoServiceImpl implements VideoService{
         videoDO.setStatus(DeleteStatusEnum.NORMAL.getId());
         videoDO.setVideoName(request.getVideoName());
         videoDO.setVersion(1L);
+        videoDO.setVideoId(request.getVideoId());
         if(FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE)){
             videoDO.addVideoFlag(VideoFlag.GRADE);
             long score = shineMoProperties.getInitScore() * shineMoProperties.getInitWeight();
