@@ -48,14 +48,21 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         }
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         VideoQuery videoQuery = new VideoQuery();
-        map.forEach((key,value)->{
-            int sumWeight = value.size();
-            long sumScore = value.stream().mapToInt(val->val.getScore()).sum();
-            videoQuery.setId(key);
+        for(Map.Entry<Long,List<ScoreDO>> entry:map.entrySet()){
+            long sumWeight = entry.getValue().size();
+            long sumScore = entry.getValue().stream().mapToInt(val->val.getScore()).sum();
+            videoQuery.setId(entry.getKey());
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
-            //if()
+            if(!rz.hasValue()){
+                log.error("[calculationByHours] video notExist:{}",rz);
+                continue;
+            }
+            VideoDO VideoDO = rz.getValue();
+            VideoDO.setScore(VideoDO.getScore()+sumScore);
+            VideoDO.setWeight(VideoDO.getWeight()+sumWeight);
+            //更新video
+        }
 
-        });
 
         return null;
     }
