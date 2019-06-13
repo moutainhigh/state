@@ -4,7 +4,6 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
-import com.shinemo.client.util.UserAgentUtils;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
 import com.shinemo.score.client.comment.domain.CommentDO;
@@ -19,7 +18,6 @@ import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
 import com.shinemo.score.core.reply.service.ReplyService;
-import com.shinemo.ygw.client.HeaderExtend;
 import com.shinemo.ygw.client.migu.UserExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,23 +88,21 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     public Result<Void> submit(CommentParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
-        HeaderExtend header = GsonUtil.fromGson2Obj(JceHolder.get(Constant.HEADER_EXTEND), HeaderExtend.class);
 
-        logger.info("[submit] param:{},token:{},header:{}", param, extend, header);
+        logger.info("[submit] param:{},token:{}", param, extend);
 
         Assert.notNull(extend, "您尚未登录");
         Assert.hasText(param.getComment(), "comment not be empty");
         Assert.notNull(extend.getUid(), "uid not be empty");
         Assert.notNull(param.getVideoId(), "videoId not be empty");
 
-        String userAgent = header.getHeaders().get("user-agent");
         // 评论
         CommentRequest request = new CommentRequest();
         request.setNetType(param.getNetType());
         request.setVideoType(param.getVideoType());
         request.setAvatarUrl(extend.getUserPortrait());
         request.setContent(param.getComment());
-        request.setDevice(UserAgentUtils.getDeviceType(userAgent));
+        request.setDevice(extend.getDeviceModel());
         request.setVideoId(param.getVideoId());
         request.setName(extend.getUserName());
         request.setUid(extend.getUid());

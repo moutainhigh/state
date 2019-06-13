@@ -16,5 +16,5 @@ CREATE TABLE `reply`
   PRIMARY KEY (`id`),
   KEY `idx_c_u` (`comment_id`, `uid`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 15
+  AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='回复表';
