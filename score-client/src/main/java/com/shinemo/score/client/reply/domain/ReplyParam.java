@@ -1,5 +1,6 @@
 package com.shinemo.score.client.reply.domain;
 
+import com.shinemo.client.common.BaseDO;
 import lombok.Data;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Data;
  * @since 2019-06-12
  */
 @Data
-public class ReplyParam {
+public class ReplyParam extends BaseDO {
 
     private Long commentId;
 

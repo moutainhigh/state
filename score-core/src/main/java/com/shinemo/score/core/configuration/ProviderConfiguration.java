@@ -6,6 +6,7 @@ import com.shinemo.my.redis.service.impl.RedisServiceImpl;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.jce.spring.AaceProviderBean;
 import com.shinemo.score.client.like.facade.LikeFacadeService;
+import com.shinemo.score.client.reply.facade.ReplyFacadeService;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,15 @@ public class ProviderConfiguration {
         AaceProviderBean aaceProviderBean = new AaceProviderBean();
         aaceProviderBean.setInterfaceName(LikeFacadeService.class.getName());
         aaceProviderBean.setTarget(likeFacadeService);
+        return aaceProviderBean;
+    }
+
+    @Bean(initMethod = "init")
+    @DependsOn("replyFacadeService")
+    public AaceProviderBean providerReplyFacadeService(@Qualifier("replyFacadeService") ReplyFacadeService replyFacadeService) {
+        AaceProviderBean aaceProviderBean = new AaceProviderBean();
+        aaceProviderBean.setInterfaceName(ReplyFacadeService.class.getName());
+        aaceProviderBean.setTarget(replyFacadeService);
         return aaceProviderBean;
     }
 

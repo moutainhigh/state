@@ -3,6 +3,7 @@ package com.shinemo.score.core.video.service.impl;
 import com.shinemo.client.common.FlagHelper;
 import com.shinemo.client.common.Result;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
+import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.video.domain.VideoDO;
 import com.shinemo.score.client.video.domain.VideoFlag;
@@ -12,6 +13,7 @@ import com.shinemo.score.dal.configuration.ShineMoProperties;
 import com.shinemo.score.dal.video.wrapper.VideoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -28,6 +30,7 @@ public class VideoServiceImpl implements VideoService{
     private ShineMoProperties shineMoProperties;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result<VideoDO> initVideo(ScoreRequest request){
 
         Assert.hasText(request.getVideoId(),"videoId is null");
@@ -52,7 +55,7 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     public Result<VideoDO> getVideo(VideoQuery query) {
-        return videoWrapper.get(query);
+        return videoWrapper.get(query, ScoreErrors.VIDEO_NOT_EXIST);
     }
 
     private VideoDO initVideoDO(ScoreRequest request) {

@@ -29,6 +29,10 @@
     <dependencies>
         <dependency>
             <groupId>com.shinemo.score</groupId>
+            <artifactId>score-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.shinemo.score</groupId>
             <artifactId>score-dal</artifactId>
         </dependency>
         <dependency>

@@ -4,6 +4,7 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
+import com.shinemo.client.util.UserAgentUtils;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
 import com.shinemo.score.client.comment.domain.CommentDO;
@@ -12,8 +13,12 @@ import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
+import com.shinemo.score.client.reply.domain.ReplyDO;
+import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
+import com.shinemo.score.core.reply.service.ReplyService;
+import com.shinemo.ygw.client.HeaderExtend;
 import com.shinemo.ygw.client.migu.UserExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +43,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     private CommentService commentService;
     @Resource
     private LikeService likeService;
+    @Resource
+    private ReplyService replyService;
 
     @Override
     public Result<CommentDO> getById(Long commentId) {
@@ -51,13 +58,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
+
         logger.info("[findListVO] query:{},token:{}", query, extend);
-
-        if (extend != null) {
-            query.setUid(extend.getUid());
-        }
-
-        logger.info("find CommentVO list query:{}", query);
 
         Assert.hasText(query.getVideoId(), "videoId not be empty");
 
@@ -68,8 +70,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
             CommentDO comment = commentService.getById(commentId);
             CommentVO commentVO = new CommentVO(comment);
-            if (query.getUid() != null) {
-                commentVO.setLike(likeService.isLike(commentId, query.getUid()));
+            if (extend != null && extend.getUid() != null) {
+                commentVO.setLike(likeService.isLike(commentId, extend.getUid()));
             }
             list.add(commentVO);
         }
@@ -81,25 +83,51 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     public Result<Void> submit(CommentParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
-        logger.info("[submit] param:{},token:{}", param, extend);
+        HeaderExtend header = GsonUtil.fromGson2Obj(JceHolder.get(Constant.HEADER_EXTEND), HeaderExtend.class);
+
+        logger.info("[submit] param:{},token:{},header:{}", param, extend, header);
 
         Assert.notNull(extend, "您尚未登录");
         Assert.hasText(param.getComment(), "comment not be empty");
         Assert.notNull(extend.getUid(), "uid not be empty");
         Assert.notNull(param.getVideoId(), "videoId not be empty");
 
+        String userAgent = header.getHeaders().get("user-agent");
         // 评论
         CommentRequest request = new CommentRequest();
         request.setNetType(param.getNetType());
         request.setVideoType(param.getVideoType());
         request.setAvatarUrl(extend.getUserPortrait());
         request.setContent(param.getComment());
-        request.setDevice(extend.getDeviceModel());
+        request.setDevice(UserAgentUtils.getDeviceType(userAgent));
         request.setVideoId(param.getVideoId());
         request.setName(extend.getUserName());
         request.setUid(extend.getUid());
+        request.setMobile(extend.getMobile());
         commentService.create(request);
 
         return Result.success();
+    }
+
+    @Override
+    public WebResult<CommentVO> getDetail(CommentQuery query) {
+
+        UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
+
+        logger.info("[findListVO] query:{},token:{}", query, extend);
+
+        CommentDO comment = commentService.getById(query.getCommentId());
+
+        ReplyQuery replyQuery = new ReplyQuery();
+        replyQuery.setCommentId(query.getCommentId());
+        replyQuery.setPageSize(query.getPageSize());
+        replyQuery.setCurrentPage(query.getCurrentPage());
+
+        ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
+        CommentVO vo = new CommentVO(comment, replys);
+        if (extend != null && extend.getUid() != null) {
+            vo.setLike(likeService.isLike(query.getCommentId(), extend.getUid()));
+        }
+        return WebResult.success(vo);
     }
 }

@@ -28,8 +28,8 @@ public class CommentLikeCache {
 
     // redis键 评论id为参数，值为用户id
     private final static String COMMENT_LIKE_KEY = "miku_comment_like_users_%s";
-    // 1天的失效时间
-    private final static Long COMMENT_LIKE_KEY_EXPIRE = 24 * 60 * 60 * 1000L;
+    // 1小时的失效时间
+    private final static Long COMMENT_LIKE_KEY_EXPIRE = 60 * 60 * 1000L;
 
     public void putOne(Long commentId, Long uid) {
         String key = keyFormat(commentId);
@@ -60,11 +60,10 @@ public class CommentLikeCache {
             LikeQuery query = new LikeQuery();
             query.setCommentId(commentId);
             query.setType(LikeTypeEnum.ADD.getId());
-            ListVO<LikeDO> listRs = likeService.findByQuery(query);
-            if (listRs.getRows().isEmpty()) {
-                return null;
-            }
+
             List<String> uids = new ArrayList<>();
+
+            ListVO<LikeDO> listRs = likeService.findByQuery(query);
             listRs.getRows().forEach(v -> uids.add(v.getUid().toString()));
 
             if (uids.isEmpty()) {

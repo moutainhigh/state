@@ -40,6 +40,8 @@ public class AfterReplyListener extends BaseAsync {
         query.setCommentId(commentId);
         query.setPageSize(3);
         query.setCurrentPage(1);
+        query.putOrderBy("id", false);
+        query.setOrderByEnable(true);
         ListVO<ReplyDO> replyDOListVO = replyService.findByQuery(query);
 
         CommentRequest commentRequest = new CommentRequest();

@@ -9,6 +9,8 @@ import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.score.domain.MyScoreRequest;
 import com.shinemo.score.client.score.domain.ScoreDO;
+import com.shinemo.score.client.common.domain.DeleteStatusEnum;
+import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import com.shinemo.score.client.video.domain.VideoDO;
@@ -16,8 +18,10 @@ import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.core.score.service.ScoreService;
 import com.shinemo.score.core.video.service.VideoService;
 import com.shinemo.ygw.client.migu.UserExtend;
+import com.shinemo.ygw.client.migu.UserExtend;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -40,6 +44,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     private ScoreService scoreService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public WebResult<Void> submitScore(ScoreRequest request) {
 
         Assert.notNull(request,"request is null");
@@ -56,7 +61,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
                 return WebResult.error(rt.getError());
             }
         }
-        CommentParam param = initCommentParam(request,rs.getValue().getId());
+        CommentParam param = initCommentParam(request);
         Result<Void> commentRs = commentFacadeService.submit(param);
         if (!commentRs.isSuccess()) {
             throw new BizException(commentRs.getError());
@@ -79,11 +84,11 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         return scoreDomain;
     }
 
-    private CommentParam initCommentParam(ScoreRequest request,Long videoId) {
+    private CommentParam initCommentParam(ScoreRequest request) {
         CommentParam param = new CommentParam();
         param.setComment(request.getComment());
         param.setNetType(request.getNetType());
-        param.setVideoId(videoId);
+        param.setVideoId(request.getVideoId());
         param.setVideoType(request.getFlag());
         return param;
     }
