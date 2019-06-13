@@ -55,6 +55,12 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     }
 
     @Override
+    public Result<ListVO<CommentDO>> findByQuery(CommentQuery query) {
+        ListVO<CommentDO> rs = commentService.findByQuery(query);
+        return Result.success(rs);
+    }
+
+    @Override
     public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);

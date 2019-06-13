@@ -15,7 +15,15 @@ import com.shinemo.score.client.comment.query.CommentQuery;
 public interface CommentFacadeService {
 
 
+    /**
+     * @return 根据id查询评论，会先走缓存
+     */
     Result<CommentDO> getById(Long commentId);
+
+    /**
+     * @return 查询评论列表
+     */
+    Result<ListVO<CommentDO>> findByQuery(CommentQuery query);
 
     /**
      * @return 评论列表, 客户端用
