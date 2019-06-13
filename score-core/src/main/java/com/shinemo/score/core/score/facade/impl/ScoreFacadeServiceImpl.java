@@ -123,6 +123,12 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
         if(!rs.hasValue()){
+            ScoreRequest scoreRequest = new ScoreRequest();
+            scoreRequest.setVideoName(request.getVideoName());
+            scoreRequest.setVideoId(request.getVideoId());
+            scoreRequest.setExtend(request.getExtend());
+            scoreRequest.setFlag(VideoFlag.GRADE.getIndex());
+            Result<VideoDO> initRs = videoService.initVideo(scoreRequest);
             return WebResult.error(rs.getError());
         }
         VideoDTO dto = new VideoDTO();

@@ -60,7 +60,8 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             VideoDO VideoDO = rz.getValue();
             VideoDO.setScore(VideoDO.getScore()+sumScore);
             VideoDO.setWeight(VideoDO.getWeight()+sumWeight);
-            //更新video
+            //更新video //TODO score 增加标位 增加一个差值分数  当创建时间和更新时间在同一天之内更改 直接更新差值分数
+            //统计完毕之后更新差值分数
         }
 
 
