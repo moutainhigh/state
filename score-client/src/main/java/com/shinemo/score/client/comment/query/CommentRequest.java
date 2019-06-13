@@ -77,4 +77,9 @@ public class CommentRequest extends BaseDO {
      * 版本号
      */
     private Long version;
+
+    /**
+     * 回复数量递增
+     */
+    private boolean incrReplyNum;
 }

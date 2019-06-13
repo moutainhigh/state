@@ -42,6 +42,10 @@ public class CommentDO extends BaseDO {
      */
     private Long likeNum;
     /**
+     * 回复数量
+     */
+    private Integer replyNum;
+    /**
      * 用户id
      */
     private Long uid;
