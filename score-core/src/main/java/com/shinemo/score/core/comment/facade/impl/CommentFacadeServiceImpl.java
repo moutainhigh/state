@@ -15,6 +15,7 @@ import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
+import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
 import com.shinemo.score.core.reply.service.ReplyService;
@@ -135,5 +136,16 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             vo.setLike(likeService.isLike(query.getCommentId(), extend.getUid()));
         }
         return WebResult.success(vo);
+    }
+
+    public static void main(String args[]){
+        ScoreRequest request = new ScoreRequest();
+        request.setVideoId("abc");
+        request.setFlag(1);
+        request.setVideoName("战狼");
+        request.setComment("我觉得还不错");
+        request.setScore(6);
+        request.setNetType("wifi");
+        System.out.println(GsonUtil.toJson(request));
     }
 }

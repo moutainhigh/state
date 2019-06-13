@@ -29,7 +29,7 @@ public interface ScoreFacadeService{
      * @param request
      * @return
      */
-    WebResult<VideoDTO> getVideoDTO(MyScoreRequest request);
+    WebResult<VideoDTO> getVideoScore(MyScoreRequest request);
 
 
 

@@ -114,7 +114,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     }
 
     @Override
-    public WebResult<VideoDTO> getVideoDTO(MyScoreRequest request) {
+    public WebResult<VideoDTO> getVideoScore(MyScoreRequest request) {
 
         Assert.notNull(request,"videoId is null");
         Assert.hasText(request.getVideoId(),"videoId is null");
