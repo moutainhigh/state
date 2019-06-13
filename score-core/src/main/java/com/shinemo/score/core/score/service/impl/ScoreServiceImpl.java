@@ -38,7 +38,14 @@ public class ScoreServiceImpl implements ScoreService{
         Result<ScoreDO> rs = scoreWrapper.get(query);
         if(!rs.hasValue()){
             try {
-                domain.setVersion(INIT_VERSION);//TODO
+                query.setVideoId(null);
+                Result<Long> rz = scoreWrapper.count(query);
+                if(rz.hasValue()){
+                    domain.setNum(rz.getValue()+INIT_VERSION);
+                }else{
+                    domain.setNum(INIT_VERSION);
+                }
+                domain.setVersion(INIT_VERSION);
                 Result<ScoreDO> rt = scoreWrapper.insert(domain);
             } catch (Exception e){
                 int i = 0;
@@ -71,6 +78,13 @@ public class ScoreServiceImpl implements ScoreService{
         Result<ScoreDO> rs = scoreWrapper.get(query);
         if(!rs.hasValue()){
             throw new BizException(rs.getError());
+        }
+        query.setVideoId(null);
+        Result<Long> rz = scoreWrapper.count(query);
+        if(rz.hasValue()){
+            domain.setNum(rz.getValue()+INIT_VERSION);
+        }else{
+            domain.setNum(INIT_VERSION);
         }
         domain.setId(rs.getValue().getId());
         domain.setVersion(rs.getValue().getVersion());
