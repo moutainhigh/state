@@ -64,6 +64,11 @@ public class ScoreServiceImpl implements ScoreService{
         return Result.success(domain);
     }
 
+    @Override
+    public Result<ScoreDO> getScore(ScoreQuery query) {
+        return scoreWrapper.get(query);
+    }
+
 
     /**
      * 循环更新

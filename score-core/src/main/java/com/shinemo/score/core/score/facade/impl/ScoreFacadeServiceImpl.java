@@ -1,30 +1,37 @@
 package com.shinemo.score.core.score.facade.impl;
 
 import com.shinemo.client.common.FlagHelper;
+import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
+import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
+import com.shinemo.score.client.score.domain.MyScoreDTO;
 import com.shinemo.score.client.score.domain.MyScoreRequest;
-import com.shinemo.score.client.score.domain.ScoreDO;
-import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
+import com.shinemo.score.client.score.query.ScoreQuery;
 import com.shinemo.score.client.video.domain.VideoDO;
+import com.shinemo.score.client.video.domain.VideoDTO;
 import com.shinemo.score.client.video.domain.VideoFlag;
+import com.shinemo.score.client.video.query.VideoQuery;
 import com.shinemo.score.core.score.service.ScoreService;
 import com.shinemo.score.core.video.service.VideoService;
 import com.shinemo.ygw.client.migu.UserExtend;
-import com.shinemo.ygw.client.migu.UserExtend;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * @author wenchao.li
@@ -34,6 +41,9 @@ import javax.annotation.Resource;
 @Slf4j
 public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
+
+    private final static long FIRST = 1;
+
     @Resource
     private CommentFacadeService commentFacadeService;
 
@@ -42,6 +52,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     @Resource
     private ScoreService scoreService;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -70,8 +81,58 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     }
 
     @Override
-    public WebResult<Void> getMyScore(MyScoreRequest request) {
-        return null;
+    public WebResult<MyScoreDTO> getMyScore(MyScoreRequest request) {
+
+        //第几部电影
+        MyScoreDTO ret = new MyScoreDTO();
+        long num = FIRST;
+        ScoreQuery query = new ScoreQuery();
+        query.setUid(UserExtend.getUserId());
+        query.putOrderBy("num",false);
+        Result<ScoreDO> rs = scoreService.getScore(query);
+        if(rs.hasValue()){
+            num = rs.getValue().getNum()+FIRST;
+        }
+        ret.setNum(num);
+        //查询我评论过的音频信息
+        if(!StringUtils.isBlank(request.getVideoId())){
+            query.setThirdVideoId(request.getVideoId());
+            Result<ScoreDO> rt = scoreService.getScore(query);
+            if(rt.hasValue()){
+                ret.setVideoId(request.getVideoId());
+                ret.setScore(Double.valueOf(rt.getValue().getScore()));
+            }
+            CommentQuery commentQuery = new CommentQuery();
+            commentQuery.setUid(UserExtend.getUserId());
+            commentQuery.setVideoId(request.getVideoId());
+            WebResult<ListVO<CommentVO>> commentRs = commentFacadeService.findListVO(commentQuery);
+            if(commentRs.isSuccess() && commentRs.getData()!=null ){
+                ret.setComments(commentRs.getData().getRows());
+            }
+        }
+        return WebResult.success(ret);
+    }
+
+    @Override
+    public WebResult<VideoDTO> getVideoScore(MyScoreRequest request) {
+
+        Assert.notNull(request,"videoId is null");
+        Assert.hasText(request.getVideoId(),"videoId is null");
+
+        VideoQuery query = new VideoQuery();
+        query.setVideoId(request.getVideoId());
+        Result<VideoDO> rs = videoService.getVideo(query);
+        if(!rs.hasValue()){
+            return WebResult.error(rs.getError());
+        }
+        VideoDTO dto = new VideoDTO();
+        double  scoreCount = Double.valueOf(rs.getValue().getScore());
+        double  score   =  scoreCount/rs.getValue().getWeight();
+        BigDecimal scoreDecimal = new BigDecimal(score);
+        dto.setScore(scoreDecimal.setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue());
+        dto.setVideoId(request.getVideoId());
+        dto.setWeight(rs.getValue().getWeight());
+        return WebResult.success(dto);
     }
 
     private ScoreDO initScoreDO(ScoreRequest request, Long id) {
@@ -80,6 +141,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         scoreDomain.setStatus(DeleteStatusEnum.NORMAL.getId());
         scoreDomain.setUid(UserExtend.getUserId());
         scoreDomain.setVideoId(id);
+        scoreDomain.setThirdVideoId(request.getVideoId());
         scoreDomain.setExtend(request.getExtend());
         return scoreDomain;
     }

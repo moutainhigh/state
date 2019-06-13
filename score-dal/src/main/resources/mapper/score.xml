@@ -14,11 +14,13 @@
 		<result property="uid" column="uid"/>
 		<result property="extend" column="extend"/>
 		<result property="version" column="version"/>
+        <result property="num" column="num"/>
+        <result property="thirdVideoId" column="third_video_id"/>
 	</resultMap>
 
 	<!-- 数据库字段 -->
 	<sql id="columns">
-		id, gmt_create, gmt_modified, status, video_id, score, uid, extend, version
+		id, gmt_create, gmt_modified, status, video_id, score, uid, extend, version,num,third_video_id
 	</sql>
 
     <sql id="table">
@@ -112,6 +114,13 @@
                     <if test="version != null">
 						version,
 					</if>
+                    <if test="num != null">
+                        num,
+                    </if>
+                    <if test="thirdVideoId != null">
+                        third_video_id,
+                    </if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
                     <if test="id != null">
@@ -136,6 +145,12 @@
                     </if>
                     <if test="version != null">
 						#{version, jdbcType=BIGINT},
+                    </if>
+                    <if test="num != null">
+                        #{num},
+                    </if>
+                    <if test="thirdVideoId != null">
+                        #{thirdVideoId},
                     </if>
         </trim>
     </insert>
@@ -162,6 +177,12 @@
             </if>
             <if test="version != null">
                 version = #{version, jdbcType=BIGINT}
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="thirdVideoId != null">
+                third_video_id = #{thirdVideoId},
             </if>
         </set>
         WHERE
