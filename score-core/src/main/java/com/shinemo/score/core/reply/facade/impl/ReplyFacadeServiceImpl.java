@@ -5,7 +5,6 @@ import com.shinemo.client.util.GsonUtil;
 import com.shinemo.client.util.UserAgentUtils;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
-import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyParam;
 import com.shinemo.score.client.reply.facade.ReplyFacadeService;
 import com.shinemo.score.client.reply.query.ReplyRequest;
@@ -37,19 +36,17 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
     public WebResult<Void> submit(ReplyParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
-        HeaderExtend header = GsonUtil.fromGson2Obj(JceHolder.get(Constant.HEADER_EXTEND), HeaderExtend.class);
-        logger.info("[submit]param:{},token:{},header:{}", param, extend, header);
+        logger.info("[submit]param:{},token:{},header:{}", param, extend);
 
         Assert.notNull(extend, "您尚未登录");
 
-        String userAgent = header.getHeaders().get("user-agent");
 
         ReplyRequest request = new ReplyRequest();
         request.setNetType(param.getNetType());
         request.setUid(extend.getUid());
         request.setAvatarUrl(extend.getUserPortrait());
         request.setContent(param.getComment());
-        request.setDevice(UserAgentUtils.getDeviceType(userAgent));
+        request.setDevice(extend.getDeviceModel());
         request.setName(extend.getUserName());
         request.setMobile(extend.getMobile());
         request.setCommentId(param.getCommentId());

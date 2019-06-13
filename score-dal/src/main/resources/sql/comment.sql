@@ -16,12 +16,12 @@ CREATE TABLE `comment`
   `net_type`      varchar(80)                  DEFAULT NULL COMMENT '网络类型',
   `sort`          int(11)                      DEFAULT '0' COMMENT '排序权重',
   `extend`        text COMMENT '扩展字段',
-  `history_reply` text COMMENT '最近的回复(最近3条)',
+  `history_reply` blob COMMENT '最近的回复(最近3条)',
   `reply_num`     int(11)             NOT NULL DEFAULT '0' COMMENT '回复的数量',
   `version`       bigint(20)          NOT NULL DEFAULT '0' COMMENT '版本号',
   PRIMARY KEY (`id`),
   KEY `idx_u` (`uid`) USING BTREE,
   KEY `idx_v_t` (`video_id`, `video_type`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 15
+  AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='评论表';
