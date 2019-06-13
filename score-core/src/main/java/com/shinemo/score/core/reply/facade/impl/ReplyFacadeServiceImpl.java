@@ -2,14 +2,12 @@ package com.shinemo.score.core.reply.facade.impl;
 
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
-import com.shinemo.client.util.UserAgentUtils;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
 import com.shinemo.score.client.reply.domain.ReplyParam;
 import com.shinemo.score.client.reply.facade.ReplyFacadeService;
 import com.shinemo.score.client.reply.query.ReplyRequest;
 import com.shinemo.score.core.reply.service.ReplyService;
-import com.shinemo.ygw.client.HeaderExtend;
 import com.shinemo.ygw.client.migu.UserExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
