@@ -38,7 +38,7 @@ public class ScoreServiceImpl implements ScoreService{
         Result<ScoreDO> rs = scoreWrapper.get(query);
         if(!rs.hasValue()){
             try {
-                domain.setVersion(INIT_VERSION);
+                domain.setVersion(INIT_VERSION);//TODO
                 Result<ScoreDO> rt = scoreWrapper.insert(domain);
             } catch (Exception e){
                 int i = 0;

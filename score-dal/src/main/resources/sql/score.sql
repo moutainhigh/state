@@ -9,8 +9,10 @@ CREATE TABLE `score` (
   `uid`   bigint not null comment '用户id',
   `extend` text DEFAULT null comment '扩展字段',
   `version` bigint not null DEFAULT 0 comment '版本',
+  `num` bigint not null DEFAULT 1 comment '第几部电影',
   PRIMARY KEY (`id`),
-  UNIQUE key `uk_m_id`(`video_id`,`uid`)
+  UNIQUE key `uk_m_id`(`video_id`,`uid`),
+  UNIQUE key `uk_u_num`(`num`,`uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='电影评分表';
 
 

@@ -7,6 +7,7 @@ import com.shinemo.client.exception.BizException;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
+import com.shinemo.score.client.score.domain.MyScoreRequest;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
@@ -61,6 +62,11 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             throw new BizException(commentRs.getError());
         }
         return WebResult.success();
+    }
+
+    @Override
+    public WebResult<Void> getMyScore(MyScoreRequest request) {
+        return null;
     }
 
     private ScoreDO initScoreDO(ScoreRequest request, Long id) {

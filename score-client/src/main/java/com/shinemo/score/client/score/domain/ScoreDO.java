@@ -44,4 +44,8 @@ public class ScoreDO extends BaseDO {
 	* 版本
 	*/
 	private Long version;
+	/**
+	 * 第几部评分
+	 */
+	private Long num;
 }
