@@ -175,9 +175,6 @@
             <if test="extend != null">
                 extend = #{extend, jdbcType=LONGVARCHAR},
             </if>
-            <if test="version != null">
-                version = #{version, jdbcType=BIGINT}
-            </if>
             <if test="num != null">
                 num = #{num},
             </if>
