@@ -10,8 +10,8 @@
 		<result property="gmtModified" column="gmt_modified"/>
 		<result property="status" column="status"/>
 		<result property="commentId" column="comment_id"/>
-		<result property="content" column="content"/>
-		<result property="uid" column="uid"/>
+        <result property="content" column="content" jdbcType="BLOB" javaType="java.lang.String" typeHandler="com.shinemo.score.dal.configuration.BlobAndStringTypeHandler"/>
+        <result property="uid" column="uid"/>
 		<result property="mobile" column="mobile"/>
 		<result property="name" column="name"/>
 		<result property="avatarUrl" column="avatar_url"/>
@@ -139,7 +139,7 @@
 						#{commentId, jdbcType=BIGINT},
                     </if>
                     <if test="content != null">
-						#{content, jdbcType=LONGVARCHAR},
+						#{content, jdbcType=BLOB},
                     </if>
                     <if test="uid != null">
 						#{uid, jdbcType=BIGINT},
@@ -177,7 +177,7 @@
                 comment_id = #{commentId, jdbcType=BIGINT},
             </if>
             <if test="content != null">
-                content = #{content, jdbcType=LONGVARCHAR},
+                content = #{content, jdbcType=BLOB},
             </if>
             <if test="uid != null">
                 uid = #{uid, jdbcType=BIGINT},

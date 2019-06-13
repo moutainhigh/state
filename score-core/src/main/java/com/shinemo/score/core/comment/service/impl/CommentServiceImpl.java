@@ -159,7 +159,7 @@ public class CommentServiceImpl implements CommentService {
         CommentDO commentDO = new CommentDO();
         commentDO.setId(request.getCommentId());
         commentDO.setVersion(oldDO.getVersion());
-        if (!StringUtils.isEmpty(request.getHistoryReply())) {
+        if (request.getHistoryReply() != null && !request.getHistoryReply().isEmpty()) {
             commentDO.setHistoryReply(GsonUtil.toJson(request.getHistoryReply()));
         }
         if (request.getLikeAction() != null) {
