@@ -18,6 +18,11 @@ public interface CommentFacadeService {
     Result<CommentDO> getById(Long commentId);
 
     /**
+     * @return 查询评论列表
+     */
+    ListVO<CommentDO> findByQuery(CommentQuery query);
+
+    /**
      * @return 评论列表, 客户端用
      */
     WebResult<ListVO<CommentVO>> findListVO(CommentQuery query);
