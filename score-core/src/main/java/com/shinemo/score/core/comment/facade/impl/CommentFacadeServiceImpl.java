@@ -55,8 +55,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     }
 
     @Override
-    public ListVO<CommentDO> findByQuery(CommentQuery query) {
-        return commentService.findByQuery(query);
+    public Result<ListVO<CommentDO>> findByQuery(CommentQuery query) {
+        ListVO<CommentDO> rs = commentService.findByQuery(query);
+        return Result.success(rs);
     }
 
     @Override

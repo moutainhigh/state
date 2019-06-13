@@ -20,7 +20,7 @@ public interface CommentFacadeService {
     /**
      * @return 查询评论列表
      */
-    ListVO<CommentDO> findByQuery(CommentQuery query);
+    Result<ListVO<CommentDO>> findByQuery(CommentQuery query);
 
     /**
      * @return 评论列表, 客户端用
