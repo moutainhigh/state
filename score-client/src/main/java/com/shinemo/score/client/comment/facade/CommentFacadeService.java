@@ -15,6 +15,9 @@ import com.shinemo.score.client.comment.query.CommentQuery;
 public interface CommentFacadeService {
 
 
+    /**
+     * @return 根据id查询评论，会先走缓存
+     */
     Result<CommentDO> getById(Long commentId);
 
     /**
