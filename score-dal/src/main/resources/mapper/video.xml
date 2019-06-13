@@ -198,7 +198,7 @@
     <update id="update" parameterType="com.shinemo.score.client.video.domain.VideoDO">
         UPDATE video
         <set>
-            gmt_modified = now(),
+            gmt_modified = now(),version=version+1,
             <if test="status != null">
                 status = #{status, jdbcType=INTEGER},
             </if>
@@ -232,14 +232,11 @@
             <if test="extend != null">
                 extend = #{extend, jdbcType=LONGVARCHAR},
             </if>
-            <if test="version != null">
-                version = #{version, jdbcType=BIGINT},
-            </if>
             <if test="flagHelper != null and  flagHelper.mask > 0">
                 <![CDATA[ flag = (flag & ~#{flagHelper.mask,jdbcType=BIGINT}) | #{flagHelper.value,jdbcType=BIGINT}, ]]>
             </if>
         </set>
         WHERE
-        id = #{id}
+        id = #{id} and version = #{version}
     </update>
 </mapper>
