@@ -28,17 +28,9 @@ public class ScoreQuery extends QueryBase {
     */
 	private Long videoId;
     /**
-    * 评分
-    */
-	private Integer score;
-    /**
     * 用户id
     */
 	private Long uid;
-    /**
-    * 扩展字段
-    */
-	private String extend;
     /**
     * 版本
     */
@@ -47,4 +39,12 @@ public class ScoreQuery extends QueryBase {
 	 * 第三方音频id
 	 */
 	private String thirdVideoId;
+	/**
+	 * 开始更新时间
+	 */
+	private Date startModifyTime;
+	/**
+	 * 结束更新时间
+	 */
+	private Date endModifyTime;
 }

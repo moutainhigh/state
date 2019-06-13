@@ -1,5 +1,6 @@
 package com.shinemo.score.core.score.service.impl;
 
+import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
 import com.shinemo.client.util.GsonUtil;
@@ -67,6 +68,11 @@ public class ScoreServiceImpl implements ScoreService{
     @Override
     public Result<ScoreDO> getScore(ScoreQuery query) {
         return scoreWrapper.get(query);
+    }
+
+    @Override
+    public Result<ListVO<ScoreDO>> findScores(ScoreQuery query) {
+        return scoreWrapper.find(query);
     }
 
 
