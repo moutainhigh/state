@@ -122,7 +122,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         VideoQuery query = new VideoQuery();
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
-        if(rs.hasValue()){
+        if(!rs.hasValue()){
             return WebResult.error(rs.getError());
         }
         VideoDTO dto = new VideoDTO();
