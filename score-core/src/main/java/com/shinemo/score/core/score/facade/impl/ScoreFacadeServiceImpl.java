@@ -17,6 +17,7 @@ import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
 import com.shinemo.score.client.video.domain.VideoDO;
+import com.shinemo.score.client.video.domain.VideoDTO;
 import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
 import com.shinemo.score.core.score.service.ScoreService;
@@ -30,6 +31,7 @@ import org.springframework.util.Assert;
 
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * @author wenchao.li
@@ -109,6 +111,28 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             }
         }
         return WebResult.success(ret);
+    }
+
+    @Override
+    public WebResult<VideoDTO> getVideoDTO(MyScoreRequest request) {
+
+        Assert.notNull(request,"videoId is null");
+        Assert.hasText(request.getVideoId(),"videoId is null");
+
+        VideoQuery query = new VideoQuery();
+        query.setVideoId(request.getVideoId());
+        Result<VideoDO> rs = videoService.getVideo(query);
+        if(rs.hasValue()){
+            return WebResult.error(rs.getError());
+        }
+        VideoDTO dto = new VideoDTO();
+        double  scoreCount = Double.valueOf(rs.getValue().getScore());
+        double  score   =  scoreCount/rs.getValue().getWeight();
+        BigDecimal scoreDecimal = new BigDecimal(score);
+        dto.setScore(scoreDecimal.setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue());
+        dto.setVideoId(request.getVideoId());
+        dto.setWeight(rs.getValue().getWeight());
+        return WebResult.success(dto);
     }
 
     private ScoreDO initScoreDO(ScoreRequest request, Long id) {
