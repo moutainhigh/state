@@ -129,7 +129,10 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             scoreRequest.setExtend(request.getExtend());
             scoreRequest.setFlag(VideoFlag.GRADE.getIndex());
             Result<VideoDO> initRs = videoService.initVideo(scoreRequest);
-            return WebResult.error(rs.getError());
+            if(!initRs.hasValue()){
+                return WebResult.error(initRs.getError());
+            }
+            rs.setValue(initRs.getValue());
         }
         VideoDTO dto = new VideoDTO();
         double  scoreCount = Double.valueOf(rs.getValue().getScore());
