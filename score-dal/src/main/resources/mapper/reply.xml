@@ -139,7 +139,7 @@
 						#{commentId, jdbcType=BIGINT},
                     </if>
                     <if test="content != null">
-						#{content, jdbcType=LONGVARCHAR},
+						#{content, jdbcType=BLOB},
                     </if>
                     <if test="uid != null">
 						#{uid, jdbcType=BIGINT},
@@ -177,7 +177,7 @@
                 comment_id = #{commentId, jdbcType=BIGINT},
             </if>
             <if test="content != null">
-                content = #{content, jdbcType=LONGVARCHAR},
+                content = #{content, jdbcType=BLOB},
             </if>
             <if test="uid != null">
                 uid = #{uid, jdbcType=BIGINT},

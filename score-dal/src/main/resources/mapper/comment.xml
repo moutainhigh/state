@@ -22,7 +22,7 @@
         <result property="netType" column="net_type"/>
         <result property="sort" column="sort"/>
         <result property="extend" column="extend"/>
-        <result property="historyReply" column="history_reply"/>
+        <result property="historyReply" column="history_reply" jdbcType="BLOB" javaType="java.lang.String" typeHandler="com.shinemo.score.dal.configuration.BlobAndStringTypeHandler"/>
         <result property="version" column="version"/>
     </resultMap>
 
@@ -189,7 +189,7 @@
                 #{videoType, jdbcType=INTEGER},
             </if>
             <if test="content != null">
-                #{content, jdbcType=LONGVARCHAR},
+                #{content, jdbcType=BLOB},
             </if>
             <if test="likeNum != null">
                 #{likeNum, jdbcType=BIGINT},
@@ -222,7 +222,7 @@
                 #{extend, jdbcType=LONGVARCHAR},
             </if>
             <if test="historyReply != null">
-                #{historyReply, jdbcType=LONGVARCHAR},
+                #{historyReply, jdbcType=BLOB},
             </if>
             <if test="version != null">
                 #{version, jdbcType=BIGINT},
@@ -245,7 +245,7 @@
                 video_type = #{videoType, jdbcType=INTEGER},
             </if>
             <if test="content != null">
-                content = #{content, jdbcType=LONGVARCHAR},
+                content = #{content, jdbcType=BLOB},
             </if>
             <if test="likeNum != null">
                 like_num = #{likeNum, jdbcType=BIGINT},
@@ -278,7 +278,7 @@
                 extend = #{extend, jdbcType=LONGVARCHAR},
             </if>
             <if test="historyReply != null">
-                history_reply = #{historyReply, jdbcType=LONGVARCHAR},
+                history_reply = #{historyReply, jdbcType=BLOB},
             </if>
             <if test="version != null">
                 version = version + 1
