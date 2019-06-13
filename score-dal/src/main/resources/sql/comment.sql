@@ -9,6 +9,7 @@ CREATE TABLE `comment`
   `video_type`    int          NOT NULL COMMENT '视频类型',
   `content`       varchar(255) NOT NULL COMMENT '评论内容',
   `like_num`      bigint       NOT NULL DEFAULT '0' COMMENT '赞数量',
+  `reply_num`     int       NOT NULL DEFAULT '0' COMMENT '回复数量',
   `uid`           bigint       not null comment '用户id',
   `mobile`        varchar(30)  not null comment '手机号码',
   `name`          varchar(256)          DEFAULT null comment '用户名称',

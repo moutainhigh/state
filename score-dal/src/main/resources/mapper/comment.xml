@@ -13,6 +13,7 @@
         <result property="videoType" column="video_type"/>
         <result property="content" column="content"/>
         <result property="likeNum" column="like_num"/>
+        <result property="replyNum" column="reply_num"/>
         <result property="uid" column="uid"/>
         <result property="mobile" column="mobile"/>
         <result property="name" column="name"/>
@@ -27,7 +28,7 @@
 
     <!-- 数据库字段 -->
     <sql id="columns">
-        id, gmt_create, gmt_modified, status, video_id, video_type, content, like_num, uid, mobile, name, avatar_url, device, net_type, sort, extend, history_reply, version
+        id, gmt_create, gmt_modified, status, video_id, video_type, content, like_num, reply_num, uid, mobile, name, avatar_url, device, net_type, sort, extend, history_reply, version
     </sql>
 
     <sql id="table">
@@ -138,6 +139,9 @@
             <if test="likeNum != null">
                 like_num,
             </if>
+            <if test="replyNum != null">
+                reply_num,
+            </if>
             <if test="uid != null">
                 uid,
             </if>
@@ -189,6 +193,9 @@
             </if>
             <if test="likeNum != null">
                 #{likeNum, jdbcType=BIGINT},
+            </if>
+            <if test="replyNum != null">
+                #{replyNum, jdbcType=INTEGER},
             </if>
             <if test="uid != null">
                 #{uid, jdbcType=BIGINT},
@@ -242,6 +249,9 @@
             </if>
             <if test="likeNum != null">
                 like_num = #{likeNum, jdbcType=BIGINT},
+            </if>
+            <if test="replyNum!=null">
+                reply_num = #{replyNum, jdbcType=INTEGER},
             </if>
             <if test="uid != null">
                 uid = #{uid, jdbcType=BIGINT},

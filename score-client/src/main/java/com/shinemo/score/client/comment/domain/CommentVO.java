@@ -27,6 +27,8 @@ public class CommentVO extends BaseDO {
 
     private Long likeNum;
 
+    private Integer replyNum;
+
     // 默认没点赞
     private boolean like;
 
@@ -61,6 +63,7 @@ public class CommentVO extends BaseDO {
         userName = commentDO.getName();
         device = commentDO.getDevice();
         likeNum = commentDO.getLikeNum();
+        replyNum = commentDO.getReplyNum();
 
         if (listVO != null) {
 

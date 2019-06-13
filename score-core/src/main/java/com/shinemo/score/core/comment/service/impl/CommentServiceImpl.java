@@ -170,6 +170,10 @@ public class CommentServiceImpl implements CommentService {
                 commentDO.setLikeNum(oldDO.getLikeNum() - 1);
             }
         }
+
+        if (request.isIncrReplyNum()) {
+            commentDO.setReplyNum(oldDO.getReplyNum() + 1);
+        }
         Result<CommentDO> updateRs = commentWrapper.update(commentDO);
 
 
