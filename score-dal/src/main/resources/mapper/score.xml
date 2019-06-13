@@ -14,11 +14,13 @@
 		<result property="uid" column="uid"/>
 		<result property="extend" column="extend"/>
 		<result property="version" column="version"/>
+        <result property="num" column="num"/>
+        <result property="thirdVideoId" column="third_video_id"/>
 	</resultMap>
 
 	<!-- 数据库字段 -->
 	<sql id="columns">
-		id, gmt_create, gmt_modified, status, video_id, score, uid, extend, version
+		id, gmt_create, gmt_modified, status, video_id, score, uid, extend, version,num,third_video_id
 	</sql>
 
     <sql id="table">
