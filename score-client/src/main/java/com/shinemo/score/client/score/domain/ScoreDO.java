@@ -48,4 +48,6 @@ public class ScoreDO extends BaseDO {
 	 * 第几部评分
 	 */
 	private Long num;
+
+	private String thirdVideoId;
 }

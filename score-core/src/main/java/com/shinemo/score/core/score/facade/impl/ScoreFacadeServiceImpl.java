@@ -117,6 +117,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         scoreDomain.setStatus(DeleteStatusEnum.NORMAL.getId());
         scoreDomain.setUid(UserExtend.getUserId());
         scoreDomain.setVideoId(id);
+        scoreDomain.setThirdVideoId(request.getVideoId());
         scoreDomain.setExtend(request.getExtend());
         return scoreDomain;
     }

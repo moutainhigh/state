@@ -112,6 +112,13 @@
                     <if test="version != null">
 						version,
 					</if>
+                    <if test="num != null">
+                        num,
+                    </if>
+                    <if test="thirdVideoId != null">
+                        third_video_id,
+                    </if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
                     <if test="id != null">
@@ -136,6 +143,12 @@
                     </if>
                     <if test="version != null">
 						#{version, jdbcType=BIGINT},
+                    </if>
+                    <if test="num != null">
+                        #{num},
+                    </if>
+                    <if test="thirdVideoId != null">
+                        #{thirdVideoId},
                     </if>
         </trim>
     </insert>
@@ -162,6 +175,12 @@
             </if>
             <if test="version != null">
                 version = #{version, jdbcType=BIGINT}
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="thirdVideoId != null">
+                third_video_id = #{thirdVideoId},
             </if>
         </set>
         WHERE
