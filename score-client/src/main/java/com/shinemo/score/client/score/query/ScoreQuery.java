@@ -43,4 +43,8 @@ public class ScoreQuery extends QueryBase {
     * 版本
     */
 	private Long version;
+	/**
+	 * 第三方音频id
+	 */
+	private String thirdVideoId;
 }

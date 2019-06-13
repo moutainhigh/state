@@ -2,6 +2,7 @@ package com.shinemo.score.client.score.facade;
 
 
 import com.shinemo.client.common.WebResult;
+import com.shinemo.score.client.score.domain.MyScoreDTO;
 import com.shinemo.score.client.score.domain.MyScoreRequest;
 import com.shinemo.score.client.score.domain.ScoreRequest;
 
@@ -16,7 +17,7 @@ public interface ScoreFacadeService{
 
 
 
-    WebResult<Void> getMyScore(MyScoreRequest request);
+    WebResult<MyScoreDTO> getMyScore(MyScoreRequest request);
 
 
 
