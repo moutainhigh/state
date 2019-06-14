@@ -13,7 +13,7 @@ public class ScoreRequest extends BaseDO {
     private String videoId;
     private Integer flag;
     private String videoName;
-    private VideoExtend extend;
+    private String extend;
     private String comment;
     private Integer score;
     private String netType;

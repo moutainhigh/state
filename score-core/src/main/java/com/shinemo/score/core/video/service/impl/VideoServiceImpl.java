@@ -61,7 +61,7 @@ public class VideoServiceImpl implements VideoService{
 
     private VideoDO initVideoDO(ScoreRequest request) {
         VideoDO videoDO = new VideoDO();
-        videoDO.setExtend(GsonUtil.toJson(request.getExtend()));
+        videoDO.setExtend(request.getExtend());
         videoDO.setStatus(DeleteStatusEnum.NORMAL.getId());
         videoDO.setVideoName(request.getVideoName());
         videoDO.setVersion(1L);
