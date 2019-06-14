@@ -41,6 +41,8 @@ public class CommentVO extends BaseDO {
 
     private String device;
 
+    private String mobile;
+
     // 回复
     // 列表页给 List<ReplyVO>
     // 详情页给 ListVO<ReplyVO>，分页展示
@@ -61,6 +63,7 @@ public class CommentVO extends BaseDO {
         content = commentDO.getContent();
         userPortrait = commentDO.getAvatarUrl();
         netType = commentDO.getNetType();
+        mobile = RegularUtils.ignorePhone(commentDO.getMobile());
         userName = commentDO.getName() + RegularUtils.ignorePhone(commentDO.getMobile());
         device = commentDO.getDevice();
         likeNum = commentDO.getLikeNum();

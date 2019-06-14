@@ -38,6 +38,6 @@ public class ReplyVO extends BaseDO {
         userPortrait = replyDO.getAvatarUrl();
         netType = replyDO.getNetType();
         device = replyDO.getDevice();
-        mobile = replyDO.getMobile();
+        mobile = RegularUtils.ignorePhone(replyDO.getMobile());
     }
 }
