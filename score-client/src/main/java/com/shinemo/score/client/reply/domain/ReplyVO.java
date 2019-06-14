@@ -22,11 +22,21 @@ public class ReplyVO extends BaseDO {
 
     private Date gmtCreate;
 
+    private String netType;
+
+    private String mobile;
+
+    private String device;
+
+
     public ReplyVO(ReplyDO replyDO){
         replyId = replyDO.getId();
         content = replyDO.getContent();
         gmtCreate = replyDO.getGmtCreate();
         userName = replyDO.getName();
         userPortrait = replyDO.getAvatarUrl();
+        netType = replyDO.getNetType();
+        device = replyDO.getDevice();
+        mobile = replyDO.getMobile();
     }
 }
