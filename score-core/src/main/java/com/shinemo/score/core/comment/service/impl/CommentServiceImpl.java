@@ -128,7 +128,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ListVO<Long> findIdsByQuery(CommentQuery query) {
 
-        query.setPageEnable(false);
+        query.setOrderByEnable(true);
+        query.putOrderBy("id",false);
         Result<ListVO<Long>> idListRs = commentWrapper.findIds(query);
         if (!idListRs.hasValue()) {
             throw new BizException(idListRs.getError());
