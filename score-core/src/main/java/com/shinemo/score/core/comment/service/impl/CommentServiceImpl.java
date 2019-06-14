@@ -45,7 +45,6 @@ public class CommentServiceImpl implements CommentService {
         Assert.hasText(request.getMobile(), "mobile not be empty");
         Assert.notNull(request.getVideoType(), "videoType not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");
-        Assert.hasText(request.getName(), "name not be empty");
 
 
         CommentDO commentDO = new CommentDO();
