@@ -5,6 +5,7 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
+import com.shinemo.score.client.utils.RegularUtils;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
@@ -40,6 +41,8 @@ public class CommentVO extends BaseDO {
 
     private String device;
 
+    private String mobile;
+
     // 回复
     // 列表页给 List<ReplyVO>
     // 详情页给 ListVO<ReplyVO>，分页展示
@@ -60,7 +63,8 @@ public class CommentVO extends BaseDO {
         content = commentDO.getContent();
         userPortrait = commentDO.getAvatarUrl();
         netType = commentDO.getNetType();
-        userName = commentDO.getName();
+        mobile = RegularUtils.ignorePhone(commentDO.getMobile());
+        userName = commentDO.getName() + RegularUtils.ignorePhone(commentDO.getMobile());
         device = commentDO.getDevice();
         likeNum = commentDO.getLikeNum();
         replyNum = commentDO.getReplyNum();

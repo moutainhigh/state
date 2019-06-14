@@ -125,7 +125,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         replyQuery.setCommentId(query.getCommentId());
         replyQuery.setPageSize(query.getPageSize());
         replyQuery.setCurrentPage(query.getCurrentPage());
-
+        replyQuery.setOrderByEnable(true);
+        replyQuery.putOrderBy("id",false);
         ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
         CommentVO vo = new CommentVO(comment, replys);
         if (extend != null && extend.getUid() != null) {
