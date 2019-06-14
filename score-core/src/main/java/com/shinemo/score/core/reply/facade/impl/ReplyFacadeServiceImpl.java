@@ -44,7 +44,9 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
         request.setUid(extend.getUid());
         request.setAvatarUrl(extend.getUserPortrait());
         request.setContent(param.getComment());
-        request.setDevice(extend.getDeviceModel());
+        if (param.showDeviceType()) {
+            request.setDevice(extend.getDeviceModel());
+        }
         request.setName(extend.getUserName());
         request.setMobile(extend.getMobile());
         request.setCommentId(param.getCommentId());

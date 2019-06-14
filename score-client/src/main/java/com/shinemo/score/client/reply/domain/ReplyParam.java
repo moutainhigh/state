@@ -15,4 +15,13 @@ public class ReplyParam extends BaseDO {
     private String comment;
 
     private String netType;
+
+    private Integer showDevice = 1;
+
+    public boolean showDeviceType() {
+        if (showDevice == null || showDevice == 2) {
+            return false;
+        }
+        return true;
+    }
 }
