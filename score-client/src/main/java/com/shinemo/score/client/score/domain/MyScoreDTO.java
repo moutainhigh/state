@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 public class MyScoreDTO extends BaseDO{
 
-    private Long num;
+    private Long number;
     private String videoId;
     private Double score;
     private List<CommentVO> comments;

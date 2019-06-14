@@ -93,7 +93,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         if(rs.hasValue()){
             num = rs.getValue().getNum()+FIRST;
         }
-        ret.setNum(num);
+        ret.setNumber(num);
         //查询我评论过的音频信息
         if(!StringUtils.isBlank(request.getVideoId())){
             query.setThirdVideoId(request.getVideoId());
@@ -123,7 +123,16 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
         if(!rs.hasValue()){
-            return WebResult.error(rs.getError());
+            ScoreRequest scoreRequest = new ScoreRequest();
+            scoreRequest.setVideoName(request.getVideoName());
+            scoreRequest.setVideoId(request.getVideoId());
+            scoreRequest.setExtend(request.getExtend());
+            scoreRequest.setFlag(VideoFlag.GRADE.getIndex());
+            Result<VideoDO> initRs = videoService.initVideo(scoreRequest);
+            if(!initRs.hasValue()){
+                return WebResult.error(initRs.getError());
+            }
+            rs.setValue(initRs.getValue());
         }
         VideoDTO dto = new VideoDTO();
         double  scoreCount = Double.valueOf(rs.getValue().getScore());

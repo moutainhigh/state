@@ -48,14 +48,22 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         }
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         VideoQuery videoQuery = new VideoQuery();
-        map.forEach((key,value)->{
-            int sumWeight = value.size();
-            long sumScore = value.stream().mapToInt(val->val.getScore()).sum();
-            videoQuery.setId(key);
+        for(Map.Entry<Long,List<ScoreDO>> entry:map.entrySet()){
+            long sumWeight = entry.getValue().size();
+            long sumScore = entry.getValue().stream().mapToInt(val->val.getScore()).sum();
+            videoQuery.setId(entry.getKey());
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
-            //if()
+            if(!rz.hasValue()){
+                log.error("[calculationByHours] video notExist:{}",rz);
+                continue;
+            }
+            VideoDO VideoDO = rz.getValue();
+            VideoDO.setScore(VideoDO.getScore()+sumScore);
+            VideoDO.setWeight(VideoDO.getWeight()+sumWeight);
+            //更新video //TODO score 增加标位 增加一个差值分数  当创建时间和更新时间在同一天之内更改 直接更新差值分数
+            //统计完毕之后更新差值分数
+        }
 
-        });
 
         return null;
     }

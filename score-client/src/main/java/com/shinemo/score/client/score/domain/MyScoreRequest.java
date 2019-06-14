@@ -10,5 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MyScoreRequest extends BaseDO{
 
     private String videoId;
+    private String videoName;
+    private String extend;
 
 }
