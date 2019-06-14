@@ -1,6 +1,7 @@
 package com.shinemo.score.client.score.domain;
 
 import com.shinemo.client.common.BaseDO;
+import com.shinemo.score.client.video.domain.VideoExtend;
 import lombok.Getter;
 import lombok.Setter;
 

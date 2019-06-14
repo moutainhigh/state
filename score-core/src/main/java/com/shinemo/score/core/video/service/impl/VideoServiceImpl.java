@@ -2,6 +2,7 @@ package com.shinemo.score.core.video.service.impl;
 
 import com.shinemo.client.common.FlagHelper;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.score.domain.ScoreRequest;
