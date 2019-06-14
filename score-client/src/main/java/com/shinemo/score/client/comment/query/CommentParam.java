@@ -16,4 +16,14 @@ public class CommentParam extends BaseDO {
     private Integer videoType;
 
     private Integer commentId;
+
+    // 1.显示机型 2.不显示
+    private Integer showDevice;
+
+    public boolean showDeviceType() {
+        if (showDevice == null || showDevice == 2) {
+            return false;
+        }
+        return true;
+    }
 }

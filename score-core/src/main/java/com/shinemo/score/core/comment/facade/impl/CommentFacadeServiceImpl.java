@@ -102,7 +102,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         request.setVideoType(param.getVideoType());
         request.setAvatarUrl(extend.getUserPortrait());
         request.setContent(param.getComment());
-        request.setDevice(extend.getDeviceModel());
+        if (param.showDeviceType()) {
+            request.setDevice(extend.getDeviceModel());
+        }
         request.setVideoId(param.getVideoId());
         request.setName(extend.getUserName());
         request.setUid(extend.getUid());
@@ -126,7 +128,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         replyQuery.setPageSize(query.getPageSize());
         replyQuery.setCurrentPage(query.getCurrentPage());
         replyQuery.setOrderByEnable(true);
-        replyQuery.putOrderBy("id",false);
+        replyQuery.putOrderBy("id", false);
         ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
         CommentVO vo = new CommentVO(comment, replys);
         if (extend != null && extend.getUid() != null) {
@@ -135,7 +137,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         return WebResult.success(vo);
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         ScoreRequest request = new ScoreRequest();
         request.setVideoId("abc");
         request.setFlag(1);

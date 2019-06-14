@@ -162,6 +162,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         param.setNetType(request.getNetType());
         param.setVideoId(request.getVideoId());
         param.setVideoType(request.getFlag());
+        param.setShowDevice(request.getShowDevice());
         return param;
     }
 }
