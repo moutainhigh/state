@@ -80,7 +80,7 @@
             <level>${log.level}</level>
         </filter>
         <encoder>
-            <pattern>${spring.logback.info.pattern}</pattern>
+            <pattern>${log.info.pattern}</pattern>
             <charset>${log.charset}</charset>
         </encoder>
     </appender>
@@ -97,7 +97,7 @@
             <level>${log.level}</level>
         </filter>
         <encoder>
-            <pattern>${spring.logback.info.pattern}</pattern>
+            <pattern>${log.info.pattern}</pattern>
             <charset>${log.charset}</charset>
         </encoder>
     </appender>
@@ -114,7 +114,7 @@
             <level>${log.level}</level>
         </filter>
         <encoder>
-            <pattern>${spring.logback.info.pattern}</pattern>
+            <pattern>${log.info.pattern}</pattern>
             <charset>${log.charset}</charset>
         </encoder>
     </appender>
