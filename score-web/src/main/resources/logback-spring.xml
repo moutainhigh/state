@@ -68,6 +68,57 @@
         </encoder>
     </appender>
 
+    <appender name="AACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/aace.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.home}/aace.log.%d{yyyy-MM-dd}
+            </FileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <encoder>
+            <pattern>${spring.logback.info.pattern}</pattern>
+            <charset>${log.charset}</charset>
+        </encoder>
+    </appender>
+
+    <appender name="PrintParamResult" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/facade-param.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.home}/facade-param.log.%d{yyyy-MM-dd}
+            </FileNamePattern>
+            <maxHistory>4</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <encoder>
+            <pattern>${spring.logback.info.pattern}</pattern>
+            <charset>${log.charset}</charset>
+        </encoder>
+    </appender>
+
+    <appender name="Performance" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/performance-time.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.home}/performance-time.log.%d{yyyy-MM-dd}
+            </FileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <encoder>
+            <pattern>${spring.logback.info.pattern}</pattern>
+            <charset>${log.charset}</charset>
+        </encoder>
+    </appender>
+
     <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.home}/${log.application.name}.info.log</file>
         <append>true</append>
@@ -153,6 +204,21 @@
         <logger name="mapper" additivity="false">
             <level value="${log.level}"/>
             <appender-ref ref="SQL"/>
+        </logger>
+
+        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="true">
+            <level value="${loglevel}"/>
+            <appender-ref ref="PrintParamResult"/>
+        </logger>
+
+        <logger name="com.shinemo.client.aop.performance.PerformanceInner" additivity="false">
+            <level value="${loglevel}"/>
+            <appender-ref ref="Performance"/>
+        </logger>
+
+        <logger name="com.shinemo.Aace.Logger">
+            <level value="${loglevel}"/>
+            <appender-ref ref="AACE"/>
         </logger>
 
         <root>
