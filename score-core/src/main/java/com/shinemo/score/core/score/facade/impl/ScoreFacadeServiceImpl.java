@@ -93,7 +93,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         if(rs.hasValue()){
             num = rs.getValue().getNum()+FIRST;
         }
-        ret.setNum(num);
+        ret.setNumber(num);
         //查询我评论过的音频信息
         if(!StringUtils.isBlank(request.getVideoId())){
             query.setThirdVideoId(request.getVideoId());
