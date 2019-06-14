@@ -5,6 +5,7 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
@@ -151,7 +152,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         scoreDomain.setUid(UserExtend.getUserId());
         scoreDomain.setVideoId(id);
         scoreDomain.setThirdVideoId(request.getVideoId());
-        scoreDomain.setExtend(request.getExtend());
+        scoreDomain.setExtend(GsonUtil.toJson(request.getExtend()));
         return scoreDomain;
     }
 
