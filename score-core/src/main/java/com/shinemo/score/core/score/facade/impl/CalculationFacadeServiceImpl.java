@@ -2,6 +2,7 @@ package com.shinemo.score.core.score.facade.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.facade.CalculationFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
@@ -32,7 +33,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
     private VideoService videoService;
 
     @Override
-    public Result<Void> calculationByHours(Date startTime, Date endTime) {
+    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum) {
 
         ScoreQuery query = new ScoreQuery();
         query.setStartModifyTime(startTime);
@@ -49,27 +50,30 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         VideoQuery videoQuery = new VideoQuery();
         for(Map.Entry<Long,List<ScoreDO>> entry:map.entrySet()){
-            long sumWeight = entry.getValue().size();
-            long sumScore = entry.getValue().stream().mapToInt(val->val.getScore()).sum();
-            videoQuery.setId(entry.getKey());
+            Long videoId = entry.getKey();
+            VideoDO videoDO = new VideoDO();
+            videoQuery.setId(videoId);
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
             if(!rz.hasValue()){
                 log.error("[calculationByHours] video notExist:{}",rz);
                 continue;
             }
-            VideoDO videoDO = rz.getValue();
-            videoDO.setScore(videoDO.getScore()+sumScore);
-            videoDO.setWeight(videoDO.getWeight()+sumWeight);
-            Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
-            if(uptRs.hasValue()){
-                log.error("[updateVideoScore] upt result:{}",uptRs);
+            if(calculationEnum == CalculationEnum.increment){//增量更新
+                long sumWeight = entry.getValue().size();
+                long sumScore = entry.getValue().stream().mapToInt(val->val.getScore()).sum();
+                videoDO.setScore(videoDO.getScore()+sumScore);
+                videoDO.setWeight(videoDO.getWeight()+sumWeight);
+                Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
+                if(uptRs.hasValue()){
+                    log.error("[updateVideoScore] upt result:{}",uptRs);
+                }
+            }else{
+
             }
+
+
         }
         return Result.success();
     }
 
-    @Override
-    public Result<Void> calculationByDays() {
-        return null;
-    }
 }
