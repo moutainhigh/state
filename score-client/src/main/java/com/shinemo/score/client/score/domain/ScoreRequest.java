@@ -18,4 +18,7 @@ public class ScoreRequest extends BaseDO {
     private Integer score;
     private String netType;
 
+    // 1.显示机型 2.不显示
+    private Integer showDevice;
+
 }
