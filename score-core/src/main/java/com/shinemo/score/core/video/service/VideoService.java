@@ -18,4 +18,11 @@ public interface VideoService {
 
     Result<VideoDO> getVideo(VideoQuery query);
 
+    /**
+     * 更新视频分数
+     * @param domain
+     * @return
+     */
+    Result<VideoDO> updateVideoScore(VideoDO domain);
+
 }

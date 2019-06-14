@@ -59,6 +59,14 @@ public class VideoServiceImpl implements VideoService{
         return videoWrapper.get(query, ScoreErrors.VIDEO_NOT_EXIST);
     }
 
+    @Override
+    public Result<VideoDO> updateVideoScore(VideoDO domain) {
+
+        Assert.notNull(domain.getId(),"id is null");
+        Assert.notNull(domain.getVersion(),"version is null");
+        return videoWrapper.update(domain);
+    }
+
     private VideoDO initVideoDO(ScoreRequest request) {
         VideoDO videoDO = new VideoDO();
         videoDO.setExtend(request.getExtend());

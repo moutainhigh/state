@@ -57,15 +57,15 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
                 log.error("[calculationByHours] video notExist:{}",rz);
                 continue;
             }
-            VideoDO VideoDO = rz.getValue();
-            VideoDO.setScore(VideoDO.getScore()+sumScore);
-            VideoDO.setWeight(VideoDO.getWeight()+sumWeight);
-            //更新video //TODO score 增加标位 增加一个差值分数  当创建时间和更新时间在同一天之内更改 直接更新差值分数
-            //统计完毕之后更新差值分数
+            VideoDO videoDO = rz.getValue();
+            videoDO.setScore(videoDO.getScore()+sumScore);
+            videoDO.setWeight(videoDO.getWeight()+sumWeight);
+            Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
+            if(uptRs.hasValue()){
+                log.error("[updateVideoScore] upt result:{}",uptRs);
+            }
         }
-
-
-        return null;
+        return Result.success();
     }
 
     @Override
