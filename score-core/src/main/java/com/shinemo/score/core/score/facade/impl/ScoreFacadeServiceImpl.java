@@ -5,16 +5,13 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
-import com.shinemo.client.util.GsonUtil;
+import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
-import com.shinemo.score.client.score.domain.MyScoreDTO;
-import com.shinemo.score.client.score.domain.MyScoreRequest;
-import com.shinemo.score.client.score.domain.ScoreDO;
-import com.shinemo.score.client.score.domain.ScoreRequest;
+import com.shinemo.score.client.score.domain.*;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
 import com.shinemo.score.client.video.domain.VideoDO;
@@ -58,28 +55,31 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WebResult<Void> submitScore(ScoreRequest request) {
+    public WebResult<ScoreDTO> submitScore(ScoreRequest request) {
 
-        Assert.notNull(request,"request is null");
+        Assert.notNull(request, "request is null");
         Result<VideoDO> rs = videoService.initVideo(request);
-        if(!rs.hasValue()){
-            log.error("[initVideo] error:{}",rs);
+        if (!rs.hasValue()) {
+            log.error("[initVideo] error:{}", rs);
             return WebResult.error(rs.getError());
         }
         //评分 或者更新评分
-        if(FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE) && request.getScore()!=null && request.getScore()>0){
-            ScoreDO scoreDomain = initScoreDO(request,rs.getValue().getId());
+        if (FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE) && request.getScore() != null && request.getScore() > 0) {
+            ScoreDO scoreDomain = initScoreDO(request, rs.getValue().getId());
             Result<ScoreDO> rt = scoreService.insertScore(scoreDomain);
-            if(!rt.hasValue()){
+            if (!rt.hasValue()) {
                 return WebResult.error(rt.getError());
             }
         }
         CommentParam param = initCommentParam(request);
-        Result<Void> commentRs = commentFacadeService.submit(param);
+        Result<CommentDO> commentRs = commentFacadeService.submit(param);
         if (!commentRs.isSuccess()) {
             throw new BizException(commentRs.getError());
         }
-        return WebResult.success();
+
+        ScoreDTO result = new ScoreDTO();
+        result.setCommentId(commentRs.getValue().getId());
+        return WebResult.success(result);
     }
 
     @Override
@@ -90,17 +90,17 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         long num = FIRST;
         ScoreQuery query = new ScoreQuery();
         query.setUid(UserExtend.getUserId());
-        query.putOrderBy("num",false);
+        query.putOrderBy("num", false);
         Result<ScoreDO> rs = scoreService.getScore(query);
-        if(rs.hasValue()){
-            num = rs.getValue().getNum()+FIRST;
+        if (rs.hasValue()) {
+            num = rs.getValue().getNum() + FIRST;
         }
         ret.setNumber(num);
         //查询我评论过的音频信息
-        if(!StringUtils.isBlank(request.getVideoId())){
+        if (!StringUtils.isBlank(request.getVideoId())) {
             query.setThirdVideoId(request.getVideoId());
             Result<ScoreDO> rt = scoreService.getScore(query);
-            if(rt.hasValue()){
+            if (rt.hasValue()) {
                 ret.setVideoId(request.getVideoId());
                 ret.setScore(Double.valueOf(rt.getValue().getScore()));
             }
@@ -108,7 +108,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             commentQuery.setUid(UserExtend.getUserId());
             commentQuery.setVideoId(request.getVideoId());
             WebResult<ListVO<CommentVO>> commentRs = commentFacadeService.findListVO(commentQuery);
-            if(commentRs.isSuccess() && commentRs.getData()!=null && !CollectionUtils.isEmpty(commentRs.getData().getRows())){
+            if (commentRs.isSuccess() && commentRs.getData() != null && !CollectionUtils.isEmpty(commentRs.getData().getRows())) {
                 ret.setComments(commentRs.getData().getRows());
             }
         }
@@ -118,29 +118,29 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     @Override
     public WebResult<VideoDTO> getVideoScore(MyScoreRequest request) {
 
-        Assert.notNull(request,"videoId is null");
-        Assert.hasText(request.getVideoId(),"videoId is null");
+        Assert.notNull(request, "videoId is null");
+        Assert.hasText(request.getVideoId(), "videoId is null");
 
         VideoQuery query = new VideoQuery();
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
-        if(!rs.hasValue()){
+        if (!rs.hasValue()) {
             ScoreRequest scoreRequest = new ScoreRequest();
             scoreRequest.setVideoName(request.getVideoName());
             scoreRequest.setVideoId(request.getVideoId());
             scoreRequest.setExtend(request.getExtend());
             scoreRequest.setFlag(VideoFlag.GRADE.getIndex());
             Result<VideoDO> initRs = videoService.initVideo(scoreRequest);
-            if(!initRs.hasValue()){
+            if (!initRs.hasValue()) {
                 return WebResult.error(initRs.getError());
             }
             rs.setValue(initRs.getValue());
         }
         VideoDTO dto = new VideoDTO();
-        double  scoreCount = Double.valueOf(rs.getValue().getScore());
-        double  score   =  scoreCount/rs.getValue().getWeight();
+        double scoreCount = Double.valueOf(rs.getValue().getScore());
+        double score = scoreCount / rs.getValue().getWeight();
         BigDecimal scoreDecimal = new BigDecimal(score);
-        dto.setScore(scoreDecimal.setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue());
+        dto.setScore(scoreDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
         dto.setVideoId(request.getVideoId());
         dto.setWeight(rs.getValue().getWeight());
         return WebResult.success(dto);

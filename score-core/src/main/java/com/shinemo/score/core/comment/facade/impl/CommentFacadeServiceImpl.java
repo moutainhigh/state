@@ -85,7 +85,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result<Void> submit(CommentParam param) {
+    public Result<CommentDO> submit(CommentParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
 
@@ -109,9 +109,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         request.setName(extend.getUserName());
         request.setUid(extend.getUid());
         request.setMobile(extend.getMobile());
-        commentService.create(request);
+        CommentDO commentDO = commentService.create(request);
 
-        return Result.success();
+        return Result.success(commentDO);
     }
 
     @Override
