@@ -25,6 +25,7 @@ import com.shinemo.score.core.score.service.ScoreService;
 import com.shinemo.score.core.video.service.VideoService;
 import com.shinemo.ygw.client.migu.UserExtend;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +108,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             commentQuery.setUid(UserExtend.getUserId());
             commentQuery.setVideoId(request.getVideoId());
             WebResult<ListVO<CommentVO>> commentRs = commentFacadeService.findListVO(commentQuery);
-            if(commentRs.isSuccess() && commentRs.getData()!=null ){
+            if(commentRs.isSuccess() && commentRs.getData()!=null && !CollectionUtils.isEmpty(commentRs.getData().getRows())){
                 ret.setComments(commentRs.getData().getRows());
             }
         }
