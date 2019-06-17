@@ -37,7 +37,7 @@ public class ReplyServiceImpl implements ReplyService {
     public ReplyDO create(ReplyRequest request) {
 
         Assert.hasText(request.getContent(), "内容不能为空");
-        Assert.isTrue(request.getContent().length() <= 50, "内容长度不能超过50字");
+        Assert.isTrue(request.getContent().length() <= 200, "内容长度不能超过200字");
         Assert.hasText(request.getMobile(), "mobile not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");
         Assert.notNull(request.getCommentId(), "commentId not be empty");
