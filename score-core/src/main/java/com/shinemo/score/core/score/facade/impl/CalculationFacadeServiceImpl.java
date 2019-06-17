@@ -3,6 +3,7 @@ package com.shinemo.score.core.score.facade.impl;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.score.client.comment.domain.CalculationEnum;
+import com.shinemo.score.client.score.domain.ScoreCountDO;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.facade.CalculationFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,30 +50,44 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             return Result.success();
         }
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
+        Map<Long,ScoreCountDO> countMap = new HashMap<>();
+        if(CalculationEnum.all == calculationEnum){//全量更新
+            List<Long> ids = rs.getValue().getRows().stream().map(val->val.getId()).collect(Collectors.toList());
+            Result<List<ScoreCountDO>> countRs = scoreService.getScoreCountDO(ids);
+            if(countRs.hasValue()){
+                countMap = countRs.getValue().stream().collect(Collectors.toMap(val->val.getVideoId(),val->val));
+            }
+        }
         VideoQuery videoQuery = new VideoQuery();
         for(Map.Entry<Long,List<ScoreDO>> entry:map.entrySet()){
             Long videoId = entry.getKey();
-            VideoDO videoDO = new VideoDO();
             videoQuery.setId(videoId);
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
+            VideoDO videoDO = rz.getValue();
             if(!rz.hasValue()){
                 log.error("[calculationByHours] video notExist:{}",rz);
                 continue;
             }
-            if(calculationEnum == CalculationEnum.increment){//增量更新
+            if(CalculationEnum.increment == calculationEnum){//增量更新
                 long sumWeight = entry.getValue().size();
                 long sumScore = entry.getValue().stream().mapToInt(val->val.getScore()).sum();
                 videoDO.setScore(videoDO.getScore()+sumScore);
                 videoDO.setWeight(videoDO.getWeight()+sumWeight);
-                Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
-                if(uptRs.hasValue()){
-                    log.error("[updateVideoScore] upt result:{}",uptRs);
+            }else{//全量
+                ScoreCountDO dto = countMap.get(videoId);
+                if(dto == null){
+                    log.error("[calculationByHours] ScoreCountDO null id:{}",videoId);
+                    continue;
                 }
-            }else{
-
+                videoDO.setYesterdayScore(videoDO.getScore());
+                videoDO.setYesterdayWeight(videoDO.getWeight());
+                videoDO.setScore(videoDO.getInitScore()+dto.getScore());
+                videoDO.setWeight(videoDO.getInitWeight()+dto.getCount());
             }
-
-
+            Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
+            if(uptRs.hasValue()){
+                log.error("[updateVideoScore] upt result:{}",uptRs);
+            }
         }
         return Result.success();
     }

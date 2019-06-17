@@ -2,8 +2,11 @@ package com.shinemo.score.core.score.service;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.score.client.score.domain.ScoreCountDO;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.query.ScoreQuery;
+
+import java.util.List;
 
 public interface ScoreService{
 
@@ -28,6 +31,12 @@ public interface ScoreService{
      * @return
      */
     Result<ListVO<ScoreDO>> findScores(ScoreQuery query);
+    /**
+     * 得到电影评分
+     * @param
+     * @return
+     */
+    Result<List<ScoreCountDO>> getScoreCountDO(List<Long> videoIds);
 
 
 

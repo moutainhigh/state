@@ -5,6 +5,7 @@ import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.error.ScoreErrors;
+import com.shinemo.score.client.score.domain.ScoreCountDO;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.query.ScoreQuery;
 import com.shinemo.score.core.score.service.ScoreService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @Slf4j
@@ -73,6 +75,11 @@ public class ScoreServiceImpl implements ScoreService{
     @Override
     public Result<ListVO<ScoreDO>> findScores(ScoreQuery query) {
         return scoreWrapper.find(query);
+    }
+
+    @Override
+    public Result<List<ScoreCountDO>> getScoreCountDO(List<Long> videoIds) {
+        return null;
     }
 
 
