@@ -35,6 +35,7 @@
                 <otherwise>
 					<if test="status != null">and status = #{status}</if>
 					<if test="videoId != null">and video_id = #{videoId}</if>
+                    <if test="videoId != null">and third_video_id = #{thirdVideoId}</if>
 					<if test="uid != null">and uid = #{uid}</if>
                 </otherwise>
             </choose>
