@@ -1,6 +1,11 @@
 package com.shinemo.score.core.configuration;
 
 import com.shinemo.client.async.InternalEventBus;
+import com.shinemo.my.redis.domain.RedisSentinelNode;
+import com.shinemo.my.redis.service.RedisLock;
+import com.shinemo.my.redis.service.RedisService;
+import com.shinemo.my.redis.service.impl.RedisLockImpl;
+import com.shinemo.my.redis.service.impl.RedisServiceImpl;
 import com.shinemo.score.dal.configuration.ShineMoProperties;
 import com.shinemo.client.mail.SendMailService;
 import com.shinemo.client.mail.SendMailServiceWrapper;
@@ -8,9 +13,11 @@ import com.shinemo.client.util.EnvUtil;
 import com.shinemo.jce.common.config.CenterConfig;
 import com.shinemo.jce.common.config.ConsumerConfig;
 import com.shinemo.jce.common.config.ProviderConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 import javax.annotation.Resource;
 
@@ -112,5 +119,24 @@ public class CoreConfiguration {
     @Bean
     public InternalEventBus internalEventBus(){
         return new InternalEventBus();
+    }
+
+    @Bean
+    public RedisService redisService(@Value("${spring.redis.database}") Integer database,
+                                     @Value("${spring.redis.ip}") String redisIp,
+                                     @Value("${spring.redis.master.name}") String masterName,
+                                     @Value("${spring.redis.pwd}") String pwd) {
+        RedisSentinelNode node = new RedisSentinelNode(redisIp, masterName);
+        node.setDatabase(database);
+        node.setPassword(pwd);
+        return new RedisServiceImpl(node);
+    }
+
+    @Bean
+    @DependsOn("redisService")
+    public RedisLock redisLock(@Qualifier("redisService") RedisService redisService) {
+        RedisLockImpl redisLock = new RedisLockImpl();
+        redisLock.setRedisService(redisService);
+        return redisLock;
     }
 }

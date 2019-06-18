@@ -1,15 +1,11 @@
 package com.shinemo.score.core.configuration;
 
-import com.shinemo.my.redis.domain.RedisSentinelNode;
-import com.shinemo.my.redis.service.RedisService;
-import com.shinemo.my.redis.service.impl.RedisServiceImpl;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.jce.spring.AaceProviderBean;
 import com.shinemo.score.client.like.facade.LikeFacadeService;
 import com.shinemo.score.client.reply.facade.ReplyFacadeService;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -58,17 +54,5 @@ public class ProviderConfiguration {
         aaceProviderBean.setInterfaceName(ReplyFacadeService.class.getName());
         aaceProviderBean.setTarget(replyFacadeService);
         return aaceProviderBean;
-    }
-
-
-    @Bean
-    public RedisService redisService(@Value("${spring.redis.database}") Integer database,
-                                     @Value("${spring.redis.ip}") String redisIp,
-                                     @Value("${spring.redis.master.name}") String masterName,
-                                     @Value("${spring.redis.pwd}") String pwd) {
-        RedisSentinelNode node = new RedisSentinelNode(redisIp, masterName);
-        node.setDatabase(database);
-        node.setPassword(pwd);
-        return new RedisServiceImpl(node);
     }
 }
