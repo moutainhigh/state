@@ -9,5 +9,5 @@ import lombok.Setter;
 public class ScoreCountDO extends BaseDO {
     private Long videoId;
     private Long score;
-    private Long count;
+    private Long num;
 }

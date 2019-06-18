@@ -78,8 +78,8 @@ public class ScoreServiceImpl implements ScoreService{
     }
 
     @Override
-    public Result<List<ScoreCountDO>> getScoreCountDO(List<Long> videoIds) {
-        return null;
+    public Result<List<ScoreCountDO>> getScoreCounts(List<Long> videoIds) {
+        return scoreWrapper.getScoreCounts(videoIds);
     }
 
 

@@ -53,7 +53,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         Map<Long,ScoreCountDO> countMap = new HashMap<>();
         if(CalculationEnum.all == calculationEnum){//全量更新
             List<Long> ids = rs.getValue().getRows().stream().map(val->val.getId()).collect(Collectors.toList());
-            Result<List<ScoreCountDO>> countRs = scoreService.getScoreCountDO(ids);
+            Result<List<ScoreCountDO>> countRs = scoreService.getScoreCounts(ids);
             if(countRs.hasValue()){
                 countMap = countRs.getValue().stream().collect(Collectors.toMap(val->val.getVideoId(),val->val));
             }
@@ -82,7 +82,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
                 videoDO.setYesterdayScore(videoDO.getScore());
                 videoDO.setYesterdayWeight(videoDO.getWeight());
                 videoDO.setScore(videoDO.getInitScore()+dto.getScore());
-                videoDO.setWeight(videoDO.getInitWeight()+dto.getCount());
+                videoDO.setWeight(videoDO.getInitWeight()+dto.getNum());
             }
             Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
             if(uptRs.hasValue()){

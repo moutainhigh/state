@@ -93,6 +93,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         long num = FIRST;
         ScoreQuery query = new ScoreQuery();
         query.setUid(UserExtend.getUserId());
+        query.setOrderByEnable(true);
         query.putOrderBy("num", false);
         Result<ScoreDO> rs = scoreService.getScore(query);
         if (rs.hasValue()) {

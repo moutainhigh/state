@@ -18,6 +18,14 @@
         <result property="thirdVideoId" column="third_video_id"/>
 	</resultMap>
 
+
+    <resultMap id="count_result" type="com.shinemo.score.client.score.domain.ScoreCountDO" >
+        <result property="videoId" column="video_id"/>
+        <result property="score" column="score"/>
+        <result property="num" column="num"/>
+    </resultMap>
+
+
 	<!-- 数据库字段 -->
 	<sql id="columns">
 		id, gmt_create, gmt_modified, status, video_id, score, uid, extend, version,num,third_video_id
@@ -61,6 +69,17 @@
             limit #{startRow}, #{pageSize}
         </if>
     </select>
+
+
+
+    <select id="find" resultMap="count_result" parameterType="java.util.List">
+        select sum(score) as score,video_id as video_id count(1) as num from <include refid="table"/>
+        group by video_id where video id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 
 	<!-- 查询某条记录 -->
     <select id="get" resultMap="result" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
