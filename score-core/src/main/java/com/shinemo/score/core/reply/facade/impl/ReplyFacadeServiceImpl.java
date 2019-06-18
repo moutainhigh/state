@@ -4,6 +4,8 @@ import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
+import com.shinemo.score.client.reply.domain.ReplyDO;
+import com.shinemo.score.client.reply.domain.ReplyDTO;
 import com.shinemo.score.client.reply.domain.ReplyParam;
 import com.shinemo.score.client.reply.facade.ReplyFacadeService;
 import com.shinemo.score.client.reply.query.ReplyRequest;
@@ -31,7 +33,7 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WebResult<Void> submit(ReplyParam param) {
+    public WebResult<ReplyDTO> submit(ReplyParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
         logger.info("[submit]param:{},token:{},header:{}", param, extend);
@@ -51,8 +53,11 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
         request.setMobile(extend.getMobile());
         request.setCommentId(param.getCommentId());
 
-        replyService.create(request);
+        ReplyDO replyDO = replyService.create(request);
 
-        return WebResult.success();
+        ReplyDTO dto = new ReplyDTO();
+        dto.setReplyId(replyDO.getId());
+
+        return WebResult.success(dto);
     }
 }

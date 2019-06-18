@@ -30,7 +30,7 @@ public interface CommentFacadeService {
      */
     WebResult<ListVO<CommentVO>> findListVO(CommentQuery query);
 
-    Result<Void> submit(CommentParam param);
+    Result<CommentDO> submit(CommentParam param);
 
     WebResult<CommentVO> getDetail(CommentQuery query);
 }

@@ -10,7 +10,6 @@ import lombok.Data;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ public class CommentVO extends BaseDO {
 
     private Long commentId;
 
-    private Date gmtCreate;
+    private Long gmtCreate;
 
     private String content;
 
@@ -59,7 +58,7 @@ public class CommentVO extends BaseDO {
     public CommentVO(CommentDO commentDO, ListVO<ReplyDO> listVO) {
 
         commentId = commentDO.getId();
-        gmtCreate = commentDO.getGmtCreate();
+        gmtCreate = commentDO.getGmtCreate().getTime();
         content = commentDO.getContent();
         userPortrait = commentDO.getAvatarUrl();
         netType = commentDO.getNetType();

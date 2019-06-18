@@ -4,7 +4,6 @@ import com.shinemo.client.common.BaseDO;
 import com.shinemo.score.client.utils.RegularUtils;
 import lombok.Data;
 
-import java.util.Date;
 
 /**
  * @author wenchao.li
@@ -21,7 +20,7 @@ public class ReplyVO extends BaseDO {
 
     private String userPortrait;
 
-    private Date gmtCreate;
+    private Long gmtCreate;
 
     private String netType;
 
@@ -33,7 +32,7 @@ public class ReplyVO extends BaseDO {
     public ReplyVO(ReplyDO replyDO) {
         replyId = replyDO.getId();
         content = replyDO.getContent();
-        gmtCreate = replyDO.getGmtCreate();
+        gmtCreate = replyDO.getGmtCreate().getTime();
         userName = replyDO.getName() + RegularUtils.ignorePhone(replyDO.getMobile());
         userPortrait = replyDO.getAvatarUrl();
         netType = replyDO.getNetType();
