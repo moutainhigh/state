@@ -157,7 +157,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         scoreDomain.setUid(UserExtend.getUserId());
         scoreDomain.setVideoId(id);
         scoreDomain.setThirdVideoId(request.getVideoId());
-        scoreDomain.setExtend(request.getExtend());
+        //scoreDomain.setExtend(request.getExtend());
         return scoreDomain;
     }
 
