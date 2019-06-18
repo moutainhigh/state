@@ -40,6 +40,15 @@ public class VideoServiceImpl implements VideoService{
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoWrapper.get(query);
         if(rs.hasValue()){
+            VideoDO videoDO = new VideoDO();
+            videoDO.setVideoName(request.getVideoName());
+            videoDO.setExtend(request.getExtend());
+            videoDO.setId(rs.getValue().getId());
+            videoDO.setVersion(rs.getValue().getVersion());
+            Result<VideoDO> uptRs = videoWrapper.update(videoDO,ScoreErrors.SQL_ERROR_UPDATE);
+            if(!uptRs.hasValue()){//这里补全音频信息 即使失败不影响评分主流程
+                log.error("[video] completInfo error result:{}",uptRs);
+            }
             return rs;
         }
         VideoDO videoDO = initVideoDO(request);
