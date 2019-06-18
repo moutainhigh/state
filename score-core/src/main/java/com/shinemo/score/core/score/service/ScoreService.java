@@ -36,7 +36,7 @@ public interface ScoreService{
      * @param
      * @return
      */
-    Result<List<ScoreCountDO>> getScoreCountDO(List<Long> videoIds);
+    Result<List<ScoreCountDO>> getScoreCounts(List<Long> videoIds);
 
 
 
