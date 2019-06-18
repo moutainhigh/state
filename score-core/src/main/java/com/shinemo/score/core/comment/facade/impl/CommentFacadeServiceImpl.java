@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -86,6 +87,11 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result<CommentDO> submit(CommentParam param) {
+
+        // 没评论成功
+        if (StringUtils.isEmpty(param.getComment())) {
+            return Result.success();
+        }
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
 

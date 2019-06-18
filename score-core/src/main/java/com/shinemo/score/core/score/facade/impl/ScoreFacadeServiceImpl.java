@@ -77,9 +77,12 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             throw new BizException(commentRs.getError());
         }
 
-        ScoreDTO result = new ScoreDTO();
-        result.setCommentId(commentRs.getValue().getId());
-        return WebResult.success(result);
+        if (commentRs.hasValue()) {
+            ScoreDTO result = new ScoreDTO();
+            result.setCommentId(commentRs.getValue().getId());
+            return WebResult.success(result);
+        }
+        return WebResult.success();
     }
 
     @Override
