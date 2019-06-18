@@ -20,9 +20,9 @@
 
 
     <resultMap id="count_result" type="com.shinemo.score.client.score.domain.ScoreCountDO" >
-        <id column="videoId" property="video_id"/>
+        <result property="videoId" column="video_id"/>
         <result property="score" column="score"/>
-        <result property="count" column="count"/>
+        <result property="num" column="num"/>
     </resultMap>
 
 
@@ -73,7 +73,7 @@
 
 
     <select id="find" resultMap="count_result" parameterType="java.util.List">
-        select count(score) as score,video_id as video_id count(1) as count from <include refid="table"/>
+        select sum(score) as score,video_id as video_id count(1) as num from <include refid="table"/>
         group by video_id where video id in
         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
             #{item}
