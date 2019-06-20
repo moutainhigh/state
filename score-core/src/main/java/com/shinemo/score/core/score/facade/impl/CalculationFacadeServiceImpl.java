@@ -83,7 +83,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
                 videoDO.setWeight(videoDO.getInitWeight()+dto.getNum());
             }
             Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
-            if(uptRs.hasValue()){
+            if(!uptRs.hasValue()){
                 log.error("[updateVideoScore] upt result:{}",uptRs);
             }
         }
