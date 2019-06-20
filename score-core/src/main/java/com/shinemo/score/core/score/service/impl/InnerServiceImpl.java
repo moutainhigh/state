@@ -36,7 +36,10 @@ public class InnerServiceImpl implements InnerService{
             List<ScoreDO> subList = entry.getValue();
             for(int i=0;i<subList.size();i++){
                 long num = i+1;
-                subList.get(i).setNum(num);
+                ScoreDO scoreDO = new ScoreDO();
+                scoreDO.setId(subList.get(i).getId());
+                scoreDO.setNum(num);
+                scoreDO.setVersion(subList.get(i).getVersion());
                 Result<ScoreDO> upt = scoreWrapper.update(subList.get(i));
                 if(!upt.hasValue()){
                     log.error("[update] error:{}",upt);
