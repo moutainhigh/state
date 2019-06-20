@@ -40,7 +40,7 @@ public class InnerServiceImpl implements InnerService{
                 scoreDO.setId(subList.get(i).getId());
                 scoreDO.setNum(num);
                 scoreDO.setVersion(subList.get(i).getVersion());
-                Result<ScoreDO> upt = scoreWrapper.update(subList.get(i));
+                Result<ScoreDO> upt = scoreWrapper.update(scoreDO);
                 if(!upt.hasValue()){
                     log.error("[update] error:{}",upt);
                 }

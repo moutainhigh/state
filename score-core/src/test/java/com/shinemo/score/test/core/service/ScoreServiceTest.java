@@ -2,6 +2,7 @@ package com.shinemo.score.test.core.service;
 
 
 import com.shinemo.score.core.score.service.InnerService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
+@Slf4j
 public class ScoreServiceTest {
 
     @Resource

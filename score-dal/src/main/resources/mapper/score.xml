@@ -178,9 +178,9 @@
 
     <!-- 更新 -->
     <update id="update" parameterType="com.shinemo.score.client.score.domain.ScoreDO">
-        UPDATE score
+        UPDATE <include refid="table"/>
         <set>
-            gmt_modified = now(),version=version+1
+            gmt_modified = now(),version=version+1,
             <if test="status != null">
                 status = #{status, jdbcType=INTEGER},
             </if>
