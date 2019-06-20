@@ -25,7 +25,7 @@ public class InnerServiceImpl implements InnerService{
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void fixScoreNum(){
-
+        log.info("[fixScoreNum] start");
         long startTime = System.currentTimeMillis();
         ScoreQuery query = new ScoreQuery();
         query.setPageEnable(false);
