@@ -28,7 +28,7 @@ public class CalculationScoreDayTask {
     @Resource
     private RedisLock redisLock;
 
-    public void excute(){
+    public void execute(){
         long beginTime = System.currentTimeMillis();
         if (EnvUtil.isPre()) {
             return;

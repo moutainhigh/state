@@ -16,6 +16,7 @@ import com.shinemo.jce.common.config.ProviderConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
@@ -28,6 +29,9 @@ import javax.annotation.Resource;
  * @date 2018-05-29
  */
 @Configuration
+@ComponentScan(basePackages = {
+        "com.shinemo.score.core",
+})
 public class CoreConfiguration {
 
     @Resource

@@ -20,6 +20,9 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = {
         "com.shinemo.score.dal",
 })
+@ComponentScan(basePackages = {
+        "com.shinemo.score.dal",
+})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DalConfiguration {
 
