@@ -49,20 +49,35 @@ public class ScoreServiceImpl implements ScoreService{
                     domain.setNum(INIT_VERSION);
                 }
                 domain.setVersion(INIT_VERSION);
-                Result<ScoreDO> rt = scoreWrapper.insert(domain);
-            } catch (Exception e){
-                int i = 0;
-                while (i < MAX_TIMES){//保证一定更新成功,并发4以下,如果还失败需要查看日志例如extend 长度超过限制
-                    if(updateScore(domain)){
-                        break;
-                    }
-                    i ++;
-                }
-                if(i == MAX_TIMES){
-                    log.error("[insertScore] try more 4 times ",e);
-                    return Result.error(ScoreErrors.DO_NOT_REPEAT_OPERATE);
-                }
+                scoreWrapper.insert(domain);//不用处理返回值 不成功肯定异常
+            } catch (Exception e){//这里异常可能会是 uid+num冲突，或者video+uid冲突 需要更新数量
+                log.error("[insert] sameRequest error",e);
+                return uptFourTimes(domain,true);
             }
+        }else{
+            ScoreDO scoreDO = new ScoreDO();
+            scoreDO.setId(domain.getId());
+            scoreDO.setVersion(domain.getVersion());
+            scoreDO.setScore(domain.getScore());
+            Result<ScoreDO> rt = scoreWrapper.update(scoreDO);
+            if(!rt.hasValue()){
+                return uptFourTimes(domain,false);
+            }
+        }
+        return Result.success(domain);
+    }
+
+    private Result<ScoreDO> uptFourTimes(ScoreDO domain, boolean uptNum) {
+        int i = 0;
+        while (i < MAX_TIMES){//保证一定更新成功,并发4以下,如果还失败需要查看日志例如extend 长度超过限制
+            if(updateScore(domain,true)){
+                break;
+            }
+            i ++;
+        }
+        if(i == MAX_TIMES){
+            log.error("[insertScore] try more 4 times ");
+            return Result.error(ScoreErrors.DO_NOT_REPEAT_OPERATE);
         }
         return Result.success(domain);
     }
@@ -88,7 +103,7 @@ public class ScoreServiceImpl implements ScoreService{
      * @param domain
      * @return
      */
-    private boolean updateScore(ScoreDO domain){
+    private boolean updateScore(ScoreDO domain,boolean uptNum){
 
         ScoreQuery query = new ScoreQuery();
         query.setUid(domain.getUid());
@@ -97,12 +112,14 @@ public class ScoreServiceImpl implements ScoreService{
         if(!rs.hasValue()){
             throw new BizException(rs.getError());
         }
-        query.setVideoId(null);
-        Result<Long> rz = scoreWrapper.count(query);
-        if(rz.hasValue()){
-            domain.setNum(rz.getValue()+INIT_VERSION);
-        }else{
-            domain.setNum(INIT_VERSION);
+        if(uptNum){
+            query.setVideoId(null);
+            Result<Long> rz = scoreWrapper.count(query);
+            if(rz.hasValue()){
+                domain.setNum(rz.getValue()+INIT_VERSION);
+            }else{
+                domain.setNum(INIT_VERSION);
+            }
         }
         domain.setId(rs.getValue().getId());
         domain.setVersion(rs.getValue().getVersion());
