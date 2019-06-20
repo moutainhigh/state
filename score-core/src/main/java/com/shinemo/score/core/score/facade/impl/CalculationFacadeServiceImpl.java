@@ -17,10 +17,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -53,7 +50,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         Map<Long,ScoreCountDO> countMap = new HashMap<>();
         if(CalculationEnum.all == calculationEnum){//全量更新
-            List<Long> ids = rs.getValue().getRows().stream().map(val->val.getId()).collect(Collectors.toList());
+            List<Long> ids = new ArrayList<>(map.keySet());
             Result<List<ScoreCountDO>> countRs = scoreService.getScoreCounts(ids);
             if(countRs.hasValue()){
                 countMap = countRs.getValue().stream().collect(Collectors.toMap(val->val.getVideoId(),val->val));
