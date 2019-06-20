@@ -56,8 +56,8 @@ public class ScoreServiceImpl implements ScoreService{
             }
         }else{
             ScoreDO scoreDO = new ScoreDO();
-            scoreDO.setId(domain.getId());
-            scoreDO.setVersion(domain.getVersion());
+            scoreDO.setId(rs.getValue().getId());
+            scoreDO.setVersion(rs.getValue().getVersion());
             scoreDO.setScore(domain.getScore());
             Result<ScoreDO> rt = scoreWrapper.update(scoreDO);
             if(!rt.hasValue()){
