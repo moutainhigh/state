@@ -1,4 +1,4 @@
-package com.shinemo.score.test.core.user.facade;
+package com.shinemo.score.test.core.facade;
 
 
 import org.junit.Test;
@@ -27,9 +27,6 @@ import javax.annotation.Resource;
         "com.shinemo.score.dal.user.wrapper",
         "com.shinemo.score.core.user.service",
         "com.shinemo.score.core.user.facade",
-})
-@TestPropertySource(properties = {
-        "spring.config.location=classpath:conf/application.yaml",
 })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserInfoFacadeServiceTest {

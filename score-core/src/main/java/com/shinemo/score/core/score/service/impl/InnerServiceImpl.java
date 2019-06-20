@@ -41,5 +41,7 @@ public class InnerServiceImpl implements InnerService{
                 }
             }
         }
+        long endTime = System.currentTimeMillis();
+        log.info("[fixScoreNum] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
     }
 }
