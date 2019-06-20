@@ -111,6 +111,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             CommentQuery commentQuery = new CommentQuery();
             commentQuery.setUid(UserExtend.getUserId());
             commentQuery.setVideoId(request.getVideoId());
+            commentQuery.setPageEnable(false);
             WebResult<ListVO<CommentVO>> commentRs = commentFacadeService.findListVO(commentQuery);
             if (commentRs.isSuccess() && commentRs.getData() != null && !CollectionUtils.isEmpty(commentRs.getData().getRows())) {
                 ret.setComments(commentRs.getData().getRows());
