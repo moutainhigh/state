@@ -35,11 +35,12 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
     private VideoService videoService;
 
     @Override
-    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum) {
+    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long id) {
 
         ScoreQuery query = new ScoreQuery();
         query.setStartModifyTime(startTime);
         query.setEndModifyTime(endTime);
+        query.setVideoId(id);
         Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
         if(!rs.hasValue() ){
             log.error("[calculationByHours]  findScores result:{}",rs);

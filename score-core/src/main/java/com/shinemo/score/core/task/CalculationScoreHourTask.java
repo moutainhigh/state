@@ -40,7 +40,7 @@ public class CalculationScoreHourTask {
         }
         Date start = DateUtil.getFutureHour(new Date(),-2);
         Date end = DateUtil.getFutureHour(new Date(),-1);
-        Result<Void> rs =  calculationFacadeService.calculationByTime(start,end, CalculationEnum.increment);
+        Result<Void> rs =  calculationFacadeService.calculationByTime(start,end, CalculationEnum.increment,null);
         if(!rs.isSuccess()){
             log.error("[calculationByTime] error result:{}",rs);
         }
