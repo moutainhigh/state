@@ -8,6 +8,7 @@ import com.shinemo.score.core.score.service.InnerService;
 import com.shinemo.score.dal.score.wrapper.ScoreWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,6 +23,7 @@ public class InnerServiceImpl implements InnerService{
     private ScoreWrapper scoreWrapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void fixScoreNum(){
 
         long startTime = System.currentTimeMillis();
