@@ -28,7 +28,7 @@ public class ScoreServiceTest {
 
     @Test
     public void test(){
-        System.out.println("11");
+        innerService.fixScoreNum();
     }
 
 
