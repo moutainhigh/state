@@ -30,6 +30,7 @@ public class CalculationScoreDayTask {
 
     public void execute(){
         long beginTime = System.currentTimeMillis();
+        log.info("[CalculationScoreDayTask] start");
         if (EnvUtil.isPre()) {
             return;
         }

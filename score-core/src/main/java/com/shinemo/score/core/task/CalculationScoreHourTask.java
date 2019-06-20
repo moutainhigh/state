@@ -29,6 +29,8 @@ public class CalculationScoreHourTask {
 
 
     public void execute(){
+
+        log.info("[CalculationScoreHourTask] start");
         long beginTime = System.currentTimeMillis();
         if (EnvUtil.isPre()) {
             return;
