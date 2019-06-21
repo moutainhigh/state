@@ -50,11 +50,16 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         Map<Long,ScoreCountDO> countMap = new HashMap<>();
         if(CalculationEnum.all == calculationEnum){//全量更新
-            //TODO 这里换成查询java 算和
+            ScoreQuery countQuery = new ScoreQuery();
             List<Long> ids = new ArrayList<>(map.keySet());
-            Result<List<ScoreCountDO>> countRs = scoreService.getScoreCounts(ids);
-            if(countRs.hasValue()){
-                countMap = countRs.getValue().stream().collect(Collectors.toMap(val->val.getVideoId(),val->val));
+            countQuery.setPageEnable(false);
+            countQuery.setVideoIds(ids);
+            Result<ListVO<ScoreDO>> countRs = scoreService.findScores(countQuery);
+            if(countRs.hasValue() && !CollectionUtils.isEmpty(countRs.getValue().getRows())){
+                Map<Long,List<ScoreDO>> subMap =  countRs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
+                for(Map.Entry<Long,List<ScoreDO>> entry:subMap.entrySet()){
+                    countMap.put(entry.getKey(),initCountDO(entry.getValue()));
+                }
             }
         }
         VideoQuery videoQuery = new VideoQuery();
@@ -89,6 +94,13 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             }
         }
         return Result.success();
+    }
+
+    private ScoreCountDO initCountDO(List<ScoreDO> value) {
+        ScoreCountDO domain = new ScoreCountDO();
+        domain.setNum((long) value.size());
+        domain.setScore(value.stream().mapToLong(val->val.getScore()).sum());
+        return domain;
     }
 
 }
