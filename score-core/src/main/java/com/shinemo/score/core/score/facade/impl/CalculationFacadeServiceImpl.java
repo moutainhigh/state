@@ -50,6 +50,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         Map<Long,ScoreCountDO> countMap = new HashMap<>();
         if(CalculationEnum.all == calculationEnum){//全量更新
+            //TODO 这里换成查询java 算和
             List<Long> ids = new ArrayList<>(map.keySet());
             Result<List<ScoreCountDO>> countRs = scoreService.getScoreCounts(ids);
             if(countRs.hasValue()){

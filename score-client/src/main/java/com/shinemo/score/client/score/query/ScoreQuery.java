@@ -1,6 +1,7 @@
 package com.shinemo.score.client.score.query;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,9 +17,9 @@ import com.shinemo.client.common.QueryBase;
 @Getter
 @Setter
 public class ScoreQuery extends QueryBase {
+
+
 	private Long id;
-	private Date gmtCreate;
-	private Date gmtModified;
     /**
     * 删除状态 1-正常 0-删除
     */
@@ -47,4 +48,8 @@ public class ScoreQuery extends QueryBase {
 	 * 结束更新时间
 	 */
 	private Date endModifyTime;
+	/**
+	 * 视频id
+	 */
+	private List<Long> videoIds;
 }

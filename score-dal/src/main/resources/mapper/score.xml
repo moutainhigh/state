@@ -45,6 +45,19 @@
 					<if test="videoId != null">and video_id = #{videoId}</if>
                     <if test="thirdVideoId != null">and third_video_id = #{thirdVideoId}</if>
 					<if test="uid != null">and uid = #{uid}</if>
+                    <if test="videoIds != null and videoIds.size() > 0">
+                        and video_id in
+                        <foreach collection="videoIds" open="(" separator=","
+                                 close=")" item="item">
+                            #{item}
+                        </foreach>
+                    </if>
+                    <if test="startModifyTime!=null">
+                        and gmt_modified &gt;= #{startModifyTime}
+                    </if>
+                    <if test="endModifyTime!=null">
+                        and gmt_modified &lt; #{startModifyTime}
+                    </if>
                 </otherwise>
             </choose>
         </where>
