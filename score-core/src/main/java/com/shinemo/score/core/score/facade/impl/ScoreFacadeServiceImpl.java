@@ -59,7 +59,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     public WebResult<ScoreDTO> submitScore(ScoreRequest request) {
 
         Assert.notNull(request, "request is null");
-        if(request.getScore() != null && request.getScore() > 0 && StringUtils.isBlank(request.getComment())){
+        if((request.getScore() == null || request.getScore() == 0) && StringUtils.isBlank(request.getComment())){
             log.error("[submitScore] score and comment is null");
             return WebResult.error(ScoreErrors.PARAM_ERROR);
         }
