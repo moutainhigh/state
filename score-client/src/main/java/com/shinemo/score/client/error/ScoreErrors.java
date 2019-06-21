@@ -35,6 +35,8 @@ public interface ScoreErrors {
     ErrorInfo VIDEO_NOT_EXIST = new ErrorInfo(100005L, "VIDEO_NOT_EXIST", "视频不存在");
     ErrorInfo DO_NOT_REPEAT_OPERATE = new ErrorInfo(100006L, "DO_NOT_REPEAT_OPERATE", "请勿重复操作");
 
+    ErrorInfo PARAM_ERROR = new ErrorInfo(300001L, "PARAM_ERROR", "参数错误");
+
 
 
 

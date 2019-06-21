@@ -11,6 +11,7 @@ import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
+import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.score.domain.*;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
@@ -58,6 +59,10 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     public WebResult<ScoreDTO> submitScore(ScoreRequest request) {
 
         Assert.notNull(request, "request is null");
+        if(request.getScore() != null && request.getScore() > 0 && StringUtils.isBlank(request.getComment())){
+            log.error("[submitScore] score and comment is null");
+            return WebResult.error(ScoreErrors.PARAM_ERROR);
+        }
         Result<VideoDO> rs = videoService.initVideo(request);
         if (!rs.hasValue()) {
             log.error("[initVideo] error:{}", rs);
