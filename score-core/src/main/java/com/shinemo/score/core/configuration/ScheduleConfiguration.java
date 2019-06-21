@@ -58,13 +58,24 @@ public class ScheduleConfiguration {
         return cronTriggerFactoryBean(jobDetail, "0 0 1 * * ?");
     }
 
+    @Bean(name = "calculationScoreMinuteDetail")
+    public FactoryBean<JobDetail> calculationScoreMinuteDetail() {
+        return methodInvokingJobDetailFactoryBean("calculationScoreMinuteTask");
+    }
+
+
+    @Bean(name = "calculationScoreMinuteTrigger")
+    @DependsOn({"calculationScoreMinuteDetail"})
+    public FactoryBean<CronTrigger> calculationScoreMinuteDetail(@Qualifier("calculationScoreMinuteDetail") JobDetail jobDetail) {
+        return cronTriggerFactoryBean(jobDetail, "0 0/5 * * * ?");
+    }
+
 
     @Bean(name = "calculationScheduler")
-    @DependsOn({"calculationScoreHourTrigger"})
-    public FactoryBean<Scheduler> orderScheduler(@Qualifier("calculationScoreHourTrigger") CronTrigger calculationScoreHourTrigger,
-                                                  @Qualifier("calculationScoreHourTrigger") CronTrigger calculationScoreDayTrigger) {
+    @DependsOn({"calculationScoreMinuteTrigger"})
+    public FactoryBean<Scheduler> orderScheduler(@Qualifier("calculationScoreMinuteTrigger") CronTrigger calculationScoreMinuteTrigger) {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-        schedulerFactoryBean.setTriggers(calculationScoreHourTrigger,calculationScoreDayTrigger);
+        schedulerFactoryBean.setTriggers(calculationScoreMinuteTrigger);
         return schedulerFactoryBean;
     }
 }
