@@ -66,16 +66,16 @@ public class ScheduleConfiguration {
 
     @Bean(name = "calculationScoreMinuteTrigger")
     @DependsOn({"calculationScoreMinuteDetail"})
-    public FactoryBean<CronTrigger> calculationScoreMinuteDetail(@Qualifier("calculationScoreMinuteDetail") JobDetail jobDetail) {
+    public FactoryBean<CronTrigger> calculationScoreMinuteTrigger(@Qualifier("calculationScoreMinuteDetail") JobDetail jobDetail) {
         return cronTriggerFactoryBean(jobDetail, "0 0/5 * * * ?");
     }
 
 
     @Bean(name = "calculationScheduler")
-    @DependsOn({"calculationScoreDayTrigger"})
-    public FactoryBean<Scheduler> orderScheduler(@Qualifier("calculationScoreDayTrigger") CronTrigger calculationScoreDayTrigger) {
+    @DependsOn({"calculationScoreMinuteTrigger"})
+    public FactoryBean<Scheduler> orderScheduler(@Qualifier("calculationScoreMinuteTrigger") CronTrigger calculationScoreMinuteTrigger) {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-        schedulerFactoryBean.setTriggers(calculationScoreDayTrigger);
+        schedulerFactoryBean.setTriggers(calculationScoreMinuteTrigger);
         return schedulerFactoryBean;
     }
 }
