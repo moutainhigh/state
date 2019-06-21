@@ -72,10 +72,10 @@ public class ScheduleConfiguration {
 
 
     @Bean(name = "calculationScheduler")
-    @DependsOn({"calculationScoreMinuteTrigger"})
-    public FactoryBean<Scheduler> orderScheduler(@Qualifier("calculationScoreMinuteTrigger") CronTrigger calculationScoreMinuteTrigger) {
+    @DependsOn({"calculationScoreDayTrigger"})
+    public FactoryBean<Scheduler> orderScheduler(@Qualifier("calculationScoreDayTrigger") CronTrigger calculationScoreDayTrigger) {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-        schedulerFactoryBean.setTriggers(calculationScoreMinuteTrigger);
+        schedulerFactoryBean.setTriggers(calculationScoreDayTrigger);
         return schedulerFactoryBean;
     }
 }
