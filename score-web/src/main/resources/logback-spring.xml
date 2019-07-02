@@ -260,7 +260,6 @@
         <logger name="org.hibernate" level="WARN"/>
         <root>
             <appender-ref ref="CONSOLE" level="${log.level}"/>
-            <appender-ref ref="APPLICATION" level="${log.level}"/>
         </root>
     </springProfile>
 
@@ -275,7 +274,7 @@
             <appender-ref ref="SQL"/>
         </logger>
 
-        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="true">
+        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="false">
             <level value="${loglevel}"/>
             <appender-ref ref="PrintParamResult"/>
         </logger>
