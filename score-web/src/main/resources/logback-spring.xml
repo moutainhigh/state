@@ -119,12 +119,12 @@
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                     <FileNamePattern>
-                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz
+                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.gz
                     </FileNamePattern>
                     <maxHistory>4</maxHistory>
                 </rollingPolicy>
                 <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-                    <level>${log.level}</level>
+                    <level>info</level>
                 </filter>
                 <encoder>
                     <pattern>${log.info.pattern}</pattern>
@@ -146,12 +146,12 @@
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                     <FileNamePattern>
-                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz
+                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.gz
                     </FileNamePattern>
                     <maxHistory>7</maxHistory>
                 </rollingPolicy>
                 <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-                    <level>${log.level}</level>
+                    <level>info</level>
                 </filter>
                 <encoder>
                     <pattern>${log.info.pattern}</pattern>
@@ -258,7 +258,7 @@
         <logger name="io.netty" level="WARN"/>
         <logger name="org.apache.ibatis" level="WARN"/>
         <logger name="org.hibernate" level="WARN"/>
-        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="false">
+        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="true">
             <level value="${log.level}"/>
             <appender-ref ref="PrintParamResult"/>
         </logger>
