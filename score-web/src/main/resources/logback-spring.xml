@@ -258,6 +258,10 @@
         <logger name="io.netty" level="WARN"/>
         <logger name="org.apache.ibatis" level="WARN"/>
         <logger name="org.hibernate" level="WARN"/>
+        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="false">
+            <level value="${log.level}"/>
+            <appender-ref ref="PrintParamResult"/>
+        </logger>
         <root>
             <appender-ref ref="CONSOLE" level="${log.level}"/>
         </root>
@@ -274,18 +278,18 @@
             <appender-ref ref="SQL"/>
         </logger>
 
-        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="false">
-            <level value="${loglevel}"/>
+        <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="true">
+            <level value="${log.level}"/>
             <appender-ref ref="PrintParamResult"/>
         </logger>
 
         <logger name="com.shinemo.client.aop.performance.PerformanceInner" additivity="false">
-            <level value="${loglevel}"/>
+            <level value="${log.level}"/>
             <appender-ref ref="Performance"/>
         </logger>
 
         <logger name="com.shinemo.Aace.Logger">
-            <level value="${loglevel}"/>
+            <level value="${log.level}"/>
             <appender-ref ref="AACE"/>
         </logger>
 
