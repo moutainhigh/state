@@ -92,17 +92,20 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     @Override
     public WebResult<MyScoreDTO> getMyScore(MyScoreRequest request) {
-
-        //第几部电影
         MyScoreDTO ret = new MyScoreDTO();
         long num = FIRST;
         ScoreQuery query = new ScoreQuery();
         query.setUid(UserExtend.getUserId());
+        query.setThirdVideoId(request.getVideoId());
         query.setOrderByEnable(true);
         query.putOrderBy("num", false);
         Result<ScoreDO> rs = scoreService.getScore(query);
         if (rs.hasValue()) {
-            num = rs.getValue().getNum() + FIRST;
+            if(StringUtils.isBlank(request.getVideoId())){
+                num = rs.getValue().getNum() + FIRST;
+            }else{
+                num = rs.getValue().getNum();
+            }
         }
         ret.setNumber(num);
         //查询我评论过的音频信息
