@@ -51,7 +51,7 @@
             <appender name="FILE-ACCESS-${threadName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${log.home}/access.log.%d{yyyy-MM-dd}-%i</FileNamePattern>
+                    <FileNamePattern>${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz</FileNamePattern>
                     <maxHistory>${log.access.max.history}</maxHistory>
                     <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                         <maxFileSize>${log.access.max.file.size}</maxFileSize>
@@ -118,7 +118,8 @@
                       class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${log.home}/facade-param.log.%d{yyyy-MM-dd}
+                    <FileNamePattern>
+                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz
                     </FileNamePattern>
                     <maxHistory>4</maxHistory>
                 </rollingPolicy>
@@ -144,7 +145,8 @@
             <appender name="FILE-Performance-${threadName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${log.home}/performance-time.log.%d{yyyy-MM-dd}
+                    <FileNamePattern>
+                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz
                     </FileNamePattern>
                     <maxHistory>7</maxHistory>
                 </rollingPolicy>
@@ -163,14 +165,15 @@
 
         <discriminator class="com.shinemo.logback.custom.ThreadDiscriminator">
             <!-- ","分割 0.文件名前缀 1.文件个数 -->
-            <defaultValue>${log.application.name}.info.log-,8</defaultValue>
+            <defaultValue>score.info.log-,8</defaultValue>
         </discriminator>
 
         <sift>
             <appender name="FILE-INFO-${threadName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${log.home}/${log.application.name}.info.%d{yyyy-MM-dd}-%i${log.history.suffix}
+                    <FileNamePattern>
+                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz
                     </FileNamePattern>
                     <maxHistory>${log.info.max.history}</maxHistory>
                     <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -192,15 +195,15 @@
 
         <discriminator class="com.shinemo.logback.custom.ThreadDiscriminator">
             <!-- ","分割 0.文件名前缀 1.文件个数 -->
-            <defaultValue>${log.application.name}.log-,8</defaultValue>
+            <defaultValue>score.log-,8</defaultValue>
         </discriminator>
 
         <sift>
             <appender name="FILE-APPLICATION-${threadName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${log.home}/${log.application.name}.log</file>
                 <append>true</append>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${log.home}/${log.application.name}.%d{yyyy-MM-dd}-%i${log.history.suffix}
+                    <FileNamePattern>
+                        ${log.home}/${threadName}-%d{yyyy-MM-dd}.%i.gz
                     </FileNamePattern>
                     <maxHistory>${log.application.max.history}</maxHistory>
                     <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -245,6 +248,10 @@
     </appender>
 
     <springProfile name="dev">
+        <logger name="access" additivity="false">
+            <level value="info"/>
+            <appender-ref ref="ACCESS"/>
+        </logger>
         <logger name="mapper" level="DEBUG"/>
         <logger name="org.springframework" level="WARN"/>
         <logger name="org.mybatis" level="WARN"/>
@@ -253,6 +260,7 @@
         <logger name="org.hibernate" level="WARN"/>
         <root>
             <appender-ref ref="CONSOLE" level="${log.level}"/>
+            <appender-ref ref="APPLICATION" level="${log.level}"/>
         </root>
     </springProfile>
 

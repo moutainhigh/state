@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,6 +27,7 @@ import javax.annotation.Resource;
 @Slf4j
 public class ScoreServiceTest {
 
+    private static final Logger logger = LoggerFactory.getLogger("APPLICATION");
     @Resource
     private InnerService innerService;
 
@@ -33,5 +36,10 @@ public class ScoreServiceTest {
         innerService.fixScoreNum();
     }
 
+    @Test
+    public void test1(){
+        System.out.println("test_log");
+        logger.info("test_log");
+    }
 
 }
