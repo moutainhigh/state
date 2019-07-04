@@ -92,20 +92,16 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     @Override
     public WebResult<MyScoreDTO> getMyScore(MyScoreRequest request) {
+
         MyScoreDTO ret = new MyScoreDTO();
         long num = FIRST;
         ScoreQuery query = new ScoreQuery();
         query.setUid(UserExtend.getUserId());
-        query.setThirdVideoId(request.getVideoId());
         query.setOrderByEnable(true);
         query.putOrderBy("num", false);
         Result<ScoreDO> rs = scoreService.getScore(query);
         if (rs.hasValue()) {
-            if(StringUtils.isBlank(request.getVideoId())){
-                num = rs.getValue().getNum() + FIRST;
-            }else{
-                num = rs.getValue().getNum();
-            }
+            num = rs.getValue().getNum() + FIRST;
         }
         ret.setNumber(num);
         //查询我评论过的音频信息
@@ -113,6 +109,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             query.setThirdVideoId(request.getVideoId());
             Result<ScoreDO> rt = scoreService.getScore(query);
             if (rt.hasValue()) {
+                ret.setNumber(rt.getValue().getNum());
                 ret.setVideoId(request.getVideoId());
                 ret.setScore(Double.valueOf(rt.getValue().getScore()));
             }
