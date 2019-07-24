@@ -288,6 +288,11 @@
             <appender-ref ref="Performance"/>
         </logger>
 
+        <logger name="com.shinemo.client.aop.performance.PerformanceOuter" additivity="false">
+            <level value="${log.level}"/>
+            <appender-ref ref="Performance"/>
+        </logger>
+
         <logger name="com.shinemo.Aace.Logger">
             <level value="${log.level}"/>
             <appender-ref ref="AACE"/>
