@@ -10,6 +10,7 @@ import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.client.reply.query.ReplyRequest;
 import com.shinemo.score.core.async.event.AfterReplyEvent;
 import com.shinemo.score.core.reply.service.ReplyService;
+import com.shinemo.score.core.word.SensitiveWordFilter;
 import com.shinemo.score.dal.reply.wrapper.ReplyWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +42,9 @@ public class ReplyServiceImpl implements ReplyService {
         Assert.hasText(request.getMobile(), "mobile not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");
         Assert.notNull(request.getCommentId(), "commentId not be empty");
+
+        Assert.isTrue(!SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
+                SensitiveWordFilter.minMatchTYpe), "包含敏感词，请重新输入");
 
         ReplyDO replyDO = new ReplyDO();
         BeanUtils.copyProperties(request, replyDO);

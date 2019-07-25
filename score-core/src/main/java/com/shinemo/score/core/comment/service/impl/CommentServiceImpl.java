@@ -12,6 +12,7 @@ import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.core.comment.cache.CommentCache;
 import com.shinemo.score.core.comment.service.CommentService;
+import com.shinemo.score.core.word.SensitiveWordFilter;
 import com.shinemo.score.dal.comment.wrapper.CommentWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -45,6 +46,10 @@ public class CommentServiceImpl implements CommentService {
         Assert.hasText(request.getMobile(), "mobile not be empty");
         Assert.notNull(request.getVideoType(), "videoType not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");
+
+        // 敏感词校验
+        Assert.isTrue(!SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
+                SensitiveWordFilter.minMatchTYpe), "包含敏感词，请重新输入");
 
 
         CommentDO commentDO = new CommentDO();
@@ -129,7 +134,7 @@ public class CommentServiceImpl implements CommentService {
     public ListVO<Long> findIdsByQuery(CommentQuery query) {
 
         query.setOrderByEnable(true);
-        query.putOrderBy("id",false);
+        query.putOrderBy("id", false);
         Result<ListVO<Long>> idListRs = commentWrapper.findIds(query);
         if (!idListRs.hasValue()) {
             throw new BizException(idListRs.getError());
