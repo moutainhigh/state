@@ -23,7 +23,7 @@ public class SensitiveWordInit {
     private SensitiveWordInit() {
     }
 
-    protected static SensitiveWord getSensitiveWord() {
+    public static SensitiveWord getSensitiveWord() {
 
         if (sensitiveWord == null) {
             synchronized (SensitiveWordInit.class) {

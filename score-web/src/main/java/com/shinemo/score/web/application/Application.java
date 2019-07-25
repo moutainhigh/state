@@ -31,9 +31,8 @@ public class Application extends SpringBootServletInitializer {
         // -Dapp_env=-1 -Dconfig_url=http://10.0.10.62/myconf/conf/dispatch -Dapp_name=score
         // java -Dapp_env=-1 -Dconfig_url=http://10.0.10.62/myconf/conf/dispatch -Dapp_name=score -jar score-web/target/score.jar
 
-        // 初始化敏感词库
-        SensitiveWordInit.initKeyWord();
-
+        // 饿汉模式加载敏感词
+        SensitiveWordInit.getSensitiveWord();
         SpringApplication.run(application, args);
     }
 
