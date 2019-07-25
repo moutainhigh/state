@@ -167,7 +167,7 @@ public class SensitiveWordFilter {
 
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.getSensitiveWordMap().size());
-        String string = "k              粉";
+        String string = "k粉";
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());
 //        long beginTime = System.currentTimeMillis();

@@ -29,6 +29,7 @@ public class SensitiveWordInit {
             synchronized (SensitiveWordInit.class) {
                 if (sensitiveWord == null) {
                     sensitiveWord = initKeyWord();
+                    log.info("[sensitiveWord] sensitiveWord size:{}", sensitiveWord.getSensitiveWordMap().size());
                 }
             }
         }
@@ -38,6 +39,7 @@ public class SensitiveWordInit {
     @SuppressWarnings("rawtypes")
     private static SensitiveWord initKeyWord() {
         try {
+            log.info("----- load SensitiveWord --------");
             //读取敏感词库
             Set<String> keyWordSet = readSensitiveWordFile();
             //将敏感词库加入到HashMap中
