@@ -37,11 +37,8 @@ public class SensitiveWordFilter {
      */
     public static boolean isContaintSensitiveWord(String txt, int matchType) {
 
-        // 去除所有空格
-        txt = txt.replaceAll(" +", "");
-
-        // 全部小写
-        txt = txt.toLowerCase();
+        // 全部小写,并去除所有的符号
+        txt = txt.toLowerCase().replaceAll("[\\s*\\pP\\p{Punct}]", "");
 
         // 先校验一个字的敏感词
         if (txt.length() == 1) {
@@ -170,7 +167,7 @@ public class SensitiveWordFilter {
 
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.getSensitiveWordMap().size());
-        String string = "K粉";
+        String string = "死";
         System.out.println(string.toLowerCase());
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());
