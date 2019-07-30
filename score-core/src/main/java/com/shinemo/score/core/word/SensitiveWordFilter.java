@@ -17,7 +17,7 @@ import java.util.Set;
 @Slf4j
 public class SensitiveWordFilter {
     @SuppressWarnings("rawtypes")
-    private static SensitiveWord sensitiveWord;
+    private static Map<String, String> sensitiveWord;
     public static int minMatchTYpe = 1;      //最小匹配规则
     public static int maxMatchType = 2;      //最大匹配规则
 
@@ -39,14 +39,6 @@ public class SensitiveWordFilter {
 
         // 全部小写,并去除所有的符号
         txt = txt.toLowerCase().replaceAll("[\\s*\\pP\\p{Punct}]", "");
-
-        // 先校验一个字的敏感词
-        if (txt.length() == 1) {
-            Set<String> singleWord = sensitiveWord.getSingleWord();
-            if (singleWord.contains(txt)) {
-                return true;
-            }
-        }
 
         boolean flag = false;
         for (int i = 0; i < txt.length(); i++) {
@@ -142,7 +134,7 @@ public class SensitiveWordFilter {
         boolean flag = false;    //敏感词结束标识位：用于敏感词只有1位的情况
         int matchFlag = 0;     //匹配标识数默认为0
         char word = 0;
-        Map nowMap = sensitiveWord.getSensitiveWordMap();
+        Map nowMap = sensitiveWord;
         for (int i = beginIndex; i < txt.length(); i++) {
             word = txt.charAt(i);
             nowMap = (Map) nowMap.get(word);     //获取指定key
@@ -158,7 +150,7 @@ public class SensitiveWordFilter {
                 break;
             }
         }
-        if (matchFlag < 2 || !flag) {        //长度必须大于等于1，为词
+        if (matchFlag < 1 || !flag) {        //长度必须大于等于1，为词
             matchFlag = 0;
         }
         return matchFlag;
@@ -166,8 +158,8 @@ public class SensitiveWordFilter {
 
 
     public static void main(String[] args) {
-        System.out.println("敏感词的数量：" + sensitiveWord.getSensitiveWordMap().size());
-        String string = "死";
+        System.out.println("敏感词的数量：" + sensitiveWord.size());
+        String string = "共产";
         System.out.println(string.toLowerCase());
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());

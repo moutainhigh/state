@@ -18,18 +18,18 @@ import java.util.*;
 @Slf4j
 public class SensitiveWordInit {
 
-    private static volatile SensitiveWord sensitiveWord;
+    private static volatile Map<String, String> sensitiveWord;
 
     private SensitiveWordInit() {
     }
 
-    public static SensitiveWord getSensitiveWord() {
+    public static Map<String, String> getSensitiveWord() {
 
         if (sensitiveWord == null) {
             synchronized (SensitiveWordInit.class) {
                 if (sensitiveWord == null) {
                     sensitiveWord = initKeyWord();
-                    log.info("[sensitiveWord] sensitiveWord size:{}", sensitiveWord.getSensitiveWordMap().size());
+                    log.info("[sensitiveWord] sensitiveWord size:{}", sensitiveWord.size());
                 }
             }
         }
@@ -37,7 +37,7 @@ public class SensitiveWordInit {
     }
 
     @SuppressWarnings("rawtypes")
-    private static SensitiveWord initKeyWord() {
+    private static Map<String, String> initKeyWord() {
         try {
             log.info("----- load SensitiveWord --------");
             //读取敏感词库
@@ -86,13 +86,8 @@ public class SensitiveWordInit {
      * @version 1.0
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static SensitiveWord addSensitiveWordToHashMap(Set<String> keyWordSet) {
+    private static Map<String, String> addSensitiveWordToHashMap(Set<String> keyWordSet) {
         Map<String, String> sensitiveWordMap = new HashMap(keyWordSet.size());     //初始化敏感词容器，减少扩容操作
-        Set<String> singleWord = new HashSet<>();
-
-        SensitiveWord sensitiveWord = new SensitiveWord();
-        sensitiveWord.setSensitiveWordMap(sensitiveWordMap);
-        sensitiveWord.setSingleWord(singleWord);
 
         String key;
         Map nowMap;
@@ -101,10 +96,6 @@ public class SensitiveWordInit {
         Iterator<String> iterator = keyWordSet.iterator();
         while (iterator.hasNext()) {
             key = iterator.next();    //关键字
-            // 一个字的敏感词
-            if (key.length() == 1) {
-                singleWord.add(key);
-            }
             nowMap = sensitiveWordMap;
             for (int i = 0; i < key.length(); i++) {
                 char keyChar = key.charAt(i);       //转换成char型
@@ -124,7 +115,7 @@ public class SensitiveWordInit {
                 }
             }
         }
-        return sensitiveWord;
+        return sensitiveWordMap;
     }
 
     /**
