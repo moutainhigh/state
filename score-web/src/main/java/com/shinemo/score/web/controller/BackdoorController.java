@@ -5,6 +5,7 @@ import com.shinemo.client.common.WebResult;
 import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.score.facade.CalculationFacadeService;
 import com.shinemo.score.core.comment.cache.CommentCache;
+import com.shinemo.score.core.score.service.InnerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author wenchao.li
@@ -29,6 +32,11 @@ public class BackdoorController {
 
     @Resource
     private CommentCache commentCache;
+
+    @Resource
+    private InnerService innerService;
+
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(2);
 
     /**
      * 刷新评论缓存
@@ -62,6 +70,19 @@ public class BackdoorController {
         if(!rs.isSuccess()){
             log.error("[calculationByTime] error:{}",rs);
         }
+        return "success";
+    }
+
+
+    @GetMapping("/fixNum")
+    public String fixNum(HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
+            return "error";
+        }
+        poolExecutor.execute(()->{
+            innerService.fixScoreNum();
+        });
         return "success";
     }
 
