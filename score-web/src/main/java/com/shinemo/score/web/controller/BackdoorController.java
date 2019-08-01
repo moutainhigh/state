@@ -80,9 +80,12 @@ public class BackdoorController {
         if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
             return "error";
         }
-        poolExecutor.execute(()->{
+        try {
             innerService.fixScoreNum();
-        });
+        } catch (Exception e) {
+            log.error("[fixNum] error",e);
+            return "false";
+        }
         return "success";
     }
 
