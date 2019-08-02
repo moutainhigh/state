@@ -5,6 +5,7 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
@@ -52,6 +53,11 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     @Resource
     private ScoreService scoreService;
+
+    @Resource
+    private RedisService redisService;
+
+    private static final String KEY = "MIGU_SCORE_VIDEO_ID_%s";
 
 
     @Override
@@ -130,7 +136,10 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
         Assert.notNull(request, "videoId is null");
         Assert.hasText(request.getVideoId(), "videoId is null");
-
+        VideoDTO result = getByCache(request);
+        if(result != null){
+            return WebResult.success(result);
+        }
         VideoQuery query = new VideoQuery();
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
@@ -153,7 +162,26 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         dto.setScore(scoreDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
         dto.setVideoId(request.getVideoId());
         dto.setWeight(rs.getValue().getWeight());
+        setCache(dto);
+
         return WebResult.success(dto);
+    }
+
+    private void setCache(VideoDTO dto) {
+        try {
+            redisService.set(String.format(KEY,dto.getVideoId()),dto,3600);
+        } catch (Exception e) {
+            log.error("[getVideoScore] setCache error",e);
+        }
+    }
+
+    private VideoDTO getByCache(MyScoreRequest request) {
+        try {
+            return redisService.get(String.format(KEY,request.getVideoId()),VideoDTO.class);
+        } catch (Exception e) {
+            log.error("[getVideoScore] getCache error",e);
+            return null;
+        }
     }
 
     private ScoreDO initScoreDO(ScoreRequest request, Long id) {
