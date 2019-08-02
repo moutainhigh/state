@@ -25,9 +25,9 @@ import javax.annotation.Resource;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
 @Slf4j
+@TestPropertySource(locations = "classpath:conf/application-dev.properties")
 public class ScoreServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger("APPLICATION");
     @Resource
     private InnerService innerService;
 
@@ -38,8 +38,8 @@ public class ScoreServiceTest {
 
     @Test
     public void test1(){
-        System.out.println("test_log");
-        logger.info("test_log");
+        System.out.println(1111);
+        log.info("test_log");
     }
 
 }
