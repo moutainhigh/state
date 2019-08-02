@@ -5,6 +5,8 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
 import com.shinemo.client.util.GsonUtil;
+import com.shinemo.mgsuggest.client.domain.DistributeConfig;
+import com.shinemo.mgsuggest.client.facade.DistributeConfigFacadeService;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.LikeTypeEnum;
 import com.shinemo.score.client.comment.query.CommentQuery;
@@ -35,6 +37,8 @@ public class CommentServiceImpl implements CommentService {
     private CommentWrapper commentWrapper;
     @Resource
     private CommentCache commentCache;
+    @Resource
+    private DistributeConfigFacadeService distributeConfigFacadeService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -155,6 +159,19 @@ public class CommentServiceImpl implements CommentService {
             throw new BizException(commentRs.getError());
         }
         return commentRs.getValue();
+    }
+
+    @Override
+    public void checkCommentOpen() {
+        Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
+        if (!configRs.hasValue()) {
+            // 这边不处理
+            return;
+        }
+        DistributeConfig config = configRs.getValue();
+        if (!config.isCommentOpen()) {
+            throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
+        }
     }
 
     private boolean doUpdate(CommentRequest request) {

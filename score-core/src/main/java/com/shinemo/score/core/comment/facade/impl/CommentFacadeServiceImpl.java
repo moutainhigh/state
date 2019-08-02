@@ -63,6 +63,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     @Override
     public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
+        // 校验评论是否打开
+        commentService.checkCommentOpen();
+
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
 
         logger.info("[findListVO] query:{},token:{}", query, extend);
@@ -87,6 +90,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result<CommentDO> submit(CommentParam param) {
+
+        // 校验评论是否打开
+        commentService.checkCommentOpen();
 
         // 没评论成功
         if (StringUtils.isEmpty(param.getComment())) {
@@ -122,6 +128,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
     @Override
     public WebResult<CommentVO> getDetail(CommentQuery query) {
+
+        // 校验评论是否打开
+        commentService.checkCommentOpen();
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
 

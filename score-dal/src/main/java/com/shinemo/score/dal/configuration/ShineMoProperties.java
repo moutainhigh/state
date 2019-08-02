@@ -182,5 +182,9 @@ public class ShineMoProperties {
          */
         @NotNull
         private String entpay;
+
+        @NotNull
+        private String mgsuggest;
+
     }
 }

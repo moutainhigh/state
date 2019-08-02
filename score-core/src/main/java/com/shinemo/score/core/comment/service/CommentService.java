@@ -56,4 +56,9 @@ public interface CommentService {
      * @return 根据commentId直接走db查询
      */
     CommentDO getByIdFromDB(Long commentId);
+
+    /**
+     * throw 评论关闭，则code 100007
+     */
+    void checkCommentOpen();
 }

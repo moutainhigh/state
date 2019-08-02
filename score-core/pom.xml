@@ -79,6 +79,11 @@
             <groupId>net.sourceforge.javacsv</groupId>
             <artifactId>javacsv</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.shinemo.mgsuggest</groupId>
+            <artifactId>mgsuggest-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
