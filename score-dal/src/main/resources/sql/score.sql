@@ -14,7 +14,7 @@ CREATE TABLE `score` (
   PRIMARY KEY (`id`),
   UNIQUE key `uk_m_id`(`video_id`,`uid`),
   UNIQUE key `uk_t_m_id`(`third_video_id`,`uid`),
-  UNIQUE key `uk_u_num`(`num`,`uid`)
+  UNIQUE key `uk_u_num`(`uid`,`num`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='电影评分表';
 
 
