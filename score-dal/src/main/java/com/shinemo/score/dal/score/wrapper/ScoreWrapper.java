@@ -2,6 +2,7 @@ package com.shinemo.score.dal.score.wrapper;
 
 import javax.annotation.Resource;
 
+import com.shinemo.client.common.Errors;
 import com.shinemo.client.common.Result;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.score.domain.ScoreCountDO;
@@ -20,8 +21,9 @@ import java.util.List;
 
 /**
  * Wrapper
- * @ClassName: ScoreWrapper
+ *
  * @author zhangyan
+ * @ClassName: ScoreWrapper
  * @Date 2019-06-12 09:52:15
  */
 @Service
@@ -36,14 +38,23 @@ public class ScoreWrapper extends Wrapper<ScoreQuery, ScoreDO> {
         return scoreMapper;
     }
 
-    public Result<List<ScoreCountDO>> getScoreCounts(List<Long> list){
-        Assert.isTrue(!CollectionUtils.isEmpty(list),"list is null");
+    public Result<List<ScoreCountDO>> getScoreCounts(List<Long> list) {
+        Assert.isTrue(!CollectionUtils.isEmpty(list), "list is null");
         try {
             List<ScoreCountDO> ret = scoreMapper.getScoreCounts(list);
             return Result.success(ret);
         } catch (Exception e) {
-            log.error("[getScoreCounts] error",e);
+            log.error("[getScoreCounts] error", e);
             return Result.error(ScoreErrors.SQL_ERROR_COUNT);
         }
+    }
+
+    public Result<ScoreDO> getScoreByMaxNum(ScoreQuery query) {
+
+        ScoreDO scoreDO = scoreMapper.getScoreByMaxNum(query);
+        if (scoreDO == null) {
+            return Result.error(Errors.DATA_NOT_EXIST);
+        }
+        return Result.success(scoreDO);
     }
 }

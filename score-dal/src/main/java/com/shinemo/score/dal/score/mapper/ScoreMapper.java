@@ -11,8 +11,9 @@ import java.util.List;
 
 /**
  * Mapper
- * @ClassName: ScoreMapper
+ *
  * @author zhangyan
+ * @ClassName: ScoreMapper
  * @Date 2019-06-12 09:52:15
  */
 @Repository
@@ -20,4 +21,6 @@ public interface ScoreMapper extends Mapper<ScoreQuery, ScoreDO> {
 
 
     List<ScoreCountDO> getScoreCounts(List<Long> list);
+
+    ScoreDO getScoreByMaxNum(ScoreQuery query);
 }

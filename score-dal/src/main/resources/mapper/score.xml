@@ -118,7 +118,17 @@
         <include refid="conditions"/>
     </select>
 
-	<!-- 删除 -->
+    <select id="getScoreByMaxNum" resultType="com.shinemo.score.client.score.domain.ScoreDO"
+            parameterType="com.shinemo.score.client.score.query.ScoreQuery">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <include refid="conditions"/>
+        order by num desc limit 1
+    </select>
+
+    <!-- 删除 -->
     <delete id="delete" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         delete from
         <include refid="table"/>
