@@ -1,5 +1,6 @@
 package com.shinemo.score.core.score.service.impl;
 
+import com.shinemo.client.common.Errors;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
@@ -109,7 +110,7 @@ public class ScoreServiceImpl implements ScoreService {
         ScoreQuery query = new ScoreQuery();
         query.setUid(domain.getUid());
         query.setVideoId(domain.getVideoId());
-        Result<ScoreDO> rs = scoreWrapper.get(query);
+        Result<ScoreDO> rs = scoreWrapper.get(query, Errors.FAILURE);
         if (!rs.hasValue()) {
             throw new BizException(rs.getError());
         }
