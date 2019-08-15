@@ -34,6 +34,7 @@ public class ReplyServiceImpl implements ReplyService {
     private InternalEventBus internalEventBus;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ReplyDO create(ReplyRequest request) {
 
         Assert.hasText(request.getContent(), "内容不能为空");
@@ -60,7 +61,11 @@ public class ReplyServiceImpl implements ReplyService {
                         .builder()
                         .commentId(request.getCommentId())
                         .build());
-
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return insertRs.getValue();
     }
 
