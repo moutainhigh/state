@@ -34,7 +34,6 @@ public class ReplyServiceImpl implements ReplyService {
     private InternalEventBus internalEventBus;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public ReplyDO create(ReplyRequest request) {
 
         Assert.hasText(request.getContent(), "内容不能为空");
