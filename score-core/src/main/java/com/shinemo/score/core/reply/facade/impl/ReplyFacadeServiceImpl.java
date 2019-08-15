@@ -32,6 +32,7 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
     private ReplyService replyService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public WebResult<ReplyDTO> submit(ReplyParam param) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
