@@ -159,7 +159,7 @@ public class SensitiveWordFilter {
 
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.size());
-        String string = "共产";
+        String string = "看不了";
         System.out.println(string.toLowerCase());
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());
