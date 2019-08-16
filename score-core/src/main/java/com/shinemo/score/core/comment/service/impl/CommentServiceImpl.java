@@ -166,6 +166,7 @@ public class CommentServiceImpl implements CommentService {
         Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
         if (!configRs.hasValue()) {
             // 这边不处理
+            log.error("[checkCommentOpen]get config has error,rs:{}", configRs);
             return;
         }
         DistributeConfig config = configRs.getValue();
