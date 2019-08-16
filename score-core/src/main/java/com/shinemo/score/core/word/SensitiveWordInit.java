@@ -9,11 +9,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /**
- * @version 1.0
- * @Description: 初始化敏感词库，将敏感词加入到HashMap中，构建DFA算法模型
- * @Project：test
- * @Author : chenming
- * @Date ： 2014年4月20日 下午2:27:06
+ * 初始化敏感词库，将敏感词加入到HashMap中，构建DFA算法模型
  */
 @Slf4j
 public class SensitiveWordInit {
@@ -80,10 +76,7 @@ public class SensitiveWordInit {
      * }
      * }
      *
-     * @param keyWordSet 敏感词库
-     * @author chenming
-     * @date 2014年4月20日 下午3:04:20
-     * @version 1.0
+     * @param keyWordSet 敏感词
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static Map<String, String> addSensitiveWordToHashMap(Set<String> keyWordSet) {
@@ -120,12 +113,6 @@ public class SensitiveWordInit {
 
     /**
      * 读取敏感词库中的内容，将内容添加到set集合中
-     *
-     * @return
-     * @throws Exception
-     * @author chenming
-     * @date 2014年4月20日 下午2:31:18
-     * @version 1.0
      */
     @SuppressWarnings("resource")
     private static Set<String> readSensitiveWordFile() {

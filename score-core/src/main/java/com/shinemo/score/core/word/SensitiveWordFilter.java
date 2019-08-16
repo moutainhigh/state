@@ -8,15 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @version 1.0
- * @Description: 敏感词过滤
- * @Project：test
- * @Author : chenming
- * @Date ： 2014年4月20日 下午4:17:15
+ * 敏感词过滤
  */
 @Slf4j
 public class SensitiveWordFilter {
-    @SuppressWarnings("rawtypes")
+
     private static Map<String, String> sensitiveWord;
     public static int minMatchTYpe = 1;      //最小匹配规则
     public static int maxMatchType = 2;      //最大匹配规则
@@ -31,9 +27,6 @@ public class SensitiveWordFilter {
      * @param txt       文字
      * @param matchType 匹配规则&nbsp;1：最小匹配规则，2：最大匹配规则
      * @return 若包含返回true，否则返回false
-     * @author chenming
-     * @date 2014年4月20日 下午4:28:30
-     * @version 1.0
      */
     public static boolean isContaintSensitiveWord(String txt, int matchType) {
 
@@ -55,10 +48,6 @@ public class SensitiveWordFilter {
      *
      * @param txt       文字
      * @param matchType 匹配规则&nbsp;1：最小匹配规则，2：最大匹配规则
-     * @return
-     * @author chenming
-     * @date 2014年4月20日 下午5:10:52
-     * @version 1.0
      */
     public static Set<String> getSensitiveWord(String txt, int matchType) {
         Set<String> sensitiveWordList = new HashSet<String>();
@@ -77,12 +66,7 @@ public class SensitiveWordFilter {
     /**
      * 替换敏感字字符
      *
-     * @param txt
-     * @param matchType
      * @param replaceChar 替换字符，默认*
-     * @author chenming
-     * @date 2014年4月20日 下午5:12:07
-     * @version 1.0
      */
     public static String replaceSensitiveWord(String txt, int matchType, String replaceChar) {
         String resultTxt = txt;
@@ -119,17 +103,10 @@ public class SensitiveWordFilter {
     }
 
     /**
-     * 检查文字中是否包含敏感字符，检查规则如下：<br>
+     * 检查文字中是否包含敏感字符
      *
-     * @param txt
-     * @param beginIndex
-     * @param matchType
-     * @author chenming
-     * @date 2014年4月20日 下午4:31:03
-     * @return，如果存在，则返回敏感词字符的长度，不存在返回0
-     * @version 1.0
+     * @return 如果存在，则返回敏感词字符的长度，不存在返回0
      */
-    @SuppressWarnings({"rawtypes"})
     public static int checkSensitiveWord(String txt, int beginIndex, int matchType) {
         boolean flag = false;    //敏感词结束标识位：用于敏感词只有1位的情况
         int matchFlag = 0;     //匹配标识数默认为0
@@ -159,13 +136,13 @@ public class SensitiveWordFilter {
 
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.size());
-        String string = "看不了";
+        String string = "哈哈习近平";
         System.out.println(string.toLowerCase());
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());
 //        long beginTime = System.currentTimeMillis();
 ////		Set<String> set = filter.getSensitiveWord(string, 1);
-//        String result = filter.replaceSensitiveWord(string, 1, "*");
+        System.out.println(SensitiveWordFilter.replaceSensitiveWord(string, 1, "*"));
 //        long endTime = System.currentTimeMillis();
 //        System.out.println(result);
 ////		System.out.println("语句中包含敏感词的个数为：" + set.size() + "。包含：" + set);
