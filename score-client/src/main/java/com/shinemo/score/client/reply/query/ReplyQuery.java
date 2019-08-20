@@ -1,6 +1,7 @@
 package com.shinemo.score.client.reply.query;
 
 
+import com.shinemo.client.common.FlagHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,4 +46,14 @@ public class ReplyQuery extends QueryBase {
     * 网络类型
     */
 	private String netType;
+
+	private Long flag;
+
+	private Long sensitiveUid;
+	/**
+	 * 忽略其他人含有敏感词的评论
+	 */
+	private Boolean ignoreOtherSensitive = false;
+
+	private FlagHelper replyFlag = FlagHelper.build();
 }

@@ -3,27 +3,32 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shinemo.score.dal.reply.mapper.ReplyMapper">
 
-	<!-- 结果集对应关系 -->
-	<resultMap id="result" type="com.shinemo.score.client.reply.domain.ReplyDO" >
-		<id column="id" property="id"/>
-		<result property="gmtCreate" column="gmt_create"/>
-		<result property="gmtModified" column="gmt_modified"/>
-		<result property="status" column="status"/>
-		<result property="commentId" column="comment_id"/>
-        <result property="content" column="content" jdbcType="BLOB" javaType="java.lang.String" typeHandler="com.shinemo.score.dal.configuration.BlobAndStringTypeHandler"/>
+    <!-- 结果集对应关系 -->
+    <resultMap id="result" type="com.shinemo.score.client.reply.domain.ReplyDO">
+        <id column="id" property="id"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="status" column="status"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="content" column="content" jdbcType="BLOB" javaType="java.lang.String"
+                typeHandler="com.shinemo.score.dal.configuration.BlobAndStringTypeHandler"/>
         <result property="uid" column="uid"/>
-		<result property="mobile" column="mobile"/>
-		<result property="name" column="name"/>
-		<result property="avatarUrl" column="avatar_url"/>
-		<result property="device" column="device"/>
-		<result property="netType" column="net_type"/>
-		<result property="extend" column="extend"/>
-	</resultMap>
+        <result property="mobile" column="mobile"/>
+        <result property="name" column="name"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="device" column="device"/>
+        <result property="netType" column="net_type"/>
+        <result property="extend" column="extend"/>
+        <result property="ip" column="ip"/>
+        <result property="flag" column="flag"/>
+        <result property="fullDevice" column="full_device"/>
+    </resultMap>
 
-	<!-- 数据库字段 -->
-	<sql id="columns">
-		id, gmt_create, gmt_modified, status, comment_id, content, uid, mobile, name, avatar_url, device, net_type, extend
-	</sql>
+    <!-- 数据库字段 -->
+    <sql id="columns">
+        id, gmt_create, gmt_modified, status, comment_id, content, uid, mobile, name, avatar_url, device, net_type, extend, ip,
+        flag, full_device
+    </sql>
 
     <sql id="table">
         reply
@@ -35,20 +40,36 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-					<if test="status != null">and status = #{status}</if>
-					<if test="commentId != null">and comment_id = #{commentId}</if>
-					<if test="uid != null">and uid = #{uid}</if>
-					<if test="mobile != null">and mobile = #{mobile}</if>
-					<if test="name != null">and name = #{name}</if>
-					<if test="device != null">and device = #{device}</if>
-					<if test="netType != null">and net_type = #{netType}</if>
+                    <if test="status != null">and status = #{status}</if>
+                    <if test="commentId != null">and comment_id = #{commentId}</if>
+                    <if test="uid != null">and uid = #{uid}</if>
+                    <if test="mobile != null">and mobile = #{mobile}</if>
+                    <if test="name != null">and name = #{name}</if>
+                    <if test="device != null">and device = #{device}</if>
+                    <if test="netType != null">and net_type = #{netType}</if>
+
+                    <choose>
+                        <when test="flag!=null">
+                            and flag = #{flag}
+                        </when>
+                        <otherwise>
+                            <if test="commentFlag != null and commentFlag.mask > 0 and commentFlag.value != null">
+                                <![CDATA[ and (flag & #{commentFlag.mask, jdbcType=BIGINT}) = #{commentFlag.value, jdbcType=BIGINT} ]]>
+                            </if>
+                        </otherwise>
+                    </choose>
+
+                    <if test="ignoreOtherSensitive and sensitiveUid !=null">
+                        or (uid = #{sensitiveUid} and flag &amp; 1 = 1)
+                    </if>
+
                 </otherwise>
             </choose>
         </where>
     </sql>
 
 
-	<!-- 查询结果集 -->
+    <!-- 查询结果集 -->
     <select id="find" resultMap="result"
             parameterType="com.shinemo.score.client.reply.query.ReplyQuery">
         select
@@ -67,7 +88,7 @@
         </if>
     </select>
 
-	<!-- 查询某条记录 -->
+    <!-- 查询某条记录 -->
     <select id="get" resultMap="result" parameterType="com.shinemo.score.client.reply.query.ReplyQuery">
         select
         <include refid="columns"/>
@@ -77,91 +98,109 @@
         limit 1
     </select>
 
-	<!-- 统计查询结果数量 -->
+    <!-- 统计查询结果数量 -->
     <select id="count" resultType="long" parameterType="com.shinemo.score.client.reply.query.ReplyQuery">
         select count(*) from
         <include refid="table"/>
         <include refid="conditions"/>
     </select>
 
-	<!-- 插入 -->
+    <!-- 插入 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="com.shinemo.score.client.reply.domain.ReplyDO">
         insert into
         <include refid="table"/>
         <trim prefix="(" suffix=")" suffixOverrides=",">
-                    <if test="id != null">
-						id,
-					</if>
-					gmt_create,
-					gmt_modified,
-                    <if test="status != null">
-						status,
-					</if>
-                    <if test="commentId != null">
-						comment_id,
-					</if>
-                    <if test="content != null">
-						content,
-					</if>
-                    <if test="uid != null">
-						uid,
-					</if>
-                    <if test="mobile != null">
-						mobile,
-					</if>
-                    <if test="name != null">
-						name,
-					</if>
-                    <if test="avatarUrl != null">
-						avatar_url,
-					</if>
-                    <if test="device != null">
-						device,
-					</if>
-                    <if test="netType != null">
-						net_type,
-					</if>
-                    <if test="extend != null">
-						extend,
-					</if>
+            <if test="id != null">
+                id,
+            </if>
+            gmt_create,
+            gmt_modified,
+            <if test="status != null">
+                status,
+            </if>
+            <if test="commentId != null">
+                comment_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="avatarUrl != null">
+                avatar_url,
+            </if>
+            <if test="device != null">
+                device,
+            </if>
+            <if test="netType != null">
+                net_type,
+            </if>
+            <if test="extend != null">
+                extend,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="fullDevice != null">
+                full_device,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-                    <if test="id != null">
-						#{id, jdbcType=BIGINT},
-                    </if>
-                    now(),
-                    now(),
-                    <if test="status != null">
-						#{status, jdbcType=INTEGER},
-                    </if>
-                    <if test="commentId != null">
-						#{commentId, jdbcType=BIGINT},
-                    </if>
-                    <if test="content != null">
-						#{content, jdbcType=BLOB},
-                    </if>
-                    <if test="uid != null">
-						#{uid, jdbcType=BIGINT},
-                    </if>
-                    <if test="mobile != null">
-						#{mobile, jdbcType=BIGINT},
-                    </if>
-                    <if test="name != null">
-						#{name, jdbcType=VARCHAR},
-                    </if>
-                    <if test="avatarUrl != null">
-						#{avatarUrl, jdbcType=VARCHAR},
-                    </if>
-                    <if test="device != null">
-						#{device, jdbcType=VARCHAR},
-                    </if>
-                    <if test="netType != null">
-						#{netType, jdbcType=VARCHAR},
-                    </if>
-                    <if test="extend != null">
-						#{extend, jdbcType=LONGVARCHAR},
-                    </if>
+            <if test="id != null">
+                #{id, jdbcType=BIGINT},
+            </if>
+            now(),
+            now(),
+            <if test="status != null">
+                #{status, jdbcType=INTEGER},
+            </if>
+            <if test="commentId != null">
+                #{commentId, jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                #{content, jdbcType=BLOB},
+            </if>
+            <if test="uid != null">
+                #{uid, jdbcType=BIGINT},
+            </if>
+            <if test="mobile != null">
+                #{mobile, jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name, jdbcType=VARCHAR},
+            </if>
+            <if test="avatarUrl != null">
+                #{avatarUrl, jdbcType=VARCHAR},
+            </if>
+            <if test="device != null">
+                #{device, jdbcType=VARCHAR},
+            </if>
+            <if test="netType != null">
+                #{netType, jdbcType=VARCHAR},
+            </if>
+            <if test="extend != null">
+                #{extend, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="flag != null">
+                #{flag, jdbcType=BIGINT},
+            </if>
+            <if test="fullDevice != null">
+                #{fullDevice, jdbcType=BIGINT},
+            </if>
+            <if test="ip != null">
+                #{ip, jdbcType=BIGINT},
+            </if>
         </trim>
     </insert>
 
@@ -198,7 +237,16 @@
                 net_type = #{netType, jdbcType=VARCHAR},
             </if>
             <if test="extend != null">
-                extend = #{extend, jdbcType=LONGVARCHAR}
+                extend = #{extend, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="flag != null">
+                flag = #{flag, jdbcType=BIGINT},
+            </if>
+            <if test="fullDevice != null">
+                full_device = #{fullDevice, jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                ip = #{ip, jdbcType=VARCHAR}
             </if>
         </set>
         WHERE

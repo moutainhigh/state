@@ -1,6 +1,7 @@
 package com.shinemo.score.client.comment.query;
 
 
+import com.shinemo.client.common.FlagHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -78,4 +79,15 @@ public class CommentQuery extends QueryBase {
 	private Long version;
 
 	private Long commentId;
+
+	/**
+	 * 忽略其他人含有敏感词的评论
+	 */
+	private Boolean ignoreOtherSensitive = false;
+
+	private Long sensitiveUid;
+
+	private Long flag;
+
+	private FlagHelper commentFlag = FlagHelper.build();
 }

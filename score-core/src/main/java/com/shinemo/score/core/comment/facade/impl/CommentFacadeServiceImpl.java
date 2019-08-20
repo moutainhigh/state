@@ -2,11 +2,13 @@ package com.shinemo.score.core.comment.facade.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.common.StatusEnum;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
 import com.shinemo.score.client.comment.domain.CommentDO;
+import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
@@ -71,6 +73,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
         Assert.hasText(query.getVideoId(), "videoId not be empty");
 
+        if (extend != null) {
+            query.setSensitiveUid(extend.getUid());
+        }
         ListVO<Long> idsRs = commentService.findIdsByQuery(query);
 
         List<CommentVO> list = new ArrayList<>();
@@ -159,6 +164,11 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         replyQuery.setCurrentPage(query.getCurrentPage());
         replyQuery.setOrderByEnable(true);
         replyQuery.putOrderBy("id", false);
+        replyQuery.setStatus(StatusEnum.NORMAL.getId());
+        // 只看没有敏感词的
+        replyQuery.getReplyFlag().remove(CommentFlag.HAS_SENSITIVE);
+        // 自己的敏感词评论可以看
+        replyQuery.setIgnoreOtherSensitive(true);
         ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
 
         // 回复敏感词转换
