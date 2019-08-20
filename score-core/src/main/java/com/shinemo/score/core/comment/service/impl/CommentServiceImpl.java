@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
         // 是否含有敏感词，
         // 这边只打个标,给前端返回含敏感词的评论内容时处理成*
         if (SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
-                SensitiveWordFilter.minMatchTYpe)) {
+                SensitiveWordFilter.minMatchType)) {
             log.error("[create_comment] has sensitiveWord ,txt:{}", request.getContent());
             request.getCommentFlag().add(CommentFlag.HAS_SENSITIVE);
         }
