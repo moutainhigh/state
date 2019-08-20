@@ -198,8 +198,10 @@ public class CommentServiceImpl implements CommentService {
             commentDO.setReplyNum(oldDO.getReplyNum() + 1);
         }
         Result<CommentDO> updateRs = commentWrapper.update(commentDO);
-
-
-        return updateRs.hasValue();
+        if (!updateRs.hasValue()) {
+            log.error("[doUpdate] update error param:{},rs:{}", commentDO, updateRs);
+            return false;
+        }
+        return true;
     }
 }
