@@ -50,8 +50,9 @@ public class ReplyServiceImpl implements ReplyService {
 
         // 是否含有敏感词，
         // 这边只打个标,给前端返回含敏感词的评论内容时处理成*
-        if (SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
-                SensitiveWordFilter.minMatchTYpe)) {
+        boolean containtSensitiveWord = SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
+                SensitiveWordFilter.minMatchType);
+        if (containtSensitiveWord) {
             log.error("[create_reply] has sensitiveWord ,txt:{}", request.getContent());
             request.getReplyFlag().add(CommentFlag.HAS_SENSITIVE);
         }
@@ -72,6 +73,7 @@ public class ReplyServiceImpl implements ReplyService {
                 AfterReplyEvent
                         .builder()
                         .commentId(request.getCommentId())
+                        .hasSensitive(containtSensitiveWord)
                         .build());
         return insertRs.getValue();
     }

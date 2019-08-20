@@ -51,8 +51,11 @@ public class AfterReplyListener extends BaseAsync {
         CommentRequest commentRequest = new CommentRequest();
         commentRequest.setCommentId(commentId);
         commentRequest.setHistoryReply(replyDOListVO.getRows());
-        commentRequest.setIncrReplyNum(true);
 
+        // 含有敏感词的回复不写入评论有效回复数中
+        if (!event.isHasSensitive()) {
+            commentRequest.setIncrReplyNum(true);
+        }
         // 更新评论最近回复
         commentService.update(commentRequest);
     }

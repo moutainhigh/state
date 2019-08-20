@@ -14,7 +14,7 @@ import java.util.Set;
 public class SensitiveWordFilter {
 
     private static Map<String, String> sensitiveWord;
-    public static int minMatchTYpe = 1;      //最小匹配规则
+    public static int minMatchType = 1;      //最小匹配规则
     public static int maxMatchType = 2;      //最大匹配规则
 
     static {
@@ -124,7 +124,7 @@ public class SensitiveWordFilter {
                 matchFlag++;     //找到相应key，匹配标识+1
                 if ("1".equals(nowMap.get("isEnd"))) {       //如果为最后一个匹配规则,结束循环，返回匹配标识数
                     flag = true;       //结束标志位为true
-                    if (SensitiveWordFilter.minMatchTYpe == matchType) {    //最小规则，直接返回,最大规则还需继续查找
+                    if (SensitiveWordFilter.minMatchType == matchType) {    //最小规则，直接返回,最大规则还需继续查找
                         break;
                     }
                 }
