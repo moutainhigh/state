@@ -4,6 +4,7 @@ import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
+import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyDTO;
 import com.shinemo.score.client.reply.domain.ReplyParam;
@@ -64,5 +65,14 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
         dto.setContent(replyDO.getContent());
 
         return WebResult.success(dto);
+    }
+
+    @Override
+    public WebResult<Void> delete(ReplyRequest request) {
+
+
+        replyService.delete(request);
+
+        return WebResult.success();
     }
 }

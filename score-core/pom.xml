@@ -4,13 +4,13 @@
     <parent>
         <artifactId>score</artifactId>
         <groupId>com.shinemo.score</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.shinemo.score</groupId>
     <artifactId>score-core</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>score-core</name>
 
     <organization>

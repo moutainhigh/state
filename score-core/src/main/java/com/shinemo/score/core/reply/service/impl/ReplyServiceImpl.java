@@ -3,8 +3,11 @@ package com.shinemo.score.core.reply.service.impl;
 import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.common.StatusEnum;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentFlag;
+import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
@@ -104,5 +107,23 @@ public class ReplyServiceImpl implements ReplyService {
                     replaceSensitiveWord(replyDO.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE)
                     + "(含有敏感词)");
         }
+    }
+
+    @Override
+    public void delete(ReplyRequest delReq) {
+
+        Assert.notNull(delReq.getUid(), "uid not be null");
+        Assert.notNull(delReq.getReplyId(), "replyId not be null");
+
+        ReplyDO replyDO = getById(delReq.getReplyId());
+
+        // 判断是否是自己
+        Assert.isTrue(replyDO.getUid().equals(delReq.getUid()), "只能删除自己的评论");
+
+        // 更新为已删除状态
+        ReplyDO upDO = new ReplyDO();
+        upDO.setCommentId(delReq.getReplyId());
+        upDO.setStatus(StatusEnum.DELETE.getId());
+        replyWrapper.update(upDO);
     }
 }

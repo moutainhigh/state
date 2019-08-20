@@ -10,6 +10,7 @@ import com.shinemo.jce.common.config.JceHolder;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.comment.domain.CommentVO;
+import com.shinemo.score.client.comment.domain.SensitiveDTO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
@@ -182,5 +183,27 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             new CommentVO(comment, null, replys);
         }
         return WebResult.success(vo);
+    }
+
+    @Override
+    public WebResult<Void> delete(CommentRequest commentRequest) {
+
+        UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
+
+        logger.info("[delete_comment] commentRequest:{},token:{}", commentRequest, extend);
+
+        Assert.notNull(extend, "您尚未登录");
+        Assert.notNull(extend.getUid(), "uid not be empty");
+        Assert.notNull(commentRequest.getCommentId(), "commentId not be null");
+
+        commentRequest.setUid(commentRequest.getUid());
+        commentService.delete(commentRequest);
+
+        return WebResult.success();
+    }
+
+    @Override
+    public Result<SensitiveDTO> checkSensitive(String txt) {
+        return Result.success(new SensitiveDTO());
     }
 }

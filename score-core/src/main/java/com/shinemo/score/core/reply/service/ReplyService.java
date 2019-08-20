@@ -27,4 +27,6 @@ public interface ReplyService {
      * 返回结果 处理敏感词
      */
     void transferSensitiveWord(ReplyDO replyDO);
+
+    void delete(ReplyRequest replyRequest);
 }

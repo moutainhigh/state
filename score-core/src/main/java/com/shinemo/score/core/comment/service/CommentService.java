@@ -62,6 +62,10 @@ public interface CommentService {
      */
     void checkCommentOpen();
 
+    /**
+     * 删除评论
+     * 软删除
+     */
     void delete(CommentRequest delReq);
 
     /**

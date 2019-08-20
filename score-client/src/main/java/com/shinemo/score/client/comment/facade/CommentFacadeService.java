@@ -5,8 +5,10 @@ import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentVO;
+import com.shinemo.score.client.comment.domain.SensitiveDTO;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
+import com.shinemo.score.client.comment.query.CommentRequest;
 
 /**
  * @author wenchao.li
@@ -33,4 +35,8 @@ public interface CommentFacadeService {
     Result<CommentDO> submit(CommentParam param);
 
     WebResult<CommentVO> getDetail(CommentQuery query);
+
+    WebResult<Void> delete(CommentRequest request);
+
+    Result<SensitiveDTO> checkSensitive(String txt);
 }

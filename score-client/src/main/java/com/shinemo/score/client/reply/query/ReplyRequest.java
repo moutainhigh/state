@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class ReplyRequest extends BaseDO {
 
+    private Long replyId;
+
     /**
      * 主评论id
      */

@@ -3,6 +3,8 @@ package com.shinemo.score.core.async.listener;
 import com.google.common.eventbus.Subscribe;
 import com.shinemo.client.async.BaseAsync;
 import com.shinemo.client.common.ListVO;
+import com.shinemo.client.common.StatusEnum;
+import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
@@ -42,6 +44,8 @@ public class AfterReplyListener extends BaseAsync {
         query.setCurrentPage(1);
         query.putOrderBy("id", false);
         query.setOrderByEnable(true);
+        query.getReplyFlag().remove(CommentFlag.HAS_SENSITIVE);
+        query.setStatus(StatusEnum.NORMAL.getId());
         ListVO<ReplyDO> replyDOListVO = replyService.findByQuery(query);
 
         CommentRequest commentRequest = new CommentRequest();
