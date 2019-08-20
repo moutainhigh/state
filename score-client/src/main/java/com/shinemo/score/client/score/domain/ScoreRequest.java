@@ -20,5 +20,9 @@ public class ScoreRequest extends BaseDO {
 
     // 1.显示机型 2.不显示
     private Integer showDevice = 1;
+    // 完整机型
+    private String fullDevice;
+    // 真实ip,华为校验移动网络后返回的值
+    private String ip;
 
 }

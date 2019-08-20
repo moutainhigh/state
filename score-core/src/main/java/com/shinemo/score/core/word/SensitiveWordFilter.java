@@ -50,8 +50,8 @@ public class SensitiveWordFilter {
      * @param matchType 匹配规则&nbsp;1：最小匹配规则，2：最大匹配规则
      */
     public static Set<String> getSensitiveWord(String txt, int matchType) {
-        Set<String> sensitiveWordList = new HashSet<String>();
 
+        Set<String> sensitiveWordList = new HashSet<>();
         for (int i = 0; i < txt.length(); i++) {
             int length = checkSensitiveWord(txt, i, matchType);    //判断是否包含敏感字符
             if (length > 0) {    //存在,加入list中
@@ -69,11 +69,16 @@ public class SensitiveWordFilter {
      * @param replaceChar 替换字符，默认*
      */
     public static String replaceSensitiveWord(String txt, int matchType, String replaceChar) {
+
+        // 全部小写,并去除所有的符号
+        txt = txt.toLowerCase().replaceAll("[\\s*\\pP\\p{Punct}]", "");
+
         String resultTxt = txt;
+
         Set<String> set = getSensitiveWord(txt, matchType);     //获取所有的敏感词
         Iterator<String> iterator = set.iterator();
-        String word = null;
-        String replaceString = null;
+        String word;
+        String replaceString;
         while (iterator.hasNext()) {
             word = iterator.next();
             replaceString = getReplaceChars(replaceChar, word.length());
@@ -94,12 +99,12 @@ public class SensitiveWordFilter {
      * @version 1.0
      */
     private static String getReplaceChars(String replaceChar, int length) {
-        String resultReplace = replaceChar;
+        StringBuilder resultReplace = new StringBuilder(replaceChar);
         for (int i = 1; i < length; i++) {
-            resultReplace += replaceChar;
+            resultReplace.append(replaceChar);
         }
 
-        return resultReplace;
+        return resultReplace.toString();
     }
 
     /**
@@ -136,17 +141,17 @@ public class SensitiveWordFilter {
 
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.size());
-        String string = "哈哈习近平";
+        String string = "wow,,,,习,,,近 平 hah,，，，含有习近平";
         System.out.println(string.toLowerCase());
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());
-//        long beginTime = System.currentTimeMillis();
+        long beginTime = System.currentTimeMillis();
 ////		Set<String> set = filter.getSensitiveWord(string, 1);
-        System.out.println(SensitiveWordFilter.replaceSensitiveWord(string, 1, "*"));
-//        long endTime = System.currentTimeMillis();
+        System.out.println(SensitiveWordFilter.replaceSensitiveWord(string, 2, "*"));
+        long endTime = System.currentTimeMillis();
 //        System.out.println(result);
 ////		System.out.println("语句中包含敏感词的个数为：" + set.size() + "。包含：" + set);
-//        System.out.println("总共消耗时间为：" + (endTime - beginTime));
+        System.out.println("总共消耗时间为：" + (endTime - beginTime));
     }
 
 

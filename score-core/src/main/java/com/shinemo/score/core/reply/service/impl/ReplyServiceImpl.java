@@ -4,6 +4,7 @@ import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
@@ -28,6 +29,8 @@ import javax.annotation.Resource;
 @Slf4j
 public class ReplyServiceImpl implements ReplyService {
 
+    public static final String SENSITIVE_REPLACE = "*";
+
     @Resource
     private ReplyWrapper replyWrapper;
     @Resource
@@ -42,12 +45,19 @@ public class ReplyServiceImpl implements ReplyService {
         Assert.notNull(request.getUid(), "uid not be empty");
         Assert.notNull(request.getCommentId(), "commentId not be empty");
 
-        Assert.isTrue(!SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
-                SensitiveWordFilter.minMatchTYpe), "包含敏感词，请重新输入");
+        // 是否含有敏感词，
+        // 这边只打个标,给前端返回含敏感词的评论内容时处理成*
+        if (SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
+                SensitiveWordFilter.minMatchTYpe)) {
+            log.error("[create_reply] has sensitiveWord ,txt:{}", request.getContent());
+            request.getReplyFlag().add(CommentFlag.HAS_SENSITIVE);
+        }
 
         ReplyDO replyDO = new ReplyDO();
         BeanUtils.copyProperties(request, replyDO);
 
+        // 标位
+        replyDO.setFlag(replyDO.getReplyFlag().getValue());
         Result<ReplyDO> insertRs = replyWrapper.insert(replyDO);
         if (!insertRs.hasValue()) {
             log.error("[create_reply] has err:replyDO:{},rs:{}", replyDO, insertRs);
@@ -83,5 +93,15 @@ public class ReplyServiceImpl implements ReplyService {
             throw new BizException(listRs.getError());
         }
         return listRs.getValue();
+    }
+
+    @Override
+    public void transferSensitiveWord(ReplyDO replyDO) {
+        // 如果有敏感词
+        if (replyDO.hasSensitiveWord()) {
+            replyDO.setContent(SensitiveWordFilter.
+                    replaceSensitiveWord(replyDO.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE)
+                    + "(含有敏感词)");
+        }
     }
 }

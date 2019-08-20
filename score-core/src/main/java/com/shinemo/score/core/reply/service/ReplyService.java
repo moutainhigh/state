@@ -22,4 +22,9 @@ public interface ReplyService {
      * @return 查询回复列表
      */
     ListVO<ReplyDO> findByQuery(ReplyQuery query);
+
+    /**
+     * 返回结果 处理敏感词
+     */
+    void transferSensitiveWord(ReplyDO replyDO);
 }

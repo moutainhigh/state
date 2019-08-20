@@ -25,3 +25,9 @@ CREATE TABLE `comment`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='评论表';
+
+
+## 2期评论优化新增字段
+alter table `comment` add `full_device` varchar(256) DEFAULT  null comment '完整机型';
+alter table `comment` add `flag` bigint(20) DEFAULT  '0' comment '评论标位';
+alter table `comment` add `ip` varchar(60) DEFAULT  null comment 'ip地址';

@@ -20,6 +20,12 @@ public class CommentParam extends BaseDO {
     // 1.显示机型 2.不显示
     private Integer showDevice;
 
+    // 完整机型
+    private String fullDevice;
+
+    // 真实ip
+    private String ip;
+
     public boolean showDeviceType() {
         if (showDevice == null || showDevice == 2) {
             return false;

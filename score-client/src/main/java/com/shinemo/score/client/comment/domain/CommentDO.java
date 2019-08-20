@@ -2,6 +2,7 @@ package com.shinemo.score.client.comment.domain;
 
 import java.util.Date;
 
+import com.shinemo.client.common.FlagHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -85,4 +86,30 @@ public class CommentDO extends BaseDO {
      * 版本号
      */
     private Long version;
+    /**
+     * 完整机型
+     */
+    private String fullDevice;
+    /**
+     * 打标
+     *
+     * @see CommentFlag
+     */
+    private Long flag;
+
+    private FlagHelper commentFlag = FlagHelper.build();
+
+    private String ip;
+
+    /**
+     *
+     * @return 是否含有敏感词
+     */
+    public boolean hasSensitiveWord() {
+
+        if (flag == null) {
+            return false;
+        }
+        return FlagHelper.hasFlag(flag,CommentFlag.HAS_SENSITIVE);
+    }
 }

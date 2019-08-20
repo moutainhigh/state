@@ -65,7 +65,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
     public WebResult<ScoreDTO> submitScore(ScoreRequest request) {
 
         Assert.notNull(request, "request is null");
-        if((request.getScore() == null || request.getScore() == 0) && StringUtils.isBlank(request.getComment())){
+        if ((request.getScore() == null || request.getScore() == 0) && StringUtils.isBlank(request.getComment())) {
             log.error("[submitScore] score and comment is null");
             return WebResult.error(ScoreErrors.PARAM_ERROR);
         }
@@ -90,7 +90,9 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
         if (commentRs.hasValue()) {
             ScoreDTO result = new ScoreDTO();
-            result.setCommentId(commentRs.getValue().getId());
+            CommentDO commentDO = commentRs.getValue();
+            result.setCommentId(commentDO.getId());
+            result.setContent(commentDO.getContent());
             return WebResult.success(result);
         }
         return WebResult.success();
@@ -137,7 +139,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         Assert.notNull(request, "videoId is null");
         Assert.hasText(request.getVideoId(), "videoId is null");
         VideoDTO result = getByCache(request);
-        if(result != null){
+        if (result != null) {
             return WebResult.success(result);
         }
         VideoQuery query = new VideoQuery();
@@ -169,17 +171,17 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     private void setCache(VideoDTO dto) {
         try {
-            redisService.set(String.format(KEY,dto.getVideoId()),dto,3600);
+            redisService.set(String.format(KEY, dto.getVideoId()), dto, 3600);
         } catch (Exception e) {
-            log.error("[getVideoScore] setCache error",e);
+            log.error("[getVideoScore] setCache error", e);
         }
     }
 
     private VideoDTO getByCache(MyScoreRequest request) {
         try {
-            return redisService.get(String.format(KEY,request.getVideoId()),VideoDTO.class);
+            return redisService.get(String.format(KEY, request.getVideoId()), VideoDTO.class);
         } catch (Exception e) {
-            log.error("[getVideoScore] getCache error",e);
+            log.error("[getVideoScore] getCache error", e);
             return null;
         }
     }
@@ -202,6 +204,8 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         param.setVideoId(request.getVideoId());
         param.setVideoType(request.getFlag());
         param.setShowDevice(request.getShowDevice());
+        param.setFullDevice(request.getFullDevice());
+        param.setIp(request.getIp());
         return param;
     }
 }

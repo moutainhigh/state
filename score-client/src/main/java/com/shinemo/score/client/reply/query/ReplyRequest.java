@@ -1,6 +1,8 @@
 package com.shinemo.score.client.reply.query;
 
 import com.shinemo.client.common.BaseDO;
+import com.shinemo.client.common.FlagHelper;
+import com.shinemo.score.client.comment.domain.CommentFlag;
 import lombok.Data;
 
 /**
@@ -54,4 +56,18 @@ public class ReplyRequest extends BaseDO {
      * 扩展字段
      */
     private String extend;
+
+    private String ip;
+
+    /**
+     * 完整机型
+     */
+    private String fullDevice;
+    /**
+     * 打标
+     * @see CommentFlag
+     */
+    private Long flag;
+
+    private FlagHelper replyFlag = FlagHelper.build();
 }

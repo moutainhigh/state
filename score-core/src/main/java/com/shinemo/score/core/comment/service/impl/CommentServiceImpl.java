@@ -3,11 +3,13 @@ package com.shinemo.score.core.comment.service.impl;
 import com.shinemo.client.common.Errors;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.common.StatusEnum;
 import com.shinemo.client.exception.BizException;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.mgsuggest.client.domain.DistributeConfig;
 import com.shinemo.mgsuggest.client.facade.DistributeConfigFacadeService;
 import com.shinemo.score.client.comment.domain.CommentDO;
+import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.comment.domain.LikeTypeEnum;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
@@ -21,7 +23,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -32,6 +33,8 @@ import javax.annotation.Resource;
 @Slf4j
 @Service
 public class CommentServiceImpl implements CommentService {
+
+    public static final String SENSITIVE_REPLACE = "*";
 
     @Resource
     private CommentWrapper commentWrapper;
@@ -51,14 +54,19 @@ public class CommentServiceImpl implements CommentService {
         Assert.notNull(request.getVideoType(), "videoType not be empty");
         Assert.notNull(request.getUid(), "uid not be empty");
 
-        // 敏感词校验
-        Assert.isTrue(!SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
-                SensitiveWordFilter.minMatchTYpe), "包含敏感词，请重新输入");
 
+        // 是否含有敏感词，
+        // 这边只打个标,给前端返回含敏感词的评论内容时处理成*
+        if (SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
+                SensitiveWordFilter.minMatchTYpe)) {
+            log.error("[create_comment] has sensitiveWord ,txt:{}", request.getContent());
+            request.getCommentFlag().add(CommentFlag.HAS_SENSITIVE);
+        }
 
         CommentDO commentDO = new CommentDO();
         BeanUtils.copyProperties(request, commentDO);
-
+        // 标位
+        commentDO.setFlag(request.getCommentFlag().getValue());
         Result<CommentDO> insertRs = commentWrapper.insert(commentDO);
         if (!insertRs.hasValue()) {
             log.error("[create_comment] has err:commentDO:{},rs:{}", commentDO, insertRs);
@@ -139,6 +147,7 @@ public class CommentServiceImpl implements CommentService {
 
         query.setOrderByEnable(true);
         query.putOrderBy("id", false);
+        query.setStatus(StatusEnum.NORMAL.getId());
         Result<ListVO<Long>> idListRs = commentWrapper.findIds(query);
         if (!idListRs.hasValue()) {
             throw new BizException(idListRs.getError());
@@ -175,6 +184,34 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    @Override
+    public void delete(CommentRequest delReq) {
+
+        Assert.notNull(delReq.getUid(), "uid not be null");
+        Assert.notNull(delReq.getCommentId(), "commentId not be null");
+
+        CommentDO commentDO = getById(delReq.getCommentId());
+
+        // 判断是否是自己
+        Assert.isTrue(commentDO.getUid().equals(delReq.getUid()), "只能删除自己的评论");
+
+        // 更新为已删除状态
+        CommentRequest upReq = new CommentRequest();
+        upReq.setCommentId(delReq.getCommentId());
+        upReq.setStatus(StatusEnum.DELETE.getId());
+        update(upReq);
+    }
+
+    @Override
+    public void transferSensitiveWord(CommentDO commentDO) {
+        // 如果有敏感词
+        if (commentDO.hasSensitiveWord()) {
+            commentDO.setContent(SensitiveWordFilter.
+                    replaceSensitiveWord(commentDO.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE)
+                    + "(含有敏感词)");
+        }
+    }
+
     private boolean doUpdate(CommentRequest request) {
 
         CommentDO oldDO = getById(request.getCommentId());
@@ -197,6 +234,15 @@ public class CommentServiceImpl implements CommentService {
         if (request.isIncrReplyNum()) {
             commentDO.setReplyNum(oldDO.getReplyNum() + 1);
         }
+
+        if (request.getStatus() != null) {
+            commentDO.setStatus(request.getStatus());
+        }
+
+        if (request.getFlag() != null) {
+            commentDO.setFlag(request.getFlag());
+        }
+
         Result<CommentDO> updateRs = commentWrapper.update(commentDO);
         if (!updateRs.hasValue()) {
             log.error("[doUpdate] update error param:{},rs:{}", commentDO, updateRs);

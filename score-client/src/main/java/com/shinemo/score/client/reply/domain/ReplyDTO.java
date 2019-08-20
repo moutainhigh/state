@@ -10,4 +10,6 @@ import lombok.Data;
 public class ReplyDTO {
 
     private Long replyId;
+
+    private String content;
 }

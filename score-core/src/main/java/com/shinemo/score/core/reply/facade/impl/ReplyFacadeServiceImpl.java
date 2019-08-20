@@ -51,11 +51,17 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
         request.setName(extend.getUserName());
         request.setMobile(extend.getMobile());
         request.setCommentId(param.getCommentId());
+        request.setIp(param.getIp());
+        request.setFullDevice(param.getFullDevice());
 
         ReplyDO replyDO = replyService.create(request);
 
+        // 敏感词处理
+        replyService.transferSensitiveWord(replyDO);
+
         ReplyDTO dto = new ReplyDTO();
         dto.setReplyId(replyDO.getId());
+        dto.setContent(replyDO.getContent());
 
         return WebResult.success(dto);
     }

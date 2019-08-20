@@ -28,8 +28,9 @@ public class ReplyVO extends BaseDO {
 
     private String device;
 
+    private boolean isMine;
 
-    public ReplyVO(ReplyDO replyDO) {
+    public ReplyVO(ReplyDO replyDO, Long currentUid) {
         replyId = replyDO.getId();
         content = replyDO.getContent();
         gmtCreate = replyDO.getGmtCreate().getTime();
@@ -38,5 +39,6 @@ public class ReplyVO extends BaseDO {
         netType = replyDO.getNetType();
         device = replyDO.getDevice();
         mobile = RegularUtils.ignorePhone(replyDO.getMobile());
+        isMine = replyDO.getUid().equals(currentUid);
     }
 }

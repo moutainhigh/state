@@ -3,6 +3,7 @@ package com.shinemo.score.client.comment.domain;
 import com.shinemo.client.common.BaseDO;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.util.GsonUtil;
+import com.shinemo.power.client.util.SensitiveWordsUtil;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
 import com.shinemo.score.client.utils.RegularUtils;
@@ -46,17 +47,24 @@ public class CommentVO extends BaseDO {
     // 列表页给 List<ReplyVO>
     // 详情页给 ListVO<ReplyVO>，分页展示
     private Object reply;
-
+    // 是否属于自己
+    private boolean isMine;
 
     public CommentVO(CommentDO commentDO) {
-        this(commentDO, null);
+        this(commentDO, null, null);
+    }
+
+
+    public CommentVO(CommentDO commentDO, Long currentUid) {
+        this(commentDO, currentUid, null);
     }
 
     /**
      * @param listVO 不为null则为回复详情，分页展示
      */
-    public CommentVO(CommentDO commentDO, ListVO<ReplyDO> listVO) {
+    public CommentVO(CommentDO commentDO, Long currentUid, ListVO<ReplyDO> listVO) {
 
+        // 是否含有敏感词
         commentId = commentDO.getId();
         gmtCreate = commentDO.getGmtCreate().getTime();
         content = commentDO.getContent();
@@ -67,13 +75,14 @@ public class CommentVO extends BaseDO {
         device = commentDO.getDevice();
         likeNum = commentDO.getLikeNum();
         replyNum = commentDO.getReplyNum();
+        isMine = commentDO.getUid().equals(currentUid);  // 是否是自己的评论
 
         if (listVO != null) {
 
             List<ReplyDO> rows = listVO.getRows();
             List<ReplyVO> result = new ArrayList<>();
 
-            rows.forEach(v -> result.add(new ReplyVO(v)));
+            rows.forEach(v -> result.add(new ReplyVO(v, currentUid)));
             reply = ListVO.list(result, listVO.getTotalCount(), listVO.getCurrentPage(), listVO.getPageSize());
 
         } else {
@@ -81,7 +90,7 @@ public class CommentVO extends BaseDO {
             if (!StringUtils.isEmpty(commentDO.getHistoryReply())) {
                 List<ReplyDO> replys = GsonUtil.fromJsonToList(commentDO.getHistoryReply(), ReplyDO[].class);
                 replys.forEach(v -> {
-                    ReplyVO replyVO = new ReplyVO(v);
+                    ReplyVO replyVO = new ReplyVO(v, currentUid);
                     result.add(replyVO);
                 });
             }

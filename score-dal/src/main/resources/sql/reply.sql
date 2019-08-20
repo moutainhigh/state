@@ -18,3 +18,8 @@ CREATE TABLE `reply`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='回复表';
+
+
+alter table `reply` add `full_device` varchar(256) DEFAULT  null comment '完整机型';
+alter table `reply` add `flag` bigint(20) DEFAULT  '0' comment '评论标位';
+alter table `reply` add `ip` varchar(60) DEFAULT  null comment 'ip地址';

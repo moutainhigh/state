@@ -18,6 +18,10 @@ public class ReplyParam extends BaseDO {
 
     private Integer showDevice = 1;
 
+    private String fullDevice;
+
+    private String ip;
+
     public boolean showDeviceType() {
         if (showDevice == null || showDevice == 2) {
             return false;

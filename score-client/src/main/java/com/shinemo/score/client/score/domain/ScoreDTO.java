@@ -11,4 +11,6 @@ public class ScoreDTO {
 
     private Long commentId;
 
+    // 评论内容
+    private String content;
 }

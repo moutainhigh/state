@@ -14,7 +14,6 @@ import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
-import com.shinemo.score.client.score.domain.ScoreRequest;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
 import com.shinemo.score.core.reply.service.ReplyService;
@@ -78,9 +77,16 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         for (Long commentId : idsRs.getRows()) {
 
             CommentDO comment = commentService.getById(commentId);
-            CommentVO commentVO = new CommentVO(comment);
+
+            // 敏感词转换
+            commentService.transferSensitiveWord(comment);
+
+            CommentVO commentVO;
             if (extend != null && extend.getUid() != null) {
+                commentVO = new CommentVO(comment, extend.getUid());
                 commentVO.setLike(likeService.isLike(commentId, extend.getUid()));
+            } else {
+                commentVO = new CommentVO(comment);
             }
             list.add(commentVO);
         }
@@ -118,10 +124,16 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             request.setDevice(extend.getDeviceModel());
         }
         request.setVideoId(param.getVideoId());
+        request.setFullDevice(param.getFullDevice());
         request.setName(extend.getUserName());
         request.setUid(extend.getUid());
         request.setMobile(extend.getMobile());
+        request.setIp(param.getIp());
+
         CommentDO commentDO = commentService.create(request);
+
+        // 敏感词处理一下
+        commentService.transferSensitiveWord(commentDO);
 
         return Result.success(commentDO);
     }
@@ -138,6 +150,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
         CommentDO comment = commentService.getById(query.getCommentId());
 
+        // 评论敏感词转换
+        commentService.transferSensitiveWord(comment);
+
         ReplyQuery replyQuery = new ReplyQuery();
         replyQuery.setCommentId(query.getCommentId());
         replyQuery.setPageSize(query.getPageSize());
@@ -145,21 +160,17 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         replyQuery.setOrderByEnable(true);
         replyQuery.putOrderBy("id", false);
         ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
-        CommentVO vo = new CommentVO(comment, replys);
+
+        // 回复敏感词转换
+        replys.getRows().forEach(v -> replyService.transferSensitiveWord(v));
+
+        CommentVO vo = null;
         if (extend != null && extend.getUid() != null) {
+            vo = new CommentVO(comment, extend.getUid(), replys);
             vo.setLike(likeService.isLike(query.getCommentId(), extend.getUid()));
+        } else {
+            new CommentVO(comment, null, replys);
         }
         return WebResult.success(vo);
-    }
-
-    public static void main(String args[]) {
-        ScoreRequest request = new ScoreRequest();
-        request.setVideoId("abc");
-        request.setFlag(1);
-        request.setVideoName("战狼");
-        request.setComment("我觉得还不错");
-        request.setScore(6);
-        request.setNetType("wifi");
-        System.out.println(GsonUtil.toJson(request));
     }
 }

@@ -61,4 +61,11 @@ public interface CommentService {
      * throw 评论关闭，则code 100007
      */
     void checkCommentOpen();
+
+    void delete(CommentRequest delReq);
+
+    /**
+     *  返回结果 处理敏感词
+     */
+    void transferSensitiveWord(CommentDO commentDO);
 }
