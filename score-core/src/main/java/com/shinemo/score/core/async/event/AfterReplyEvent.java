@@ -14,4 +14,6 @@ public class AfterReplyEvent {
      */
     private boolean hasSensitive;
 
+    private boolean del;
+
 }

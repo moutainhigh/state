@@ -93,6 +93,13 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (upSucc) {
+
+            // 删除则缓存直接删除，不进行refresh
+            if (request.getStatus() == StatusEnum.DELETE.getId()) {
+                commentCache.remove(request.getCommentId());
+                return;
+            }
+
             // 更新成功refresh缓存
             commentCache.refresh(request.getCommentId());
         } else {
@@ -237,6 +244,10 @@ public class CommentServiceImpl implements CommentService {
 
         if (request.isIncrReplyNum()) {
             commentDO.setReplyNum(oldDO.getReplyNum() + 1);
+        }
+
+        if (request.isSubReplyNum()) {
+            commentDO.setReplyNum(oldDO.getReplyNum() - 1);
         }
 
         if (request.getStatus() != null) {

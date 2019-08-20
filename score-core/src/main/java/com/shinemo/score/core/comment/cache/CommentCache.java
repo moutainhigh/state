@@ -51,7 +51,7 @@ public class CommentCache {
     }
 
     // 清除key
-    private void remove(Long key) {
+    public void remove(Long key) {
         redisService.del(keyFormat(key));
     }
 

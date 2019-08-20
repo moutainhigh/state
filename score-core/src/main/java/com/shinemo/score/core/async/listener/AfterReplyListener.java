@@ -56,6 +56,11 @@ public class AfterReplyListener extends BaseAsync {
         if (!event.isHasSensitive()) {
             commentRequest.setIncrReplyNum(true);
         }
+        // 如果是删除，并且不是含有敏感词的，有效回复数减1
+        if (event.isDel() && !event.isHasSensitive()) {
+            commentRequest.setSubReplyNum(true);
+        }
+
         // 更新评论最近回复
         commentService.update(commentRequest);
     }

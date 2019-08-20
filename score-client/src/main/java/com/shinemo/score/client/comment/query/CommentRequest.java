@@ -84,6 +84,10 @@ public class CommentRequest extends BaseDO {
      * 回复数量递增
      */
     private boolean incrReplyNum;
+    /**
+     * 回复数量递增
+     */
+    private boolean subReplyNum;
 
     /**
      * 完整机型

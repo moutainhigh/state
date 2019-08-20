@@ -127,5 +127,14 @@ public class ReplyServiceImpl implements ReplyService {
         upDO.setCommentId(delReq.getReplyId());
         upDO.setStatus(StatusEnum.DELETE.getId());
         replyWrapper.update(upDO);
+
+        // 异步更新评论
+        internalEventBus.post(
+                AfterReplyEvent
+                        .builder()
+                        .commentId(replyDO.getCommentId())
+                        .hasSensitive(replyDO.hasSensitiveWord())
+                        .del(true)
+                        .build());
     }
 }
