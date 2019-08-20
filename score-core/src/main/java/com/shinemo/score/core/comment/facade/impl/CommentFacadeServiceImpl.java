@@ -168,6 +168,10 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         replyQuery.setStatus(StatusEnum.NORMAL.getId());
         // 只看没有敏感词的
         replyQuery.getReplyFlag().remove(CommentFlag.HAS_SENSITIVE);
+
+        if (extend != null) {
+            replyQuery.setSensitiveUid(extend.getUid());
+        }
         // 自己的敏感词评论可以看
         replyQuery.setIgnoreOtherSensitive(true);
         ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
