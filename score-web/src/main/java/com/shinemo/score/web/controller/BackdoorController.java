@@ -6,6 +6,8 @@ import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.score.facade.CalculationFacadeService;
 import com.shinemo.score.core.comment.cache.CommentCache;
 import com.shinemo.score.core.score.service.InnerService;
+import com.shinemo.score.core.task.CalculationScoreDayTask;
+import com.shinemo.score.core.task.CalculationScoreHourTask;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,12 @@ public class BackdoorController {
 
     private static final Executor poolExecutor = Executors.newFixedThreadPool(2);
 
+    @Resource
+    private CalculationScoreDayTask calculationScoreDayTask;
+
+    @Resource
+    private CalculationScoreHourTask calculationScoreHourTask;
+
     /**
      * 刷新评论缓存
      *
@@ -56,6 +64,21 @@ public class BackdoorController {
             for (String v : splits) {
                 commentCache.refresh(Long.valueOf(v));
             }
+        }
+        return "success";
+    }
+
+    @GetMapping("/calculatTest")
+    public String calculatTest(HttpServletRequest request, Long id) {
+
+        String ip = request.getRemoteAddr();
+        if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
+            return "error";
+        }
+        if(id==1){
+            calculationScoreDayTask.execute();
+        }else{
+            calculationScoreHourTask.execute();
         }
         return "success";
     }
