@@ -56,7 +56,7 @@
                         and gmt_modified &gt;= #{startModifyTime}
                     </if>
                     <if test="endModifyTime!=null">
-                        and gmt_modified &lt; #{startModifyTime}
+                        and gmt_modified &lt; #{endModifyTime}
                     </if>
                 </otherwise>
             </choose>
