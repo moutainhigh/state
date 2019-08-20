@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinemo.score.dal.score.mapper.ChangeTmpMapper">
+
+	<!-- 结果集对应关系 -->
+	<resultMap id="result" type="com.shinemo.score.client.score.domain.ChangeTmp" >
+		<id column="id" property="id"/>
+		<result property="videoId" column="video_id"/>
+		<result property="thirdVideoId" column="third_video_id"/>
+		<result property="name" column="name"/>
+	</resultMap>
+
+	<!-- 数据库字段 -->
+	<sql id="columns">
+		id, video_id, third_video_id, name
+	</sql>
+
+    <sql id="table">
+        change_tmp
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="conditions">
+        <where>
+            <choose>
+                <when test="id != null">and id = #{id}</when>
+                <otherwise>
+					<if test="videoId != null">and video_id = #{videoId}</if>
+					<if test="thirdVideoId != null">and third_video_id = #{thirdVideoId}</if>
+					<if test="name != null">and name = #{name}</if>
+                </otherwise>
+            </choose>
+        </where>
+    </sql>
+
+
+	<!-- 查询结果集 -->
+    <select id="find" resultMap="result"
+            parameterType="com.shinemo.score.client.score.query.ChangeQuery">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <include refid="conditions"/>
+        <if test="orderByEnable and orderByList != null and orderByList.size() > 0">
+            order by
+            <foreach collection="orderByList" item="orderBy" separator=",">
+                ${orderBy.column} ${orderBy.sort}
+            </foreach>
+        </if>
+        <if test="pageEnable">
+            limit #{startRow}, #{pageSize}
+        </if>
+    </select>
+
+	<!-- 查询某条记录 -->
+    <select id="get" resultMap="result" parameterType="com.shinemo.score.client.score.query.ChangeQuery">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <include refid="conditions"/>
+        limit 1
+    </select>
+
+	<!-- 统计查询结果数量 -->
+    <select id="count" resultType="long" parameterType="com.shinemo.score.client.score.query.ChangeQuery">
+        select count(*) from
+        <include refid="table"/>
+        <include refid="conditions"/>
+    </select>
+
+	<!-- 删除 -->
+    <delete id="delete" parameterType="com.shinemo.score.client.score.query.ChangeQuery">
+        delete from
+        <include refid="table"/>
+        where id = #{id}
+    </delete>
+
+	<!-- 插入 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.shinemo.score.client.score.domain.ChangeTmp">
+        insert into
+        <include refid="table"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test="id != null">
+						id,
+					</if>
+                    <if test="videoId != null">
+						video_id,
+					</if>
+                    <if test="thirdVideoId != null">
+						third_video_id,
+					</if>
+                    <if test="name != null">
+						name,
+					</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test="id != null">
+						#{id, jdbcType=BIGINT},
+                    </if>
+                    <if test="videoId != null">
+						#{videoId, jdbcType=VARCHAR},
+                    </if>
+                    <if test="thirdVideoId != null">
+						#{thirdVideoId, jdbcType=VARCHAR},
+                    </if>
+                    <if test="name != null">
+						#{name, jdbcType=VARCHAR},
+                    </if>
+        </trim>
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.shinemo.score.client.score.domain.ChangeTmp">
+        UPDATE change_tmp
+        <set>
+            <if test="videoId != null">
+                video_id = #{videoId, jdbcType=VARCHAR},
+            </if>
+            <if test="thirdVideoId != null">
+                third_video_id = #{thirdVideoId, jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name, jdbcType=VARCHAR}
+            </if>
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+</mapper>
