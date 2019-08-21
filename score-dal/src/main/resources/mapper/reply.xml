@@ -40,29 +40,49 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-                    <if test="status != null">and status = #{status}</if>
-                    <if test="commentId != null">and comment_id = #{commentId}</if>
-                    <if test="uid != null">and uid = #{uid}</if>
-                    <if test="mobile != null">and mobile = #{mobile}</if>
-                    <if test="name != null">and name = #{name}</if>
-                    <if test="device != null">and device = #{device}</if>
-                    <if test="netType != null">and net_type = #{netType}</if>
 
                     <choose>
-                        <when test="flag!=null">
-                            and flag = #{flag}
+                        <when test="containMySensitive and sensitiveUid !=null">
+                            <if test="status != null">and status = #{status}</if>
+                            <if test="commentId != null">and comment_id = #{commentId}</if>
+                            <if test="uid != null">and uid = #{uid}</if>
+                            <if test="mobile != null">and mobile = #{mobile}</if>
+                            <if test="name != null">and name = #{name}</if>
+                            <if test="device != null">and device = #{device}</if>
+                            <if test="netType != null">and net_type = #{netType}</if>
+                            <choose>
+                                <when test="flag!=null">
+                                    and flag = #{flag}
+                                </when>
+                                <otherwise>
+                                    <if test="replyFlag != null and replyFlag.mask > 0 and replyFlag.value != null">
+                                        <![CDATA[ and (flag & #{replyFlag.mask, jdbcType=BIGINT}) = #{replyFlag.value, jdbcType=BIGINT} ]]>
+                                    </if>
+                                </otherwise>
+                            </choose>
+                            or (uid = #{sensitiveUid} and flag &amp; 1 = 1)
                         </when>
                         <otherwise>
-                            <if test="replyFlag != null and replyFlag.mask > 0 and replyFlag.value != null">
-                                <![CDATA[ and (flag & #{replyFlag.mask, jdbcType=BIGINT}) = #{replyFlag.value, jdbcType=BIGINT} ]]>
-                            </if>
+                            <if test="status != null">and status = #{status}</if>
+                            <if test="commentId != null">and comment_id = #{commentId}</if>
+                            <if test="uid != null">and uid = #{uid}</if>
+                            <if test="mobile != null">and mobile = #{mobile}</if>
+                            <if test="name != null">and name = #{name}</if>
+                            <if test="device != null">and device = #{device}</if>
+                            <if test="netType != null">and net_type = #{netType}</if>
+                            <choose>
+                                <when test="flag!=null">
+                                    and flag = #{flag}
+                                </when>
+                                <otherwise>
+                                    <if test="replyFlag != null and replyFlag.mask > 0 and replyFlag.value != null">
+                                        <![CDATA[ and (flag & #{replyFlag.mask, jdbcType=BIGINT}) = #{replyFlag.value, jdbcType=BIGINT} ]]>
+                                    </if>
+                                </otherwise>
+                            </choose>
+
                         </otherwise>
                     </choose>
-
-                    <if test="containMySensitive and sensitiveUid !=null">
-                        or (uid = #{sensitiveUid} and flag &amp; 1 = 1)
-                    </if>
-
                 </otherwise>
             </choose>
         </where>
