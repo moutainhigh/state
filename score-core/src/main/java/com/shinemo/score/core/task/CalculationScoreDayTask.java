@@ -41,7 +41,7 @@ public class CalculationScoreDayTask {
         }
         Date start = DateUtil.getFutureDate(DateUtil.getDayFirstTime(new Date()),-1);
         Date end = DateUtil.getFutureDate(DateUtil.getDayLastTime(new Date()),-1);
-        Result<Void> rs =  calculationFacadeService.calculationByTime(start,end, CalculationEnum.all,null,null);
+        Result<Void> rs =  calculationFacadeService.calculationByTime(start,end, CalculationEnum.all);
         if(!rs.isSuccess()){
             log.error("[calculationByTime] error result:{}",rs);
         }

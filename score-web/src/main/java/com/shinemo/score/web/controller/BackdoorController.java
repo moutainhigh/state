@@ -93,7 +93,7 @@ public class BackdoorController {
         if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
             return "error";
         }
-        Result<Void>  rs = calculationFacadeService.calculationByTime(null,null, CalculationEnum.all,id,null);
+        Result<Void>  rs = calculationFacadeService.calculationByThirdId(id,null);
         if(!rs.isSuccess()){
             log.error("[calculationByTime] error:{}",rs);
         }

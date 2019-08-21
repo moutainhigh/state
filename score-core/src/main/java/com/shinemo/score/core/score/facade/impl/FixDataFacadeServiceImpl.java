@@ -5,6 +5,7 @@ import com.shinemo.client.util.DateUtil;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.muic.client.token.facade.TokenFacadeService;
 import com.shinemo.muic.client.user.domain.UserBaseInfoDO;
+import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.score.domain.ScoreDO;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -70,8 +72,11 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     @Resource
     private CalculationFacadeService calculationFacadeService;
 
+    @Resource
+    private RedisService redisService;
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(30);
+
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
 
     @PostConstruct
     public void init(){
@@ -79,7 +84,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         videoDOMap = new HashMap<>(20000);
         userNumMap = new ConcurrentHashMap<>(800000);
     }
-
 
 
     @Override
@@ -171,13 +175,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         query.setPageEnable(false);
         List<VideoTmp> list = videoTmpMapper.find(query);
         int size = list.size();
-        if (size % 500 == 0) {
-            count = size / 500;
+        if (size % 300 == 0) {
+            count = size / 300;
         } else {
-            count =  size / 500 +1; ;
+            count =  size / 300 +1; ;
         }
         for (int i = 0; i < count; i++) {
-            List<VideoTmp> subList = list.subList(i * 500, ((i + 1) * 500 > size ? size : 500 * (i + 1)));
+            List<VideoTmp> subList = list.subList(i * 300, ((i + 1) * 300 > size ? size : 300 * (i + 1)));
             int j = i;
             poolExecutor.execute(()->{
                 subRun(subList,j);
@@ -190,9 +194,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoQuery query = new VideoQuery();
         ScoreQuery tmpQuery = new ScoreQuery();
         for(UserTmp iter:userList){
-
-
-
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
             VideoDO videoDO = videoDOMap.get(tmp.getXmVideoId());
@@ -244,23 +245,69 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         return true;
     }
 
+    private void subOnine(List<ScoreDO> list,String videoId){
+
+        VideoQuery videoquery = new VideoQuery();
+        videoquery.setVideoId(videoId);
+        VideoDO newVideoDO = videoMapper.get(videoquery);
+        if(newVideoDO ==null){
+            newVideoDO = new VideoDO();
+            newVideoDO.setStatus(DeleteStatusEnum.NORMAL.getId());;
+            newVideoDO.setVersion(1L);
+            newVideoDO.setVideoId(videoId);
+            newVideoDO.addVideoFlag(VideoFlag.GRADE);
+            newVideoDO.setInitScore(7000L);
+            newVideoDO.setInitWeight(1000L);
+            newVideoDO.setWeight(newVideoDO.getInitWeight());
+            newVideoDO.setScore(newVideoDO.getInitScore());
+            newVideoDO.setYesterdayScore(newVideoDO.getInitScore());
+            newVideoDO.setYesterdayWeight(newVideoDO.getInitWeight());
+            videoMapper.insert(newVideoDO);
+        }
+        Long id = newVideoDO.getId();
+        long count = 0;
+        int size = list.size();
+        if (size % 300 == 0) {
+            count = size / 300;
+        } else {
+            count =  size / 300 +1; ;
+        }
+        for (int i = 0; i < count; i++) {
+            List<ScoreDO> subList = list.subList(i * 300, ((i + 1) * 300 > size ? size : 300 * (i + 1)));
+            poolExecutor.execute(()->{
+                subAndSubRun(subList,id);
+            });
+        }
+    }
+
+
+    private void subAndSubRun(List<ScoreDO> list,Long videoId){
+        ScoreQuery tempQuery = new ScoreQuery();
+        for(ScoreDO iter:list){
+            tempQuery.setUid(iter.getUid());
+            ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(tempQuery);
+            if(scoreDO!=null){
+                iter.setNum(scoreDO.getNum()+1);
+            }else{
+                iter.setNum(1L);
+            }
+            iter.setVideoId(videoId);
+            scoreTempMapper.insert(iter);
+        }
+    }
+
     @Override
     public Result<Void> addOnlineScore(Long minId){
         ScoreQuery query = new ScoreQuery();
         query.setPageEnable(false);
         query.setMinId(minId);
         List<ScoreDO> list = scoreMapper.find(query);
-        ScoreQuery tempQuery = new ScoreQuery();
-        for(ScoreDO iter:list){
-            tempQuery.setUid(iter.getUid());
-            ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(tempQuery);
-            if(scoreDO!=null){
-                iter.setNum(scoreDO.getNum());
-            }else{
-                iter.setNum(1L);
-            }
-            scoreTempMapper.insert(iter);
-        }
+        Map<String,List<ScoreDO>> vMap = list.stream().collect(Collectors.groupingBy(ScoreDO::getThirdVideoId));
+        vMap.forEach((K,V)-> {
+            poolExecutor.execute(()->{
+                subOnine(V,K);
+            });
+        });
         return Result.success();
     }
 
@@ -269,15 +316,33 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoTmpQuery query = new VideoTmpQuery();
         query.setPageEnable(false);
         List<VideoTmp> rs = videoTmpMapper.find(query);
-        for(VideoTmp iter:rs){
-            Result<Void> ret = calculationFacadeService.calculationByTime(null,null,
-                    CalculationEnum.all,null,iter.getXmVideoId());
-            if(!ret.isSuccess()){
-                log.error("[calculateScore] error videoId:{}",iter.getXmVideoId());
-            }
+        long count = 0;
+        int size = rs.size();
+        if (size % 500 == 0) {
+            count = size / 500;
+        } else {
+            count =  size / 500 +1; ;
+        }
+        for (int i = 0; i < count; i++) {
+            List<VideoTmp> subList = rs.subList(i * 500, ((i + 1) * 500 > size ? size : 500 * (i + 1)));
+            int j = i;
+            poolExecutor.execute(()->{
+                subCalculate(subList,j);
+            });
         }
         return Result.success();
     }
 
-
+    private void subCalculate(List<VideoTmp> list,int j){
+        long start = System.currentTimeMillis();
+        log.info("[subCalculate] page:{} start:{}",j,start);
+        for(VideoTmp iter:list){
+            Result<Void> ret = calculationFacadeService.calculationByThirdId(null,iter.getXmVideoId());
+            if(!ret.isSuccess()){
+                log.error("[calculateScore] error videoId:{}",iter.getXmVideoId());
+            }
+        }
+        long end = System.currentTimeMillis();
+        log.info("[subCalculate] finish page:{} start:{} end:{} cost:{}",j,start,end,end-start);
+    }
 }
