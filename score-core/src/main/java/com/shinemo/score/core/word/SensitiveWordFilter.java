@@ -138,7 +138,6 @@ public class SensitiveWordFilter {
         return matchFlag;
     }
 
-
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.size());
         String string = "wow,,,,习,,,近 平 hah,，，，含有习近平";

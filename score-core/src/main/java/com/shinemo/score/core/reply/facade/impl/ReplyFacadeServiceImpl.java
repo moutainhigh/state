@@ -7,6 +7,7 @@ import com.shinemo.jce.common.config.JceHolder;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyDTO;
+import com.shinemo.score.client.reply.domain.ReplyExtend;
 import com.shinemo.score.client.reply.domain.ReplyParam;
 import com.shinemo.score.client.reply.facade.ReplyFacadeService;
 import com.shinemo.score.client.reply.query.ReplyRequest;
@@ -59,8 +60,13 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
 
         ReplyDTO dto = new ReplyDTO();
         dto.setReplyId(replyDO.getId());
-        dto.setContent(replyDO.getContent());
 
+        if (replyDO.hasSensitiveWord()) {
+            ReplyExtend replyExtend = GsonUtil.fromGson2Obj(replyDO.getExtend(), ReplyExtend.class);
+            dto.setContent(replyExtend.getSensitiveContent() + "(含有敏感词)");
+        } else {
+            dto.setContent(replyDO.getContent());
+        }
         return WebResult.success(dto);
     }
 

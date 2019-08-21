@@ -5,14 +5,17 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CommentDO;
+import com.shinemo.score.client.comment.domain.CommentExtend;
 import com.shinemo.score.client.comment.domain.CommentVO;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.error.ScoreErrors;
+import com.shinemo.score.client.reply.domain.ReplyExtend;
 import com.shinemo.score.client.score.domain.*;
 import com.shinemo.score.client.score.facade.ScoreFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
@@ -92,7 +95,15 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             ScoreDTO result = new ScoreDTO();
             CommentDO commentDO = commentRs.getValue();
             result.setCommentId(commentDO.getId());
-            result.setContent(commentDO.getContent());
+
+            // 含有敏感词则返回处理后的内容
+            if (commentDO.hasSensitiveWord()) {
+                CommentExtend replyExtend = GsonUtil.fromGson2Obj(commentDO.getExtend(), CommentExtend.class);
+                result.setContent(replyExtend.getSensitiveContent() + "(含有敏感词)");
+            } else {
+                result.setContent(commentDO.getContent());
+            }
+
             return WebResult.success(result);
         }
         return WebResult.success();
