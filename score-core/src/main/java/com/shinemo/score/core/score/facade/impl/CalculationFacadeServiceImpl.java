@@ -43,7 +43,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         query.setStartModifyTime(startTime);
         query.setEndModifyTime(endTime);
         query.setPageEnable(false);
-        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
+        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);//全量找到昨日所有电影分组取电影id,增量直接根据这次结果计算
         if(!rs.hasValue() ){
             log.error("[calculationByHours]  findScores result:{}",rs);
             return Result.error(rs.getError());
@@ -54,7 +54,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         }
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         Map<Long,ScoreCountDO> countMap = new HashMap<>();
-        if(CalculationEnum.all == calculationEnum){//全量更新
+        if(CalculationEnum.all == calculationEnum){//全量更新 TODO 如果id数组非常大 是否多线程处理更好
             ScoreQuery countQuery = new ScoreQuery();
             List<Long> ids = new ArrayList<>(map.keySet());
             countQuery.setPageEnable(false);
