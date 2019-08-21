@@ -4,10 +4,12 @@ import com.shinemo.client.common.Result;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.muic.client.token.facade.TokenFacadeService;
 import com.shinemo.muic.client.user.domain.UserBaseInfoDO;
+import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.UserTmp;
 import com.shinemo.score.client.score.domain.VideoTmp;
+import com.shinemo.score.client.score.facade.CalculationFacadeService;
 import com.shinemo.score.client.score.facade.FixDataFacadeService;
 import com.shinemo.score.client.score.query.ScoreQuery;
 import com.shinemo.score.client.score.query.UserTmpQuery;
@@ -60,6 +62,9 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private Map<String,VideoDO> videoDOMap;
 
     private Map<Long,Long> userNumMap;
+
+    @Resource
+    private CalculationFacadeService calculationFacadeService;
 
 
 
@@ -226,8 +231,18 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     @Override
-    public Result<Void> calculateScore() {
-        return null;
+    public Result<Void> calculateScore(){
+        VideoTmpQuery query = new VideoTmpQuery();
+        query.setPageEnable(false);
+        List<VideoTmp> rs = videoTmpMapper.find(query);
+        for(VideoTmp iter:rs){
+            Result<Void> ret = calculationFacadeService.calculationByTime(null,null,
+                    CalculationEnum.all,null,iter.getXmVideoId());
+            if(!ret.isSuccess()){
+                log.error("[calculateScore] error videoId:{}",iter.getXmVideoId());
+            }
+        }
+        return Result.success();
     }
 
 
