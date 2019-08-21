@@ -5,6 +5,7 @@ import com.shinemo.client.util.DateUtil;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.muic.client.token.facade.TokenFacadeService;
 import com.shinemo.muic.client.user.domain.UserBaseInfoDO;
+import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.score.domain.ScoreDO;
@@ -71,8 +72,12 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     @Resource
     private CalculationFacadeService calculationFacadeService;
 
+    @Resource
+    private RedisService redisService;
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(100);
+
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
+
 
     @PostConstruct
     public void init(){
@@ -80,7 +85,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         videoDOMap = new HashMap<>(20000);
         userNumMap = new ConcurrentHashMap<>(800000);
     }
-
 
 
     @Override
@@ -172,13 +176,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         query.setPageEnable(false);
         List<VideoTmp> list = videoTmpMapper.find(query);
         int size = list.size();
-        if (size % 500 == 0) {
-            count = size / 500;
+        if (size % 300 == 0) {
+            count = size / 300;
         } else {
-            count =  size / 500 +1; ;
+            count =  size / 300 +1; ;
         }
         for (int i = 0; i < count; i++) {
-            List<VideoTmp> subList = list.subList(i * 500, ((i + 1) * 500 > size ? size : 500 * (i + 1)));
+            List<VideoTmp> subList = list.subList(i * 300, ((i + 1) * 300 > size ? size : 300 * (i + 1)));
             int j = i;
             poolExecutor.execute(()->{
                 subRun(subList,j);
