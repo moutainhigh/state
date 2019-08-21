@@ -15,5 +15,7 @@ public interface ScoreTempMapper extends Mapper<ScoreQuery, ScoreDO> {
 
     ScoreDO getScoreByMaxNum(ScoreQuery query);
 
+    List<Long> findUid(ScoreQuery query);
+
 
 }

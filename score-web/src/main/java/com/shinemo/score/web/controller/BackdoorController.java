@@ -108,7 +108,7 @@ public class BackdoorController {
             return "error";
         }
         try {
-            innerService.fixScoreNum();
+            fixDataFacadeService.fixScoreNum();
         } catch (Exception e) {
             log.error("[fixNum] error",e);
             return "false";
