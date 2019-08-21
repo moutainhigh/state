@@ -51,7 +51,7 @@ public class ReplyVO extends BaseDO {
 
         if (hasSensitive && StringUtils.isNotBlank(replyDO.getExtend())) {
             ReplyExtend replyExtend = GsonUtil.fromGson2Obj(replyDO.getExtend(), ReplyExtend.class);
-            content = replyExtend.getSensitiveContent();
+            content = replyExtend.getSensitiveContent() + "(含有敏感词)";
         } else {
             content = replyDO.getContent();
         }
