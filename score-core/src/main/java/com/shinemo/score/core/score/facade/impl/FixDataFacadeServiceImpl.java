@@ -6,15 +6,18 @@ import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.score.domain.UserTmp;
 import com.shinemo.score.client.score.domain.VideoTmp;
 import com.shinemo.score.client.score.facade.FixDataFacadeService;
+import com.shinemo.score.client.score.query.UserTmpQuery;
 import com.shinemo.score.client.score.query.VideoTmpQuery;
 import com.shinemo.score.client.video.domain.VideoDO;
 import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
+import com.shinemo.score.dal.score.mapper.UserTmpMapper;
 import com.shinemo.score.dal.score.mapper.VideoTmpMapper;
 import com.shinemo.score.dal.video.mapper.VideoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,7 +31,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private VideoTmpMapper videoTmpMapper;
 
     @Resource
-    private UserTmp userTmp;
+    private UserTmpMapper userTmpMapper;
 
     @Resource
     private VideoMapper videoMapper;
@@ -38,6 +41,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         long start = System.currentTimeMillis();
         log.info("[fixVideoFinish] start:{}",start);
         VideoTmpQuery query = new VideoTmpQuery();
+        query.setPageEnable(false);
         List<VideoTmp> rs = videoTmpMapper.find(query);
         long count = 0;
         for(VideoTmp iter:rs){
@@ -91,8 +95,33 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     @Override
-    public Result<Void> initScore() {
-        return null;
+    public Result<Void> initScore(){
+        long start = System.currentTimeMillis();
+        long count = 0;
+        log.info("[initScore] start:{}",start);
+        VideoTmpQuery query = new VideoTmpQuery();
+        query.setPageEnable(false);
+        List<VideoTmp> list = videoTmpMapper.find(query);
+        UserTmpQuery userTemQuery = new UserTmpQuery();
+        userTemQuery.setPageEnable(false);
+        for(VideoTmp iter:list){
+            userTemQuery.setVideoId(iter.getVideoId());
+            List<UserTmp> userList = userTmpMapper.find(userTemQuery);
+            if(CollectionUtils.isEmpty(userList)){
+                continue;
+            }
+            if(!insert(userList,iter)){
+                log.error("[initScore] batchInsert error videoId:{}",iter.getXmVideoId());
+                count++;
+            }
+        }
+        long end = System.currentTimeMillis();
+        log.info("[initScore] finish errorCount:{} start:{},finish:{},cost:{}",count,start,end,end-start);
+        return Result.success();
+    }
+
+    private boolean insert(List<UserTmp> userList, VideoTmp iter) {
+        return true;
     }
 
     @Override
