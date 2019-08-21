@@ -60,6 +60,8 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             if(StringUtils.isBlank(iter.getVideoName())){
                 video.setVideoName(iter.getVideoName());
             }
+            video.setYesterdayScore(video.getScore());
+            video.setYesterdayWeight(video.getWeight());
             int rs = videoMapper.update(video);
             if(rs<1){
                 log.error("[insertOrUpdateVideo] updateError iter:{}", GsonUtil.toJson(iter));
