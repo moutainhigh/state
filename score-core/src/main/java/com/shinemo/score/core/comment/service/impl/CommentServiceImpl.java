@@ -1,5 +1,6 @@
 package com.shinemo.score.core.comment.service.impl;
 
+import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.client.common.Errors;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
@@ -15,6 +16,7 @@ import com.shinemo.score.client.comment.domain.LikeTypeEnum;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
+import com.shinemo.score.core.async.event.AfterDeleteCommentEvent;
 import com.shinemo.score.core.comment.cache.CommentCache;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.word.SensitiveWordFilter;
@@ -42,6 +44,8 @@ public class CommentServiceImpl implements CommentService {
     private CommentWrapper commentWrapper;
     @Resource
     private CommentCache commentCache;
+    @Resource
+    private InternalEventBus internalEventBus;
     @Resource
     private DistributeConfigFacadeService distributeConfigFacadeService;
 
@@ -101,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (upSucc) {
 
-            // 删除则缓存直接删除，不进行refresh
+            // 删除则缓存直接remove，不进行refresh
             if (request.getStatus() != null && StatusEnum.DELETE.getId() == request.getStatus()) {
                 commentCache.remove(request.getCommentId());
                 return;
@@ -220,7 +224,10 @@ public class CommentServiceImpl implements CommentService {
         update(upReq);
 
         // 该评论下的回复都删了
-
+        internalEventBus.post(
+                AfterDeleteCommentEvent.builder()
+                        .commentId(delReq.getCommentId())
+                        .build());
     }
 
     private boolean doUpdate(CommentRequest request) {

@@ -132,4 +132,9 @@ public class ReplyServiceImpl implements ReplyService {
                         .del(true)
                         .build());
     }
+
+    @Override
+    public void deleteByComment(Long commentId) {
+        replyWrapper.deleteByComment(commentId);
+    }
 }

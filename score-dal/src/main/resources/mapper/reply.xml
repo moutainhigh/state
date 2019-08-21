@@ -88,6 +88,10 @@
         </where>
     </sql>
 
+    <update id="deleteByCommentId" parameterType="java.lang.Long">
+        update reply set status = 0 where comment_id = #{commentId}
+    </update>
+
 
     <!-- 查询结果集 -->
     <select id="find" resultMap="result"

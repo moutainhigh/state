@@ -51,7 +51,7 @@ public class CommentWrapper extends Wrapper<CommentQuery, CommentDO> {
             List<Long> list = commentMapper.findIds(query);
             return Result.success(ListVO.list(list, (long) list.size(), 1L, (long) list.size()));
         } catch (Throwable e) {
-            throw new BizException(SQL_ERROR_FIND);
+            throw new BizException(SQL_ERROR_FIND, e);
         }
     }
 }

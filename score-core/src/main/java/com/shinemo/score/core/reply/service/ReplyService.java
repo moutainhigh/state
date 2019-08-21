@@ -24,4 +24,6 @@ public interface ReplyService {
     ListVO<ReplyDO> findByQuery(ReplyQuery query);
 
     void delete(ReplyRequest replyRequest);
+
+    void deleteByComment(Long commentId);
 }
