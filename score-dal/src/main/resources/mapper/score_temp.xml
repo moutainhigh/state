@@ -190,7 +190,7 @@
     </select>
 
 
-    <select id="findUid" resultMap="long" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
+    <select id="findUid" resultType="long" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select uid  from <include refid="table"/> group by uid
     </select>
 
