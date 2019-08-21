@@ -39,6 +39,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         query.setEndModifyTime(endTime);
         query.setVideoId(id);
         query.setThirdVideoId(thirdId);
+        query.setPageEnable(false);
         Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
         if(!rs.hasValue() ){
             log.error("[calculationByHours]  findScores result:{}",rs);
@@ -95,6 +96,14 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             }
         }
         return Result.success();
+    }
+
+
+
+    @Override
+    public Result<Void> calculationByThirdId(String thirdVideoId) {
+        //TODO
+        return null;
     }
 
     private ScoreCountDO initCountDO(List<ScoreDO> value) {

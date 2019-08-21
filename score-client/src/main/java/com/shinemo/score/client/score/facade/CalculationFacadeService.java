@@ -11,7 +11,7 @@ public interface CalculationFacadeService{
     Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long videoId,String thirdVideoId);
 
 
-
+    Result<Void> calculationByThirdId(String thirdVideoId);
 
 
 }

@@ -313,15 +313,34 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoTmpQuery query = new VideoTmpQuery();
         query.setPageEnable(false);
         List<VideoTmp> rs = videoTmpMapper.find(query);
-        for(VideoTmp iter:rs){
+        long count = 0;
+        int size = rs.size();
+        if (size % 500 == 0) {
+            count = size / 500;
+        } else {
+            count =  size / 500 +1; ;
+        }
+        for (int i = 0; i < count; i++) {
+            List<VideoTmp> subList = rs.subList(i * 500, ((i + 1) * 500 > size ? size : 500 * (i + 1)));
+            int j = i;
+            poolExecutor.execute(()->{
+                subCalculate(subList,j);
+            });
+        }
+        return Result.success();
+    }
+
+    private void subCalculate(List<VideoTmp> list,int j){
+        long start = System.currentTimeMillis();
+        log.info("[subCalculate] page:{} start:{}",j,start);
+        for(VideoTmp iter:list){
             Result<Void> ret = calculationFacadeService.calculationByTime(null,null,
                     CalculationEnum.all,null,iter.getXmVideoId());
             if(!ret.isSuccess()){
                 log.error("[calculateScore] error videoId:{}",iter.getXmVideoId());
             }
         }
-        return Result.success();
+        long end = System.currentTimeMillis();
+        log.info("[subCalculate] finish page:{} start:{} end:{} cost:{}",j,start,end,end-start);
     }
-
-
 }
