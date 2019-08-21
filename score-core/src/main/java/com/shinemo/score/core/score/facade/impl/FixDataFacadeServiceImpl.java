@@ -201,7 +201,9 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     @Override
-    public Result<Void> fixNum() {
+    public Result<Void> calculateScore() {
         return null;
     }
+
+
 }

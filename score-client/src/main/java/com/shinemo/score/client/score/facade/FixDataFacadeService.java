@@ -3,7 +3,6 @@ package com.shinemo.score.client.score.facade;
 import com.shinemo.client.common.Result;
 
 public interface FixDataFacadeService{
-
     /**
      * 修正音频初始化信息
      * @return
@@ -14,8 +13,14 @@ public interface FixDataFacadeService{
      * @return
      */
     Result<Void> initScore();
-
+    /**
+     * 添加上线之后的用户评分
+     * @return
+     */
     Result<Void> addOnlineScore();
-
-    Result<Void> fixNum();
+    /**
+     *重新全量计算一次评分
+     * @return
+     */
+    Result<Void> calculateScore();
 }
