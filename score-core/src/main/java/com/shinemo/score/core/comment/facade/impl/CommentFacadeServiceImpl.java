@@ -214,7 +214,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             vo = new CommentVO(comment, extend.getUid(), replys);
             vo.setLike(likeService.isLike(query.getCommentId(), extend.getUid()));
         } else {
-            new CommentVO(comment, null, replys);
+            vo = new CommentVO(comment, null, replys);
         }
         return WebResult.success(vo);
     }
