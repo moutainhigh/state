@@ -103,7 +103,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         double initScore = iter.getScore()*iter.getWeight();
         if(video!=null){
             videoDOMap.put(video.getVideoId(),video);
-            video.setInitScore(Long.parseLong(String.valueOf(initScore)));
+            video.setInitScore(new Double(initScore).longValue());
             video.setInitWeight(iter.getWeight());
             if(StringUtils.isBlank(iter.getVideoName())){
                 video.setVideoName(iter.getVideoName());
