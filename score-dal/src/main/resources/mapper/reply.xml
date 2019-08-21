@@ -67,16 +67,6 @@
                         <if test="name != null">and name = #{name}</if>
                         <if test="device != null">and device = #{device}</if>
                         <if test="netType != null">and net_type = #{netType}</if>
-                        <choose>
-                            <when test="flag!=null">
-                                and flag = #{flag}
-                            </when>
-                            <otherwise>
-                                <if test="replyFlag != null and replyFlag.mask > 0 and replyFlag.value != null">
-                                    <![CDATA[ and (flag & #{replyFlag.mask, jdbcType=BIGINT}) = #{replyFlag.value, jdbcType=BIGINT} ]]>
-                                </if>
-                            </otherwise>
-                        </choose>
                         )
                     </if>
                 </otherwise>
