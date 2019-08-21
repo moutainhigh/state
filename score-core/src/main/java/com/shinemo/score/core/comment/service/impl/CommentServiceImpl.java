@@ -102,7 +102,7 @@ public class CommentServiceImpl implements CommentService {
         if (upSucc) {
 
             // 删除则缓存直接删除，不进行refresh
-            if (request.getStatus() == StatusEnum.DELETE.getId()) {
+            if (request.getStatus() != null && StatusEnum.DELETE.getId() == request.getStatus()) {
                 commentCache.remove(request.getCommentId());
                 return;
             }
