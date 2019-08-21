@@ -57,6 +57,9 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         if(CalculationEnum.all == calculationEnum){//全量更新 TODO 如果id数组非常大 是否多线程处理更好
             ScoreQuery countQuery = new ScoreQuery();
             List<Long> ids = new ArrayList<>(map.keySet());
+            if(ids.size()>100){
+                log.error("[calculation] error nedChange idSize:{}",ids.size());
+            }
             countQuery.setPageEnable(false);
             countQuery.setVideoIds(ids);
             Result<ListVO<ScoreDO>> countRs = scoreService.findScores(countQuery);
