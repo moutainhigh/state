@@ -183,36 +183,51 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void fixScoreNum() {
-        log.info("[fixScoreNum] start");
         long startTime = System.currentTimeMillis();
         ScoreQuery query = new ScoreQuery();
         query.setPageEnable(false);
-        List<ScoreDO> list = scoreTempMapper.find(query);
-        Map<Long,List<ScoreDO>> uidMap = list.stream().collect(Collectors.groupingBy(ScoreDO::getUid));
-        for(Map.Entry<Long,List<ScoreDO>> entry:uidMap.entrySet()){
-            List<ScoreDO> subList = entry.getValue();
+        List<Long> list = scoreTempMapper.findUid(query);
+        long count=0;
+        int size = list.size();
+        if (size % 50000 == 0) {
+            count = size / 50000;
+        } else {
+            count =  size / 50000 +1; ;
+        }
+        for (int i = 0; i < count; i++) {
+            List<Long> subList = list.subList(i * 50000, ((i + 1) * 50000 > size ? size : 50000 * (i + 1)));
+            int j = i;
             poolExecutor.execute(()->{
-                updateNum(subList);
+                updateNum(subList,j);
             });
         }
         long endTime = System.currentTimeMillis();
         log.info("[fixScoreNum] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
     }
 
-    private void updateNum(List<ScoreDO>list){
-        for(int i=0;i<list.size();i++){
-            long num = i+1;
-            ScoreDO scoreDO = new ScoreDO();
-            scoreDO.setId(list.get(i).getId());
-            scoreDO.setNum(num);
-            scoreDO.setVersion(list.get(i).getVersion());
-            int upt = scoreTempMapper.update(scoreDO);
-            if(upt<1){
-                log.error("[update] error:{}",upt);
+    private void updateNum(List<Long>list,int j){
+        long startTime = System.currentTimeMillis();
+        log.info("[updateNum] page:{} start:{}",j,startTime);
+        ScoreQuery query = new ScoreQuery();
+        query.setPageEnable(false);
+        for(Long iter:list){
+            query.setUid(iter);
+            List<ScoreDO> scoreDOList = scoreTempMapper.find(query);
+            for(int i=0;i<scoreDOList.size();i++){
+                long num = i+1;
+                ScoreDO scoreDO = new ScoreDO();
+                scoreDO.setId(scoreDOList.get(i).getId());
+                scoreDO.setNum(num);
+                scoreDO.setVersion(scoreDOList.get(i).getVersion());
+                int upt = scoreTempMapper.update(scoreDO);
+                if(upt<1){
+                    log.error("[update] error:{}",upt);
+                }
             }
         }
+        long endTime = System.currentTimeMillis();
+        log.info("[updateNum] page:{} start:{},end:{} cost:{}",j,startTime,endTime,endTime-startTime);
     }
 
     private boolean insert(List<UserTmp>userList, VideoTmp tmp){
