@@ -1,6 +1,7 @@
 package com.shinemo.score.core.score.facade.impl;
 
 import com.shinemo.client.common.Result;
+import com.shinemo.client.util.DateUtil;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.muic.client.token.facade.TokenFacadeService;
 import com.shinemo.muic.client.user.domain.UserBaseInfoDO;
@@ -194,8 +195,8 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 domain.setUid(rs.getValue().getId());
                 userMap.put(iter.getMobile(),rs.getValue());
             }
-            domain.setGmtCreate(new Date());
-            domain.setGmtModified(new Date());
+            domain.setGmtCreate(DateUtil.format("2019-08-01","yyyy-MM-dd"));
+            domain.setGmtModified(DateUtil.format("2019-08-01","yyyy-MM-dd"));
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
