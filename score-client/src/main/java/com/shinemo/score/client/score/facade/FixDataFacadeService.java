@@ -13,6 +13,9 @@ public interface FixDataFacadeService{
      * @return
      */
     Result<Void> initScore();
+
+
+    void fixScoreNum();
     /**
      * 添加上线之后的用户评分
      * @return
