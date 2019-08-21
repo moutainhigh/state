@@ -166,7 +166,11 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
 
     private boolean insert(List<UserTmp>userList, VideoTmp tmp){
         VideoQuery query = new VideoQuery();
+        ScoreQuery tmpQuery = new ScoreQuery();
         for(UserTmp iter:userList){
+
+
+
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
             VideoDO videoDO = videoDOMap.get(tmp.getXmVideoId());
@@ -194,6 +198,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 }
                 domain.setUid(rs.getValue().getId());
                 userMap.put(iter.getMobile(),rs.getValue());
+            }
+            tmpQuery.setUid(domain.getUid());
+            tmpQuery.setVideoId(domain.getVideoId());
+            ScoreDO check = scoreTempMapper.get(tmpQuery);
+            if(check!=null){
+                log.error("[check] score domain:{}",GsonUtil.toJson(domain));
+                continue;
             }
             domain.setGmtCreate(DateUtil.format("2019-08-01","yyyy-MM-dd"));
             domain.setGmtModified(DateUtil.format("2019-08-01","yyyy-MM-dd"));
