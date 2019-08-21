@@ -15,7 +15,7 @@
 
 	<!-- 数据库字段 -->
 	<sql id="columns">
-		id, score, video_id, weight
+		id, score, video_id, weight,video_name,xm_video_id
 	</sql>
 
     <sql id="table">
