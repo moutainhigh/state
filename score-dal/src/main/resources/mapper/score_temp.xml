@@ -147,8 +147,12 @@
             <if test="id != null">
                 #{id, jdbcType=BIGINT},
             </if>
-            now(),
-            now(),
+            <if test="status != null">
+                #{gmtCreate},
+            </if>
+            <if test="status != null">
+                #{gmtModified},
+            </if>
             <if test="status != null">
                 #{status, jdbcType=INTEGER},
             </if>
@@ -175,6 +179,26 @@
             </if>
         </trim>
     </insert>
+
+    <select id="getScoreCounts" resultMap="count_result" parameterType="java.util.List">
+        select sum(score) as score,video_id as video_id ,count(1) as num from <include refid="table"/>
+        where video_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by video_id
+    </select>
+
+    <select id="getScoreByMaxNum" resultType="com.shinemo.score.client.score.domain.ScoreDO"
+            parameterType="com.shinemo.score.client.score.query.ScoreQuery">
+        select
+        <include refid="columns"/>
+        from
+        <include refid="table"/>
+        <include refid="conditions"/>
+        order by num desc limit 1
+    </select>
+
 
     <!-- 更新 -->
     <update id="update" parameterType="com.shinemo.score.client.score.domain.ScoreDO">

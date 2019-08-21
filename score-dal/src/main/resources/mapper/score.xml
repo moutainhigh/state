@@ -58,6 +58,7 @@
                     <if test="endModifyTime!=null">
                         and gmt_modified &lt; #{endModifyTime}
                     </if>
+                    <if test="minId != null">and id &gt;= #{minId}</if>
                 </otherwise>
             </choose>
         </where>

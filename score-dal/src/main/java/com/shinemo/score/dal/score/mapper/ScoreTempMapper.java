@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface ScoreTempMapper extends Mapper<ScoreQuery, ScoreDO> {
 
+    List<ScoreCountDO> getScoreCounts(List<Long> list);
+
+    ScoreDO getScoreByMaxNum(ScoreQuery query);
 
 
 }

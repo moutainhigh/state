@@ -9,11 +9,13 @@ import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.UserTmp;
 import com.shinemo.score.client.score.domain.VideoTmp;
 import com.shinemo.score.client.score.facade.FixDataFacadeService;
+import com.shinemo.score.client.score.query.ScoreQuery;
 import com.shinemo.score.client.score.query.UserTmpQuery;
 import com.shinemo.score.client.score.query.VideoTmpQuery;
 import com.shinemo.score.client.video.domain.VideoDO;
 import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
+import com.shinemo.score.dal.score.mapper.ScoreMapper;
 import com.shinemo.score.dal.score.mapper.ScoreTempMapper;
 import com.shinemo.score.dal.score.mapper.UserTmpMapper;
 import com.shinemo.score.dal.score.mapper.VideoTmpMapper;
@@ -25,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,11 +52,16 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     @Resource
     private TokenFacadeService tokenFacadeService;
 
+    @Resource
+    private ScoreMapper scoreMapper;
+
     private Map<String, UserBaseInfoDO> userMap;
 
     private Map<String,VideoDO> videoDOMap;
 
     private Map<Long,Long> userNumMap;
+
+
 
     @PostConstruct
     public void init(){
@@ -181,6 +189,8 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 domain.setUid(rs.getValue().getId());
                 userMap.put(iter.getMobile(),rs.getValue());
             }
+            domain.setGmtCreate(new Date());
+            domain.setGmtModified(new Date());
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
@@ -196,8 +206,23 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     @Override
-    public Result<Void> addOnlineScore() {
-        return null;
+    public Result<Void> addOnlineScore(Long minId){
+        ScoreQuery query = new ScoreQuery();
+        query.setPageEnable(false);
+        query.setMinId(minId);
+        List<ScoreDO> list = scoreMapper.find(query);
+        ScoreQuery tempQuery = new ScoreQuery();
+        for(ScoreDO iter:list){
+            tempQuery.setUid(iter.getUid());
+            ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(tempQuery);
+            if(scoreDO!=null){
+                iter.setNum(scoreDO.getNum());
+            }else{
+                iter.setNum(1L);
+            }
+            scoreTempMapper.insert(iter);
+        }
+        return Result.success();
     }
 
     @Override

@@ -17,7 +17,7 @@ public interface FixDataFacadeService{
      * 添加上线之后的用户评分
      * @return
      */
-    Result<Void> addOnlineScore();
+    Result<Void> addOnlineScore(Long minId);
     /**
      *重新全量计算一次评分
      * @return
