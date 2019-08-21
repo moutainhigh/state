@@ -89,6 +89,30 @@
         </encoder>
     </appender>
 
+
+
+    <appender name="BACKDOOR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/backdoor.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.home}/backdoor.log.%d{yyyy-MM-dd}-%i${log.history.suffix}
+            </FileNamePattern>
+            <maxHistory>${log.error.max.history}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${log.error.max.file.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>error</level>
+        </filter>
+        <encoder>
+            <pattern>${log.error.pattern}</pattern>
+            <charset>${log.charset}</charset>
+        </encoder>
+    </appender>
+
+
+
     <appender name="AACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.home}/aace.log</file>
         <append>true</append>
@@ -258,10 +282,12 @@
         <logger name="io.netty" level="WARN"/>
         <logger name="org.apache.ibatis" level="WARN"/>
         <logger name="org.hibernate" level="WARN"/>
+
         <logger name="com.shinemo.client.aop.log.PrintParamResult" additivity="true">
             <level value="${log.level}"/>
             <appender-ref ref="PrintParamResult"/>
         </logger>
+
         <root>
             <appender-ref ref="CONSOLE" level="${log.level}"/>
         </root>
@@ -297,6 +323,12 @@
             <level value="${log.level}"/>
             <appender-ref ref="AACE"/>
         </logger>
+
+        <logger name="com.shinemo.score.core.score.facade.impl.FixDataFacadeServiceImpl" additivity="false">
+            <level value="${log.level}"/>
+            <appender-ref ref="BACKDOOR"/>
+        </logger>
+
 
         <root>
             <appender-ref ref="APPLICATION" level="${log.level}"/>
