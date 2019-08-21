@@ -2,7 +2,10 @@ package com.shinemo.score.core.score.facade.impl;
 
 import com.shinemo.client.common.Result;
 import com.shinemo.client.util.GsonUtil;
+import com.shinemo.muic.client.token.facade.TokenFacadeService;
+import com.shinemo.muic.client.user.domain.UserBaseInfoDO;
 import com.shinemo.score.client.common.domain.DeleteStatusEnum;
+import com.shinemo.score.client.score.domain.ScoreDO;
 import com.shinemo.score.client.score.domain.UserTmp;
 import com.shinemo.score.client.score.domain.VideoTmp;
 import com.shinemo.score.client.score.facade.FixDataFacadeService;
@@ -11,6 +14,7 @@ import com.shinemo.score.client.score.query.VideoTmpQuery;
 import com.shinemo.score.client.video.domain.VideoDO;
 import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
+import com.shinemo.score.dal.score.mapper.ScoreTempMapper;
 import com.shinemo.score.dal.score.mapper.UserTmpMapper;
 import com.shinemo.score.dal.score.mapper.VideoTmpMapper;
 import com.shinemo.score.dal.video.mapper.VideoMapper;
@@ -19,8 +23,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -35,6 +42,25 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
 
     @Resource
     private VideoMapper videoMapper;
+
+    @Resource
+    private ScoreTempMapper scoreTempMapper;
+
+    @Resource
+    private TokenFacadeService tokenFacadeService;
+
+    private Map<String, UserBaseInfoDO> userMap;
+
+    private Map<String,VideoDO> videoDOMap;
+
+
+    @PostConstruct
+    public void init(){
+        userMap = new HashMap<>(100000);
+        videoDOMap = new HashMap<>(20000);
+    }
+
+
 
     @Override
     public Result<Void> fixVideo(){
@@ -60,6 +86,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoDO video = videoMapper.get(query);
         double initScore = iter.getScore()*iter.getWeight();
         if(video!=null){
+            videoDOMap.put(video.getVideoId(),video);
             video.setInitScore(Long.parseLong(String.valueOf(initScore)));
             video.setInitWeight(iter.getWeight());
             if(StringUtils.isBlank(iter.getVideoName())){
@@ -90,6 +117,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 log.error("[insertOrUpdateVideo] insertError iter:{}", GsonUtil.toJson(iter));
                 return false;
             }
+            videoDOMap.put(video.getVideoId(),video);
         }
         return true;
     }
@@ -120,7 +148,42 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         return Result.success();
     }
 
-    private boolean insert(List<UserTmp>userList, VideoTmp iter){
+    private boolean insert(List<UserTmp>userList, VideoTmp tmp){
+        VideoQuery query = new VideoQuery();
+        for(UserTmp iter:userList){
+            ScoreDO domain = new ScoreDO();
+            domain.setStatus(1);
+            VideoDO videoDO = videoDOMap.get(tmp.getXmVideoId());
+            if(videoDO!=null){
+                domain.setVideoId(videoDO.getId());
+            }else{
+                query.setVideoId(tmp.getXmVideoId());
+                VideoDO newVideoDO = videoMapper.get(query);
+                if(newVideoDO!=null){
+                    domain.setVideoId(newVideoDO.getId());
+                    videoDOMap.put(tmp.getXmVideoId(),newVideoDO);
+                }else{
+                    log.error("[video] not exist id:{}",tmp.getXmVideoId());
+                    continue;
+                }
+            }
+            UserBaseInfoDO userBaseInfoDO = userMap.get(iter.getMobile());
+            if(userBaseInfoDO!=null){
+                domain.setUid(userBaseInfoDO.getId());
+            }else{
+                Result<UserBaseInfoDO> rs = tokenFacadeService.getUserByMobile(iter.getMobile());
+                if(!rs.hasValue()){
+                    log.error("[getUserByMobile] error mobile:{}",iter.getMobile());
+                    continue;
+                }
+                domain.setUid(rs.getValue().getId());
+                userMap.put(iter.getMobile(),rs.getValue());
+            }
+            domain.setScore(iter.getScore());
+            domain.setVersion(1L);
+            domain.setThirdVideoId(tmp.getXmVideoId());
+            scoreTempMapper.insert(domain);
+        }
         return true;
     }
 
