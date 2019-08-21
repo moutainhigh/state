@@ -1,8 +1,10 @@
 package com.shinemo.score.client.reply.domain;
 
 import com.shinemo.client.common.BaseDO;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.utils.RegularUtils;
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -36,7 +38,7 @@ public class ReplyVO extends BaseDO {
 
     public ReplyVO(ReplyDO replyDO, Long currentUid) {
         replyId = replyDO.getId();
-        content = replyDO.getContent();
+
         gmtCreate = replyDO.getGmtCreate().getTime();
         userName = replyDO.getName() + RegularUtils.ignorePhone(replyDO.getMobile());
         userPortrait = replyDO.getAvatarUrl();
@@ -46,5 +48,12 @@ public class ReplyVO extends BaseDO {
         isMine = replyDO.getUid().equals(currentUid);
         hasSensitive = replyDO.hasSensitiveWord();
         uid = replyDO.getUid();
+
+        if (hasSensitive && StringUtils.isNotBlank(replyDO.getExtend())) {
+            ReplyExtend replyExtend = GsonUtil.fromGson2Obj(replyDO.getExtend(), ReplyExtend.class);
+            content = replyExtend.getSensitiveContent();
+        } else {
+            content = replyDO.getContent();
+        }
     }
 }
