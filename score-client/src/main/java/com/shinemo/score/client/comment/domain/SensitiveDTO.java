@@ -14,7 +14,7 @@ public class SensitiveDTO {
     private boolean hasSensitiveWord;
 
     /**
-     * 敏感词处理后内容
+     * 敏感词处理后内容,如果没有敏感词，则为null
      */
     private String sensitiveContent;
 

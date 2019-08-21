@@ -15,6 +15,4 @@ import com.shinemo.score.client.reply.query.ReplyRequest;
 public interface ReplyFacadeService {
 
     WebResult<ReplyDTO> submit(ReplyParam replyParam);
-
-    WebResult<Void> delete(ReplyRequest request);
 }

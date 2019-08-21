@@ -69,18 +69,4 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
         }
         return WebResult.success(dto);
     }
-
-    @Override
-    public WebResult<Void> delete(ReplyRequest request) {
-
-        UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
-        logger.info("[delete_reply]param:{},token:{},header:{}", request, extend);
-
-        Assert.notNull(extend, "您尚未登录");
-
-        request.setUid(extend.getUid());
-        replyService.delete(request);
-
-        return WebResult.success();
-    }
 }

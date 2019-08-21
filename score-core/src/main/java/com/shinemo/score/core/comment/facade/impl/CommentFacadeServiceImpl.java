@@ -7,10 +7,7 @@ import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
-import com.shinemo.score.client.comment.domain.CommentDO;
-import com.shinemo.score.client.comment.domain.CommentFlag;
-import com.shinemo.score.client.comment.domain.CommentVO;
-import com.shinemo.score.client.comment.domain.SensitiveDTO;
+import com.shinemo.score.client.comment.domain.*;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
@@ -18,10 +15,13 @@ import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
+import com.shinemo.score.client.reply.query.ReplyRequest;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
 import com.shinemo.score.core.reply.service.ReplyService;
+import com.shinemo.score.core.word.SensitiveWordFilter;
 import com.shinemo.ygw.client.migu.UserExtend;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -40,9 +39,13 @@ import java.util.List;
  * @since 2019-06-11
  */
 @Service("commentFacadeService")
+@Slf4j
 public class CommentFacadeServiceImpl implements CommentFacadeService {
 
     private Logger logger = LoggerFactory.getLogger("access");
+
+    private static final int DeleteTypeCommentType = 1;
+    private static final int DeleteTypeReplyType = 2;
 
     @Resource
     private CommentService commentService;
@@ -217,24 +220,50 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     }
 
     @Override
-    public WebResult<Void> delete(CommentRequest commentRequest) {
+    public WebResult<Void> delete(DeleteParam deleteParam) {
 
         UserExtend extend = GsonUtil.fromGson2Obj(JceHolder.get(Constant.USER_EXTEND), UserExtend.class);
 
-        logger.info("[delete_comment] commentRequest:{},token:{}", commentRequest, extend);
+        logger.info("[delete_comment] param:{},token:{}", deleteParam, extend);
 
         Assert.notNull(extend, "您尚未登录");
         Assert.notNull(extend.getUid(), "uid not be empty");
-        Assert.notNull(commentRequest.getCommentId(), "commentId not be null");
+        Assert.notNull(deleteParam.getId(), "id not be null");
+        Assert.notNull(deleteParam.getType(), "type not be null");
 
-        commentRequest.setUid(commentRequest.getUid());
-        commentService.delete(commentRequest);
+        // 评论
+        if (DeleteTypeCommentType == deleteParam.getType()) {
+
+            CommentRequest request = new CommentRequest();
+            request.setCommentId(deleteParam.getId());
+            request.setUid(extend.getUid());
+            commentService.delete(request);
+        }
+
+        // 回复
+        if (DeleteTypeReplyType == deleteParam.getType()) {
+            ReplyRequest replyRequest = new ReplyRequest();
+            replyRequest.setUid(extend.getUid());
+            replyRequest.setReplyId(deleteParam.getId());
+            replyService.delete(replyRequest);
+        }
 
         return WebResult.success();
     }
 
     @Override
-    public Result<SensitiveDTO> checkSensitive(String txt) {
-        return Result.success(new SensitiveDTO());
+    public Result<SensitiveDTO> checkSensitive(SensitiveRequest sensitiveReq) {
+
+        SensitiveDTO sensitiveDTO = new SensitiveDTO();
+        // 默认false
+        sensitiveDTO.setHasSensitiveWord(false);
+        if (SensitiveWordFilter.isContaintSensitiveWord(sensitiveReq.getTxt(),
+                SensitiveWordFilter.minMatchType)) {
+            log.info("[checkSensitive] has sensitiveWord ,txt:{}", sensitiveReq.getTxt());
+            sensitiveDTO.setHasSensitiveWord(true);
+            sensitiveDTO.setSensitiveContent(SensitiveWordFilter.
+                    replaceSensitiveWord(sensitiveReq.getTxt(), SensitiveWordFilter.maxMatchType, sensitiveReq.getReplaceChar()));
+        }
+        return Result.success(sensitiveDTO);
     }
 }
