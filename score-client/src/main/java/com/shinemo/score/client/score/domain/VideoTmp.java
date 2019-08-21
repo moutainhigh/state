@@ -29,4 +29,7 @@ public class VideoTmp extends BaseDO {
 	* 权重
 	*/
 	private Long weight;
+
+	private String videoName;
+	private String xmVideoId;
 }

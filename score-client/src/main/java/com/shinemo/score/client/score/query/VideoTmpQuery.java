@@ -14,7 +14,8 @@ import com.shinemo.client.common.QueryBase;
  */
 @Getter
 @Setter
-public class VideoTmpQuery extends QueryBase {
+public class VideoTmpQuery extends QueryBase{
+
 	private Long id;
     /**
     * 分数
@@ -28,4 +29,7 @@ public class VideoTmpQuery extends QueryBase {
     * 权重
     */
 	private Long weight;
+
+	private String videoName;
+	private String xmVideoId;
 }

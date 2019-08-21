@@ -9,6 +9,8 @@
 		<result property="score" column="score"/>
 		<result property="videoId" column="video_id"/>
 		<result property="weight" column="weight"/>
+        <result property="videoName" column="video_name"/>
+        <result property="xmVideoId" column="xm_video_id"/>
 	</resultMap>
 
 	<!-- 数据库字段 -->
@@ -26,14 +28,12 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-					<if test="score != null">and score = #{score}</if>
 					<if test="videoId != null">and video_id = #{videoId}</if>
-					<if test="weight != null">and weight = #{weight}</if>
+                    <if test="xmVideoId != null">and xm_video_id = #{xmVideoId}</if>
                 </otherwise>
             </choose>
         </where>
     </sql>
-
 
 	<!-- 查询结果集 -->
     <select id="find" resultMap="result"
