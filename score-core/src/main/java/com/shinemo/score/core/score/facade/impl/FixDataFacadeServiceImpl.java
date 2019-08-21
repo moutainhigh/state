@@ -53,11 +53,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
 
     private Map<String,VideoDO> videoDOMap;
 
+    private Map<Long,Long> userNumMap;
 
     @PostConstruct
     public void init(){
-        userMap = new HashMap<>(100000);
+        userMap = new HashMap<>(800000);
         videoDOMap = new HashMap<>(20000);
+        userNumMap = new HashMap<>(800000);
     }
 
 
@@ -182,7 +184,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
+            Long num = userNumMap.get(domain.getUid());
+            if(num == null){
+                num = 1L;
+            }
+            domain.setNum(num);
             scoreTempMapper.insert(domain);
+            userNumMap.put(domain.getUid(),num+1);
         }
         return true;
     }
