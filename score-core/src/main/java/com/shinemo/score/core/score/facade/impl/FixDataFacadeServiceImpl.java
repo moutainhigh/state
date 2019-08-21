@@ -73,10 +73,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
 
 
-    private String getRedisVedeoKey(String videoId){
-        return String.format("MIGU_FIX_SCORE_VIDEO_%s",videoId);
-    }
-
     private String getRedisUidKey(String mobile){
         return String.format("MIGU_FIX_SCORE_USERBASEINFO_%s",mobile);
     }
@@ -106,7 +102,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoDO video = videoMapper.get(query);
         double initScore = iter.getScore()*iter.getWeight();
         if(video!=null){
-            redisService.set(getRedisVedeoKey(video.getVideoId()),video);
             video.setInitScore(new Double(initScore).longValue());
             video.setInitWeight(iter.getWeight());
             if(StringUtils.isBlank(iter.getVideoName())){
@@ -137,7 +132,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 log.error("[insertOrUpdateVideo] insertError iter:{}", GsonUtil.toJson(iter));
                 return false;
             }
-            redisService.set(getRedisVedeoKey(video.getVideoId()),video,3600);
         }
         return true;
     }
@@ -187,26 +181,20 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     private boolean insert(List<UserTmp>userList, VideoTmp tmp){
+
         VideoQuery query = new VideoQuery();
+        query.setVideoId(tmp.getXmVideoId());
+        VideoDO newVideoDO = videoMapper.get(query);
+        if(newVideoDO == null){
+            log.error("[video] not exist id:{}",tmp.getXmVideoId());
+            return false;
+        }
         ScoreQuery tmpQuery = new ScoreQuery();
         ScoreQuery numQuery = new ScoreQuery();
         for(UserTmp iter:userList){
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
-            VideoDO videoDO = redisService.get(getRedisVedeoKey(tmp.getXmVideoId()),VideoDO.class);
-            if(videoDO!=null){
-                domain.setVideoId(videoDO.getId());
-            }else{
-                query.setVideoId(tmp.getXmVideoId());
-                VideoDO newVideoDO = videoMapper.get(query);
-                if(newVideoDO!=null){
-                    domain.setVideoId(newVideoDO.getId());
-                    redisService.set(getRedisVedeoKey(tmp.getXmVideoId()),newVideoDO,3600);
-                }else{
-                    log.error("[video] not exist id:{}",tmp.getXmVideoId());
-                    continue;
-                }
-            }
+            domain.setVideoId(newVideoDO.getId());
             UserBaseInfoDO userBaseInfoDO = redisService.get(getRedisUidKey(iter.getMobile()),UserBaseInfoDO.class);
             if(userBaseInfoDO!=null){
                 domain.setUid(userBaseInfoDO.getId());
@@ -217,7 +205,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                     continue;
                 }
                 domain.setUid(rs.getValue().getId());
-                redisService.set(getRedisVedeoKey(iter.getMobile()),rs.getValue(),3600);
             }
             tmpQuery.setUid(domain.getUid());
             tmpQuery.setVideoId(domain.getVideoId());
