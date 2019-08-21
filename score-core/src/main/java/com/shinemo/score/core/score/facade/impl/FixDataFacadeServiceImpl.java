@@ -122,7 +122,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             video.setVersion(1L);
             video.setVideoId(iter.getXmVideoId());
             video.addVideoFlag(VideoFlag.GRADE);
-            video.setInitScore(Long.parseLong(String.valueOf(initScore)));
+            video.setInitScore(new Double(initScore).longValue());
             video.setInitWeight(iter.getWeight());
             video.setWeight(video.getInitWeight());
             video.setScore(video.getInitScore());
