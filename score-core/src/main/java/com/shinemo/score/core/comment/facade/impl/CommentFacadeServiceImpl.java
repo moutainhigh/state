@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -94,7 +95,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
                 commentVO = new CommentVO(comment);
             }
 
-            // 1.最近三条回复，如果含有敏感词的情况，返回结果删除含有敏感词的
+            // 1.最近三条回复，如果含有敏感词的情况，把其他人的敏感词删除
             // 2.如果extend中存在大于等于三条记录，然后因为敏感词删除了任意条，则重新从库中拉最新三条数据
             // 只有登录过的才处理
             if (extend != null) {
@@ -103,7 +104,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
                 if (!replys.isEmpty()) {
                     int originSize = replys.size();
                     // 删除
-                    replys.removeIf(ReplyVO::isHasSensitive);
+                    replys.removeIf(next -> next.isHasSensitive() && !next.getUid().equals(extend.getUid()));
+
                     if (originSize >= 3 && originSize != replys.size()) {
                         // 重新构造最近三条记录,可以看自己含敏感词的回复
                         ReplyQuery replyQuery = new ReplyQuery();
