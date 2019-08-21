@@ -30,10 +30,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -67,51 +67,34 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     @Resource
     private CalculationFacadeService calculationFacadeService;
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(20);
-
 
 
     @PostConstruct
     public void init(){
         userMap = new HashMap<>(800000);
         videoDOMap = new HashMap<>(20000);
-        userNumMap = new ConcurrentHashMap<>(800000);
+        userNumMap = new HashMap<>(800000);
     }
 
 
 
     @Override
     public Result<Void> fixVideo(){
+        long start = System.currentTimeMillis();
+        log.info("[fixVideoFinish] start:{}",start);
         VideoTmpQuery query = new VideoTmpQuery();
         query.setPageEnable(false);
         List<VideoTmp> rs = videoTmpMapper.find(query);
-        int size = rs.size();
-        int count = (size + 2000 - 1) / 2000;
-        List<List<VideoTmp>> result = new ArrayList<>(20);
-        for (int i = 0; i < count; i++) {
-            List<VideoTmp> subList = rs.subList(i * 2000, ((i + 1) * 2000 > size ? size : 2000 * (i + 1)));
-            int j = i;
-            poolExecutor.execute(()->{
-                subRun(subList,j);
-            });
-        }
-        log.info("[fixVideo] pageCount:{}",count);
-        return Result.success();
-    }
-
-    private void subRun(List<VideoTmp> list,int j){
-        long start = System.currentTimeMillis();
-        log.info("[page] pageNum:{}start:{}",j,start);
         long count = 0;
-        for(VideoTmp iter:list){
+        for(VideoTmp iter:rs){
             if(!insertOrUpdateVideo(iter)){
                 count++;
             }
         }
         long end = System.currentTimeMillis();
-        log.info("[page] finish pageNum:{} errorCount:{} start:{},finish:{},cost:{}",j,count,start,end,end-start);
+        log.info("[fixVideoFinish] finish errorCount:{} start:{},finish:{},cost:{}",count,start,end,end-start);
+        return Result.success();
     }
-
 
     private boolean insertOrUpdateVideo(VideoTmp iter) {
         VideoQuery query = new VideoQuery();
@@ -185,6 +168,9 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoQuery query = new VideoQuery();
         ScoreQuery tmpQuery = new ScoreQuery();
         for(UserTmp iter:userList){
+
+
+
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
             VideoDO videoDO = videoDOMap.get(tmp.getXmVideoId());
