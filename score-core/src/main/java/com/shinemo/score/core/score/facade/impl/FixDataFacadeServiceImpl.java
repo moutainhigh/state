@@ -71,7 +71,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private CalculationFacadeService calculationFacadeService;
 
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(20);
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(30);
 
     @PostConstruct
     public void init(){
