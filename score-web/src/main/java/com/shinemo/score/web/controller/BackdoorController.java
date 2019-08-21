@@ -88,12 +88,12 @@ public class BackdoorController {
     }
 
     @GetMapping("/calculat")
-    public String calculat(HttpServletRequest request, Long id) {
+    public String calculat(HttpServletRequest request, String id) {
         String ip = request.getRemoteAddr();
         if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
             return "error";
         }
-        Result<Void>  rs = calculationFacadeService.calculationByThirdId(id,null);
+        Result<Void>  rs = calculationFacadeService.calculationByThirdId(id);
         if(!rs.isSuccess()){
             log.error("[calculationByTime] error:{}",rs);
         }

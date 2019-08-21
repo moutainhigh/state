@@ -111,9 +111,9 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         ScoreQuery query = new ScoreQuery();
         query.setThirdVideoId(thirdVideoId);
         query.setPageEnable(false);
-        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
-        if(rs.hasValue() && !CollectionUtils.isEmpty(rs.getValue().getRows())){
-            ScoreCountDO count = initCountDO(rs.getValue().getRows());
+        List<ScoreDO> rs = scoreTempMapper.find(query);
+        if(!CollectionUtils.isEmpty(rs)){
+            ScoreCountDO count = initCountDO(rs);
             VideoQuery videoQuery = new VideoQuery();
             videoQuery.setVideoId(thirdVideoId);
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
