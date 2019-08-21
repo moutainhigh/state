@@ -103,7 +103,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>error</level>
+            <level>${log.level}</level>
         </filter>
         <encoder>
             <pattern>${log.error.pattern}</pattern>
