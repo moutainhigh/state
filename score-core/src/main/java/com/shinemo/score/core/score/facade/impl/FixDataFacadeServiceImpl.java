@@ -120,7 +120,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         return Result.success();
     }
 
-    private boolean insert(List<UserTmp> userList, VideoTmp iter) {
+    private boolean insert(List<UserTmp>userList, VideoTmp iter){
         return true;
     }
 

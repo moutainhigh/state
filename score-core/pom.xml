@@ -84,6 +84,11 @@
             <groupId>com.shinemo.mgsuggest</groupId>
             <artifactId>mgsuggest-client</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.shinemo.muic</groupId>
+            <artifactId>muic-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
