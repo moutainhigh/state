@@ -205,6 +205,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                     continue;
                 }
                 domain.setUid(rs.getValue().getId());
+                redisService.set(getRedisUidKey(iter.getMobile()),rs.getValue(),3600);
             }
             tmpQuery.setUid(domain.getUid());
             tmpQuery.setVideoId(domain.getVideoId());
