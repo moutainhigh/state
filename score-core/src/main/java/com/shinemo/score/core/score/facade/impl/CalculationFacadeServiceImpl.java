@@ -107,16 +107,15 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
 
 
     @Override
-    public Result<Void> calculationByThirdId(Long videoId,String thirdVideoId) {
+    public Result<Void> calculationByThirdId(String thirdVideoId) {
         ScoreQuery query = new ScoreQuery();
-        query.setVideoId(videoId);
         query.setThirdVideoId(thirdVideoId);
         query.setPageEnable(false);
         Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
         if(rs.hasValue() && !CollectionUtils.isEmpty(rs.getValue().getRows())){
             ScoreCountDO count = initCountDO(rs.getValue().getRows());
             VideoQuery videoQuery = new VideoQuery();
-            videoQuery.setId(rs.getValue().getRows().get(0).getVideoId());
+            videoQuery.setVideoId(thirdVideoId);
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
             if(!rz.hasValue()){
                 log.error("[getVideo] error thirdVideoId:{} result:{}",thirdVideoId,rz);

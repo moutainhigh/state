@@ -17,12 +17,11 @@ public interface CalculationFacadeService{
      */
     Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum);
     /**
-     * 三方id 或者 videoId 更新全量评分
-     * @param videoId
+     * 三方id 更新全量评分
      * @param thirdVideoId
      * @return
      */
-    Result<Void> calculationByThirdId(Long videoId,String thirdVideoId);
+    Result<Void> calculationByThirdId(String thirdVideoId);
 
 
 }
