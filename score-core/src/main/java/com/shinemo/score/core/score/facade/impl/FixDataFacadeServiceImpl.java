@@ -219,7 +219,11 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
-            scoreTempMapper.insert(domain);
+            try {
+                scoreTempMapper.insert(domain);
+            } catch (Exception e) {
+                log.error("[scoreTempMapper] insert error,",e);
+            }
         }
         return true;
     }
