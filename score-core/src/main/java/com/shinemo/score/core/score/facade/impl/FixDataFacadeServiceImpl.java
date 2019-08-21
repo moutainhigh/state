@@ -250,7 +250,15 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     private boolean insert(ScoreDO domain){
-        domain.setNum(domain.getNum()+1);
+
+        ScoreQuery numQuery = new ScoreQuery();
+        numQuery.setUid(domain.getUid());
+        ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(numQuery);
+        if(scoreDO != null){
+            domain.setNum(scoreDO.getNum()+1);
+        }else{
+            domain.setNum(1L);
+        }
         try {
             scoreTempMapper.insert(domain);
         } catch (Exception e) {
