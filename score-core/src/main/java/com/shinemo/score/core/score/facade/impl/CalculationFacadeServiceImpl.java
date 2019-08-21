@@ -2,6 +2,7 @@ package com.shinemo.score.core.score.facade.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.score.domain.ScoreCountDO;
 import com.shinemo.score.client.score.domain.ScoreDO;
@@ -104,8 +105,32 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
 
     @Override
     public Result<Void> calculationByThirdId(Long videoId,String thirdVideoId) {
-        //TODO
-        return null;
+        ScoreQuery query = new ScoreQuery();
+        query.setVideoId(videoId);
+        query.setThirdVideoId(thirdVideoId);
+        query.setPageEnable(false);
+        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
+        if(rs.hasValue() && !CollectionUtils.isEmpty(rs.getValue().getRows())){
+            ScoreCountDO count = initCountDO(rs.getValue().getRows());
+            VideoQuery videoQuery = new VideoQuery();
+            videoQuery.setId(rs.getValue().getRows().get(0).getVideoId());
+            Result<VideoDO> rz = videoService.getVideo(videoQuery);
+            if(!rz.hasValue()){
+                log.error("[getVideo] error id:{} result:{}",videoQuery.getVideoId(),rz);
+                return Result.error(rz.getError());
+            }
+            VideoDO videoDO = rz.getValue();
+            videoDO.setYesterdayScore(videoDO.getScore());
+            videoDO.setYesterdayWeight(videoDO.getWeight());
+            videoDO.setScore(videoDO.getInitScore()+count.getScore());
+            videoDO.setWeight(videoDO.getInitWeight()+count.getNum());
+            Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
+            if(uptRs.hasValue()){
+                log.error("[updateVideoScore] error param:{} result:{}", GsonUtil.toJson(videoDO),uptRs);
+                return Result.error(uptRs.getError());
+            }
+        }
+        return Result.success();
     }
 
     private ScoreCountDO initCountDO(List<ScoreDO> value) {
