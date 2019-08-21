@@ -58,7 +58,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             ScoreQuery countQuery = new ScoreQuery();
             List<Long> ids = new ArrayList<>(map.keySet());
             if(ids.size()>100){
-                log.error("[calculation] error needChange idSize:{}",ids.size());
+                log.error("[calculationSize] error needChange idSize:{}",ids.size());
             }
             countQuery.setPageEnable(false);
             countQuery.setVideoIds(ids);
