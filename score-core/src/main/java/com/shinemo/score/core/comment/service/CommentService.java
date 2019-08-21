@@ -67,9 +67,4 @@ public interface CommentService {
      * 软删除
      */
     void delete(CommentRequest delReq);
-
-    /**
-     *  返回结果 处理敏感词
-     */
-    void transferSensitiveWord(CommentDO commentDO);
 }

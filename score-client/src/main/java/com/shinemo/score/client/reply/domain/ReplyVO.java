@@ -30,6 +30,8 @@ public class ReplyVO extends BaseDO {
 
     private boolean isMine;
 
+    private boolean hasSensitive;
+
     public ReplyVO(ReplyDO replyDO, Long currentUid) {
         replyId = replyDO.getId();
         content = replyDO.getContent();
@@ -40,5 +42,6 @@ public class ReplyVO extends BaseDO {
         device = replyDO.getDevice();
         mobile = RegularUtils.ignorePhone(replyDO.getMobile());
         isMine = replyDO.getUid().equals(currentUid);
+        hasSensitive = replyDO.hasSensitiveWord();
     }
 }

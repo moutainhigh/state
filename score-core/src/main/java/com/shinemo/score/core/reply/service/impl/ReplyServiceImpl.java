@@ -5,11 +5,13 @@ import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.common.StatusEnum;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
+import com.shinemo.score.client.reply.domain.ReplyExtend;
 import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.client.reply.query.ReplyRequest;
 import com.shinemo.score.core.async.event.AfterReplyEvent;
@@ -50,11 +52,16 @@ public class ReplyServiceImpl implements ReplyService {
 
         // 是否含有敏感词，
         // 这边只打个标,给前端返回含敏感词的评论内容时处理成*
-        boolean containtSensitiveWord = SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
+        boolean containSensitiveWord = SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
                 SensitiveWordFilter.minMatchType);
-        if (containtSensitiveWord) {
+        if (containSensitiveWord) {
             log.error("[create_reply] has sensitiveWord ,txt:{}", request.getContent());
             request.getReplyFlag().add(CommentFlag.HAS_SENSITIVE);
+            // 扩展字段存一下处理后的敏感词
+            ReplyExtend extend = new ReplyExtend();
+            extend.setSensitiveContent(SensitiveWordFilter.
+                    replaceSensitiveWord(request.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE));
+            request.setExtend(GsonUtil.toJson(extend));
         }
 
         ReplyDO replyDO = new ReplyDO();
@@ -73,7 +80,6 @@ public class ReplyServiceImpl implements ReplyService {
                 AfterReplyEvent
                         .builder()
                         .commentId(request.getCommentId())
-                        .hasSensitive(containtSensitiveWord)
                         .build());
         return insertRs.getValue();
     }
@@ -102,16 +108,6 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public void transferSensitiveWord(ReplyDO replyDO) {
-        // 如果有敏感词
-        if (replyDO.hasSensitiveWord()) {
-            replyDO.setContent(SensitiveWordFilter.
-                    replaceSensitiveWord(replyDO.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE)
-                    + "(含有敏感词)");
-        }
-    }
-
-    @Override
     public void delete(ReplyRequest delReq) {
 
         Assert.notNull(delReq.getUid(), "uid not be null");
@@ -133,7 +129,6 @@ public class ReplyServiceImpl implements ReplyService {
                 AfterReplyEvent
                         .builder()
                         .commentId(replyDO.getCommentId())
-                        .hasSensitive(replyDO.hasSensitiveWord())
                         .del(true)
                         .build());
     }

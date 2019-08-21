@@ -51,9 +51,9 @@ public class ReplyQuery extends QueryBase {
 
 	private Long sensitiveUid;
 	/**
-	 * 忽略其他人含有敏感词的评论
+	 *  保留自己的敏感词
 	 */
-	private Boolean ignoreOtherSensitive = false;
+	private Boolean containMySensitive = false;
 
 	private FlagHelper replyFlag = FlagHelper.build();
 }

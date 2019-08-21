@@ -57,9 +57,6 @@ public class ReplyFacadeServiceImpl implements ReplyFacadeService {
 
         ReplyDO replyDO = replyService.create(request);
 
-        // 敏感词处理
-        replyService.transferSensitiveWord(replyDO);
-
         ReplyDTO dto = new ReplyDTO();
         dto.setReplyId(replyDO.getId());
         dto.setContent(replyDO.getContent());

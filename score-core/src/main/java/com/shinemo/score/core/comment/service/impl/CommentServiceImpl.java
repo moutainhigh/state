@@ -9,6 +9,7 @@ import com.shinemo.client.util.GsonUtil;
 import com.shinemo.mgsuggest.client.domain.DistributeConfig;
 import com.shinemo.mgsuggest.client.facade.DistributeConfigFacadeService;
 import com.shinemo.score.client.comment.domain.CommentDO;
+import com.shinemo.score.client.comment.domain.CommentExtend;
 import com.shinemo.score.client.comment.domain.CommentFlag;
 import com.shinemo.score.client.comment.domain.LikeTypeEnum;
 import com.shinemo.score.client.comment.query.CommentQuery;
@@ -19,6 +20,7 @@ import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.word.SensitiveWordFilter;
 import com.shinemo.score.dal.comment.wrapper.CommentWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,11 +58,16 @@ public class CommentServiceImpl implements CommentService {
 
 
         // 是否含有敏感词，
-        // 这边只打个标,给前端返回含敏感词的评论内容时处理成*
         if (SensitiveWordFilter.isContaintSensitiveWord(request.getContent(),
                 SensitiveWordFilter.minMatchType)) {
             log.error("[create_comment] has sensitiveWord ,txt:{}", request.getContent());
             request.getCommentFlag().add(CommentFlag.HAS_SENSITIVE);
+
+            // 扩展字段存一下处理后的敏感词
+            CommentExtend extend = new CommentExtend();
+            extend.setSensitiveContent(SensitiveWordFilter.
+                    replaceSensitiveWord(request.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE));
+            request.setExtend(GsonUtil.toJson(extend));
         }
 
         CommentDO commentDO = new CommentDO();
@@ -211,16 +218,9 @@ public class CommentServiceImpl implements CommentService {
         upReq.setCommentId(delReq.getCommentId());
         upReq.setStatus(StatusEnum.DELETE.getId());
         update(upReq);
-    }
 
-    @Override
-    public void transferSensitiveWord(CommentDO commentDO) {
-        // 如果有敏感词
-        if (commentDO.hasSensitiveWord()) {
-            commentDO.setContent(SensitiveWordFilter.
-                    replaceSensitiveWord(commentDO.getContent(), SensitiveWordFilter.maxMatchType, SENSITIVE_REPLACE)
-                    + "(含有敏感词)");
-        }
+        // 该评论下的回复都删了
+
     }
 
     private boolean doUpdate(CommentRequest request) {
@@ -256,6 +256,9 @@ public class CommentServiceImpl implements CommentService {
 
         if (request.getFlag() != null) {
             commentDO.setFlag(request.getFlag());
+        }
+        if (StringUtils.isNotBlank(request.getExtend())) {
+            commentDO.setExtend(request.getExtend());
         }
 
         Result<CommentDO> updateRs = commentWrapper.update(commentDO);

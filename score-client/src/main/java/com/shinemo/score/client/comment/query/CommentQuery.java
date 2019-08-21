@@ -81,9 +81,9 @@ public class CommentQuery extends QueryBase {
 	private Long commentId;
 
 	/**
-	 * 忽略其他人含有敏感词的评论
+	 * 保留自己的敏感词
 	 */
-	private Boolean ignoreOtherSensitive = false;
+	private Boolean containMySensitive = false;
 
 	private Long sensitiveUid;
 

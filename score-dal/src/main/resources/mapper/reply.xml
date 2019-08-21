@@ -59,7 +59,7 @@
                         </otherwise>
                     </choose>
 
-                    <if test="ignoreOtherSensitive and sensitiveUid !=null">
+                    <if test="containMySensitive and sensitiveUid !=null">
                         or (uid = #{sensitiveUid} and flag &amp; 1 = 1)
                     </if>
 

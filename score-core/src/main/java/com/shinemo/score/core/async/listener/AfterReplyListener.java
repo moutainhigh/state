@@ -44,7 +44,6 @@ public class AfterReplyListener extends BaseAsync {
         query.setCurrentPage(1);
         query.putOrderBy("id", false);
         query.setOrderByEnable(true);
-        query.getReplyFlag().remove(CommentFlag.HAS_SENSITIVE);
         query.setStatus(StatusEnum.NORMAL.getId());
         ListVO<ReplyDO> replyDOListVO = replyService.findByQuery(query);
 
@@ -52,12 +51,10 @@ public class AfterReplyListener extends BaseAsync {
         commentRequest.setCommentId(commentId);
         commentRequest.setHistoryReply(replyDOListVO.getRows());
 
-        // 含有敏感词的回复不写入评论有效回复数中
-        if (!event.isHasSensitive()) {
-            commentRequest.setIncrReplyNum(true);
-        }
         // 如果是删除，并且不是含有敏感词的，有效回复数减1
-        if (event.isDel() && !event.isHasSensitive()) {
+        if (!event.isDel()) {
+            commentRequest.setIncrReplyNum(true);
+        } else {
             commentRequest.setSubReplyNum(true);
         }
 

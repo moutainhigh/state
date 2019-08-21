@@ -9,11 +9,10 @@ public class AfterReplyEvent {
 
     private Long commentId;
 
-    /**
-     * 该回复是否含有敏感词
-     */
-    private boolean hasSensitive;
 
+    /**
+     * 是否是删除
+     */
     private boolean del;
 
 }

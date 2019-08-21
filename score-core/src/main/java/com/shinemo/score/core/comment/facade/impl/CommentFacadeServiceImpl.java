@@ -16,6 +16,7 @@ import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
 import com.shinemo.score.client.reply.domain.ReplyDO;
+import com.shinemo.score.client.reply.domain.ReplyVO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
@@ -31,6 +32,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * @author wenchao.li
@@ -84,9 +86,6 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
             CommentDO comment = commentService.getById(commentId);
 
-            // 敏感词转换
-            commentService.transferSensitiveWord(comment);
-
             CommentVO commentVO;
             if (extend != null && extend.getUid() != null) {
                 commentVO = new CommentVO(comment, extend.getUid());
@@ -94,6 +93,41 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             } else {
                 commentVO = new CommentVO(comment);
             }
+
+            // 1.最近三条回复，如果含有敏感词的情况，返回结果删除含有敏感词的
+            // 2.如果extend中存在大于等于三条记录，然后因为敏感词删除了任意条，则重新从库中拉最新三条数据
+            // 只有登录过的才处理
+            if (extend != null) {
+                @SuppressWarnings("unchecked")
+                List<ReplyVO> replys = (List<ReplyVO>) commentVO.getReply();
+                if (!replys.isEmpty()) {
+                    int originSize = replys.size();
+                    // 删除
+                    replys.removeIf(ReplyVO::isHasSensitive);
+                    if (originSize >= 3 && originSize != replys.size()) {
+                        // 重新构造最近三条记录,可以看自己含敏感词的回复
+                        ReplyQuery replyQuery = new ReplyQuery();
+                        replyQuery.setCommentId(commentId);
+                        replyQuery.setPageSize(3);
+                        replyQuery.setCurrentPage(1);
+                        replyQuery.putOrderBy("id", false);
+                        replyQuery.setOrderByEnable(true);
+                        replyQuery.setSensitiveUid(extend.getUid());
+                        replyQuery.setStatus(StatusEnum.NORMAL.getId());
+                        replyQuery.setContainMySensitive(true);
+                        replyQuery.getReplyFlag().remove(CommentFlag.HAS_SENSITIVE);
+                        ListVO<ReplyDO> replyDOListVO = replyService.findByQuery(replyQuery);
+
+                        List<ReplyVO> result = new ArrayList<>();
+                        replyDOListVO.getRows().forEach(v -> {
+                            ReplyVO replyVO = new ReplyVO(v, extend.getUid());
+                            result.add(replyVO);
+                        });
+                        commentVO.setReply(result);
+                    }
+                }
+            }
+
             list.add(commentVO);
         }
         return WebResult.success(ListVO.list(list, idsRs.getTotalCount(), idsRs.getCurrentPage(), idsRs.getPageSize()));
@@ -138,9 +172,6 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
         CommentDO commentDO = commentService.create(request);
 
-        // 敏感词处理一下
-        commentService.transferSensitiveWord(commentDO);
-
         return Result.success(commentDO);
     }
 
@@ -156,9 +187,6 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
         CommentDO comment = commentService.getById(query.getCommentId());
 
-        // 评论敏感词转换
-        commentService.transferSensitiveWord(comment);
-
         ReplyQuery replyQuery = new ReplyQuery();
         replyQuery.setCommentId(query.getCommentId());
         replyQuery.setPageSize(query.getPageSize());
@@ -173,11 +201,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
             replyQuery.setSensitiveUid(extend.getUid());
         }
         // 自己的敏感词评论可以看
-        replyQuery.setIgnoreOtherSensitive(true);
+        replyQuery.setContainMySensitive(true);
         ListVO<ReplyDO> replys = replyService.findByQuery(replyQuery);
-
-        // 回复敏感词转换
-        replys.getRows().forEach(v -> replyService.transferSensitiveWord(v));
 
         CommentVO vo = null;
         if (extend != null && extend.getUid() != null) {

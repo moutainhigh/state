@@ -1,14 +1,15 @@
 package com.shinemo.score.client.comment.domain;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.reflect.TypeToken;
 import com.shinemo.client.common.BaseDO;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.util.GsonUtil;
-import com.shinemo.power.client.util.SensitiveWordsUtil;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
 import com.shinemo.score.client.utils.RegularUtils;
 import lombok.Data;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,6 @@ public class CommentVO extends BaseDO {
         // 是否含有敏感词
         commentId = commentDO.getId();
         gmtCreate = commentDO.getGmtCreate().getTime();
-        content = commentDO.getContent();
         userPortrait = commentDO.getAvatarUrl();
         netType = commentDO.getNetType();
         mobile = RegularUtils.ignorePhone(commentDO.getMobile());
@@ -76,6 +76,14 @@ public class CommentVO extends BaseDO {
         likeNum = commentDO.getLikeNum();
         replyNum = commentDO.getReplyNum();
         isMine = commentDO.getUid().equals(currentUid);  // 是否是自己的评论
+
+        // 如果是含有敏感词的,返回敏感词处理的结果
+        if (commentDO.hasSensitiveWord() && StringUtils.isNotBlank(commentDO.getExtend())) {
+            CommentExtend extend = GsonUtil.fromGson2Obj(commentDO.getExtend(), CommentExtend.class);
+            content = extend.getSensitiveContent() + "(含有敏感词)";
+        } else {
+            content = commentDO.getContent();
+        }
 
         if (listVO != null) {
 
