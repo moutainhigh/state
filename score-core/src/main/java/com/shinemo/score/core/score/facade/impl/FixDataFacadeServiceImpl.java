@@ -1,5 +1,6 @@
 package com.shinemo.score.core.score.facade.impl;
 
+import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.util.DateUtil;
 import com.shinemo.client.util.GsonUtil;
@@ -27,6 +28,7 @@ import com.shinemo.score.dal.video.mapper.VideoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -178,6 +180,39 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             });
         }
         return Result.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void fixScoreNum() {
+        log.info("[fixScoreNum] start");
+        long startTime = System.currentTimeMillis();
+        ScoreQuery query = new ScoreQuery();
+        query.setPageEnable(false);
+        List<ScoreDO> list = scoreTempMapper.find(query);
+        Map<Long,List<ScoreDO>> uidMap = list.stream().collect(Collectors.groupingBy(ScoreDO::getUid));
+        for(Map.Entry<Long,List<ScoreDO>> entry:uidMap.entrySet()){
+            List<ScoreDO> subList = entry.getValue();
+            poolExecutor.execute(()->{
+                updateNum(subList);
+            });
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("[fixScoreNum] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
+    }
+
+    private void updateNum(List<ScoreDO>list){
+        for(int i=0;i<list.size();i++){
+            long num = i+1;
+            ScoreDO scoreDO = new ScoreDO();
+            scoreDO.setId(list.get(i).getId());
+            scoreDO.setNum(num);
+            scoreDO.setVersion(list.get(i).getVersion());
+            int upt = scoreTempMapper.update(scoreDO);
+            if(upt<1){
+                log.error("[update] error:{}",upt);
+            }
+        }
     }
 
     private boolean insert(List<UserTmp>userList, VideoTmp tmp){
