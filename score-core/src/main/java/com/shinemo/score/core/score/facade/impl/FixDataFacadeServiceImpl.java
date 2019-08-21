@@ -34,6 +34,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 @Service
@@ -68,12 +71,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private CalculationFacadeService calculationFacadeService;
 
 
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(20);
 
     @PostConstruct
     public void init(){
         userMap = new HashMap<>(800000);
         videoDOMap = new HashMap<>(20000);
-        userNumMap = new HashMap<>(800000);
+        userNumMap = new ConcurrentHashMap<>(800000);
     }
 
 
@@ -138,14 +142,10 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         return true;
     }
 
-    @Override
-    public Result<Void> initScore(){
+    private void subRun(List<VideoTmp> list,int j){
         long start = System.currentTimeMillis();
         long count = 0;
-        log.info("[initScore] start:{}",start);
-        VideoTmpQuery query = new VideoTmpQuery();
-        query.setPageEnable(false);
-        List<VideoTmp> list = videoTmpMapper.find(query);
+        log.info("[initScore] page:{},start:{}",j,start);
         UserTmpQuery userTemQuery = new UserTmpQuery();
         userTemQuery.setPageEnable(false);
         for(VideoTmp iter:list){
@@ -160,7 +160,29 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             }
         }
         long end = System.currentTimeMillis();
-        log.info("[initScore] finish errorCount:{} start:{},finish:{},cost:{}",count,start,end,end-start);
+        log.info("[initScore] finish page:{} errorCount:{} start:{},finish:{},cost:{}",j,count,start,end,end-start);
+
+    }
+
+    @Override
+    public Result<Void> initScore(){
+        long count = 0;
+        VideoTmpQuery query = new VideoTmpQuery();
+        query.setPageEnable(false);
+        List<VideoTmp> list = videoTmpMapper.find(query);
+        int size = list.size();
+        if (size % 2000 == 0) {
+            count = size / 2000;
+        } else {
+            count =  size / 2000 +1; ;
+        }
+        for (int i = 0; i < count; i++) {
+            List<VideoTmp> subList = list.subList(i * 2000, ((i + 1) * 2000 > size ? size : 2000 * (i + 1)));
+            int j = i;
+            poolExecutor.execute(()->{
+                subRun(subList,j);
+            });
+        }
         return Result.success();
     }
 
