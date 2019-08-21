@@ -165,13 +165,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         query.setPageEnable(false);
         List<VideoTmp> list = videoTmpMapper.find(query);
         int size = list.size();
-        if (size % 300 == 0) {
-            count = size / 300;
+        if (size % 1000 == 0) {
+            count = size / 1000;
         } else {
-            count =  size / 300 +1; ;
+            count =  size / 1000 +1; ;
         }
         for (int i = 0; i < count; i++) {
-            List<VideoTmp> subList = list.subList(i * 300, ((i + 1) * 300 > size ? size : 300 * (i + 1)));
+            List<VideoTmp> subList = list.subList(i * 1000, ((i + 1) * 1000 > size ? size : 1000 * (i + 1)));
             int j = i;
             poolExecutor.execute(()->{
                 subRun(subList,j);
@@ -190,6 +190,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             return false;
         }
         ScoreQuery tmpQuery = new ScoreQuery();
+        ScoreQuery numQuery = new ScoreQuery();
         for(UserTmp iter:userList){
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
@@ -218,7 +219,11 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
-            scoreTempMapper.insert(domain);
+            try {
+                scoreTempMapper.insert(domain);
+            } catch (Exception e) {
+                log.error("[scoreTempMapper] insert error,",e);
+            }
         }
         return true;
     }
