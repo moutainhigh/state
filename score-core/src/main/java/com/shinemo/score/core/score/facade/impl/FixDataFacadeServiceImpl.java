@@ -190,7 +190,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             return false;
         }
         ScoreQuery tmpQuery = new ScoreQuery();
-        ScoreQuery numQuery = new ScoreQuery();
         for(UserTmp iter:userList){
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
@@ -219,53 +218,9 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
-            numQuery.setUid(domain.getUid());
-            ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(numQuery);
-            if(scoreDO!=null){
-                domain.setNum(scoreDO.getNum()+1);
-            }else{
-                domain.setNum(1L);
-            }
-            try {
-                scoreTempMapper.insert(domain);
-            } catch (Exception e) {
-                domain.setNum(domain.getNum()+1);
-                try {
-                    scoreTempMapper.insert(domain);
-                } catch (Exception ex) {
-                    int i = 0;
-                    while (i < 10){
-                        if (insert(domain)) {
-                            break;
-                        }
-                        i++;
-                        if(i==10){
-                            log.error("[getScoreByMaxNum] error param:{}",GsonUtil.toJson(domain));
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean insert(ScoreDO domain){
-
-        ScoreQuery numQuery = new ScoreQuery();
-        numQuery.setUid(domain.getUid());
-        ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(numQuery);
-        if(scoreDO != null){
-            domain.setNum(scoreDO.getNum()+1);
-        }else{
-            domain.setNum(1L);
-        }
-        try {
             scoreTempMapper.insert(domain);
-        } catch (Exception e) {
-            return false;
         }
         return true;
-
     }
 
     private void subOnine(List<ScoreDO> list,String videoId){
