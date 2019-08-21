@@ -120,6 +120,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         // 更新为已删除状态
         ReplyDO upDO = new ReplyDO();
+        upDO.setId(replyDO.getId());
         upDO.setCommentId(delReq.getReplyId());
         upDO.setStatus(StatusEnum.DELETE.getId());
         replyWrapper.update(upDO);
