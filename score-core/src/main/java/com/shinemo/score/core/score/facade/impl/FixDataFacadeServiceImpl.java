@@ -36,6 +36,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     @Override
     public Result<Void> fixVideo(){
         long start = System.currentTimeMillis();
+        log.info("[fixVideoFinish] start:{}",start);
         VideoTmpQuery query = new VideoTmpQuery();
         List<VideoTmp> rs = videoTmpMapper.find(query);
         long count = 0;
