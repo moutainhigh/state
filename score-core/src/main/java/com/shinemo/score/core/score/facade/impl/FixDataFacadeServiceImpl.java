@@ -334,8 +334,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         long start = System.currentTimeMillis();
         log.info("[subCalculate] page:{} start:{}",j,start);
         for(VideoTmp iter:list){
-            Result<Void> ret = calculationFacadeService.calculationByTime(null,null,
-                    CalculationEnum.all,null,iter.getXmVideoId());
+            Result<Void> ret = calculationFacadeService.calculationByThirdId(null,iter.getXmVideoId());
             if(!ret.isSuccess()){
                 log.error("[calculateScore] error videoId:{}",iter.getXmVideoId());
             }

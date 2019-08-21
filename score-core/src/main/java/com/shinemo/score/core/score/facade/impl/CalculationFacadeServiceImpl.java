@@ -12,6 +12,7 @@ import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
 import com.shinemo.score.core.score.service.ScoreService;
 import com.shinemo.score.core.video.service.VideoService;
+import com.shinemo.score.dal.score.mapper.ScoreTempMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,15 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
     @Resource
     private VideoService videoService;
 
+    @Resource
+    private ScoreTempMapper scoreTempMapper;
+
     @Override
-    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long id,String thirdId) {
+    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum) {
 
         ScoreQuery query = new ScoreQuery();
         query.setStartModifyTime(startTime);
         query.setEndModifyTime(endTime);
-        query.setVideoId(id);
-        query.setThirdVideoId(thirdId);
         query.setPageEnable(false);
         Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
         if(!rs.hasValue() ){
@@ -101,7 +103,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
 
 
     @Override
-    public Result<Void> calculationByThirdId(String thirdVideoId) {
+    public Result<Void> calculationByThirdId(Long videoId,String thirdVideoId) {
         //TODO
         return null;
     }

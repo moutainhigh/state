@@ -8,10 +8,10 @@ import java.util.Date;
 public interface CalculationFacadeService{
 
 
-    Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long videoId,String thirdVideoId);
+    Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum);
 
 
-    Result<Void> calculationByThirdId(String thirdVideoId);
+    Result<Void> calculationByThirdId(Long videoId,String thirdVideoId);
 
 
 }
