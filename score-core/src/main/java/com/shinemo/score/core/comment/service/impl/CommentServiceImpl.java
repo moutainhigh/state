@@ -165,7 +165,7 @@ public class CommentServiceImpl implements CommentService {
         // 只看没有敏感词的
         query.getCommentFlag().remove(CommentFlag.HAS_SENSITIVE);
         // 自己的敏感词评论可以看
-        query.setIgnoreOtherSensitive(true);
+        query.setContainMySensitive(true);
         Result<ListVO<Long>> idListRs = commentWrapper.findIds(query);
         if (!idListRs.hasValue()) {
             throw new BizException(idListRs.getError());
