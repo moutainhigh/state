@@ -171,13 +171,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         query.setPageEnable(false);
         List<VideoTmp> list = videoTmpMapper.find(query);
         int size = list.size();
-        if (size % 2000 == 0) {
-            count = size / 2000;
+        if (size % 500 == 0) {
+            count = size / 500;
         } else {
-            count =  size / 2000 +1; ;
+            count =  size / 500 +1; ;
         }
         for (int i = 0; i < count; i++) {
-            List<VideoTmp> subList = list.subList(i * 2000, ((i + 1) * 2000 > size ? size : 2000 * (i + 1)));
+            List<VideoTmp> subList = list.subList(i * 500, ((i + 1) * 500 > size ? size : 500 * (i + 1)));
             int j = i;
             poolExecutor.execute(()->{
                 subRun(subList,j);
