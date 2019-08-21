@@ -8,7 +8,7 @@ import java.util.Date;
 public interface CalculationFacadeService{
 
 
-    Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long videoId);
+    Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long videoId,String thirdVideoId);
 
 
 

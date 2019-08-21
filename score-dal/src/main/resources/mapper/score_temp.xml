@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shinemo.score.dal.score.mapper.ScoreMapper">
+<mapper namespace="com.shinemo.score.dal.score.mapper.ScoreTempMapper">
 
-	<!-- 结果集对应关系 -->
-	<resultMap id="result" type="com.shinemo.score.client.score.domain.ScoreDO" >
-		<id column="id" property="id"/>
-		<result property="gmtCreate" column="gmt_create"/>
-		<result property="gmtModified" column="gmt_modified"/>
-		<result property="status" column="status"/>
-		<result property="videoId" column="video_id"/>
-		<result property="score" column="score"/>
-		<result property="uid" column="uid"/>
-		<result property="extend" column="extend"/>
-		<result property="version" column="version"/>
+    <!-- 结果集对应关系 -->
+    <resultMap id="result" type="com.shinemo.score.client.score.domain.ScoreDO" >
+        <id column="id" property="id"/>
+        <result property="gmtCreate" column="gmt_create"/>
+        <result property="gmtModified" column="gmt_modified"/>
+        <result property="status" column="status"/>
+        <result property="videoId" column="video_id"/>
+        <result property="score" column="score"/>
+        <result property="uid" column="uid"/>
+        <result property="extend" column="extend"/>
+        <result property="version" column="version"/>
         <result property="num" column="num"/>
         <result property="thirdVideoId" column="third_video_id"/>
-	</resultMap>
+    </resultMap>
 
 
     <resultMap id="count_result" type="com.shinemo.score.client.score.domain.ScoreCountDO" >
@@ -26,13 +26,13 @@
     </resultMap>
 
 
-	<!-- 数据库字段 -->
-	<sql id="columns">
+    <!-- 数据库字段 -->
+    <sql id="columns">
 		id, gmt_create, gmt_modified, status, video_id, score, uid, extend, version,num,third_video_id
 	</sql>
 
     <sql id="table">
-        score
+        score_temp
     </sql>
 
     <!-- 查询条件 -->
@@ -41,10 +41,10 @@
             <choose>
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
-					<if test="status != null">and status = #{status}</if>
-					<if test="videoId != null">and video_id = #{videoId}</if>
+                    <if test="status != null">and status = #{status}</if>
+                    <if test="videoId != null">and video_id = #{videoId}</if>
                     <if test="thirdVideoId != null">and third_video_id = #{thirdVideoId}</if>
-					<if test="uid != null">and uid = #{uid}</if>
+                    <if test="uid != null">and uid = #{uid}</if>
                     <if test="videoIds != null and videoIds.size() > 0">
                         and video_id in
                         <foreach collection="videoIds" open="(" separator=","
@@ -58,14 +58,13 @@
                     <if test="endModifyTime!=null">
                         and gmt_modified &lt; #{endModifyTime}
                     </if>
-                    <if test="minId != null">and id &gt;= #{minId}</if>
                 </otherwise>
             </choose>
         </where>
     </sql>
 
 
-	<!-- 查询结果集 -->
+    <!-- 查询结果集 -->
     <select id="find" resultMap="result"
             parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select
@@ -84,19 +83,7 @@
         </if>
     </select>
 
-
-
-    <select id="getScoreCounts" resultMap="count_result" parameterType="java.util.List">
-        select sum(score) as score,video_id as video_id ,count(1) as num from <include refid="table"/>
-        where video_id in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        group by video_id
-    </select>
-
-
-	<!-- 查询某条记录 -->
+    <!-- 查询某条记录 -->
     <select id="get" resultMap="result" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select
         <include refid="columns"/>
@@ -112,11 +99,94 @@
         limit 1
     </select>
 
-	<!-- 统计查询结果数量 -->
+    <!-- 统计查询结果数量 -->
     <select id="count" resultType="long" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select count(*) from
         <include refid="table"/>
         <include refid="conditions"/>
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.shinemo.score.client.score.domain.ScoreDO">
+        insert into
+        <include refid="table"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            gmt_create,
+            gmt_modified,
+            <if test="status != null">
+                status,
+            </if>
+            <if test="videoId != null">
+                video_id,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="extend != null">
+                extend,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="num != null">
+                num,
+            </if>
+            <if test="thirdVideoId != null">
+                third_video_id,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id, jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{gmtCreate},
+            </if>
+            <if test="status != null">
+                #{gmtModified},
+            </if>
+            <if test="status != null">
+                #{status, jdbcType=INTEGER},
+            </if>
+            <if test="videoId != null">
+                #{videoId, jdbcType=VARCHAR},
+            </if>
+            <if test="score != null">
+                #{score, jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid, jdbcType=BIGINT},
+            </if>
+            <if test="extend != null">
+                #{extend, jdbcType=LONGVARCHAR},
+            </if>
+            <if test="version != null">
+                #{version, jdbcType=BIGINT},
+            </if>
+            <if test="num != null">
+                #{num},
+            </if>
+            <if test="thirdVideoId != null">
+                #{thirdVideoId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getScoreCounts" resultMap="count_result" parameterType="java.util.List">
+        select sum(score) as score,video_id as video_id ,count(1) as num from <include refid="table"/>
+        where video_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by video_id
     </select>
 
     <select id="getScoreByMaxNum" resultType="com.shinemo.score.client.score.domain.ScoreDO"
@@ -129,82 +199,6 @@
         order by num desc limit 1
     </select>
 
-    <!-- 删除 -->
-    <delete id="delete" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
-        delete from
-        <include refid="table"/>
-        where id = #{id}
-    </delete>
-
-	<!-- 插入 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.shinemo.score.client.score.domain.ScoreDO">
-        insert into
-        <include refid="table"/>
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-                    <if test="id != null">
-						id,
-					</if>
-					gmt_create,
-					gmt_modified,
-                    <if test="status != null">
-						status,
-					</if>
-                    <if test="videoId != null">
-						video_id,
-					</if>
-                    <if test="score != null">
-						score,
-					</if>
-                    <if test="uid != null">
-						uid,
-					</if>
-                    <if test="extend != null">
-						extend,
-					</if>
-                    <if test="version != null">
-						version,
-					</if>
-                    <if test="num != null">
-                        num,
-                    </if>
-                    <if test="thirdVideoId != null">
-                        third_video_id,
-                    </if>
-
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-                    <if test="id != null">
-						#{id, jdbcType=BIGINT},
-                    </if>
-                    now(),
-                    now(),
-                    <if test="status != null">
-						#{status, jdbcType=INTEGER},
-                    </if>
-                    <if test="videoId != null">
-						#{videoId, jdbcType=VARCHAR},
-                    </if>
-                    <if test="score != null">
-						#{score, jdbcType=INTEGER},
-                    </if>
-                    <if test="uid != null">
-						#{uid, jdbcType=BIGINT},
-                    </if>
-                    <if test="extend != null">
-						#{extend, jdbcType=LONGVARCHAR},
-                    </if>
-                    <if test="version != null">
-						#{version, jdbcType=BIGINT},
-                    </if>
-                    <if test="num != null">
-                        #{num},
-                    </if>
-                    <if test="thirdVideoId != null">
-                        #{thirdVideoId},
-                    </if>
-        </trim>
-    </insert>
 
     <!-- 更新 -->
     <update id="update" parameterType="com.shinemo.score.client.score.domain.ScoreDO">

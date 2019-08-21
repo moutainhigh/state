@@ -186,5 +186,8 @@ public class ShineMoProperties {
         @NotNull
         private String mgsuggest;
 
+        @NotNull
+        private String muic;
+
     }
 }

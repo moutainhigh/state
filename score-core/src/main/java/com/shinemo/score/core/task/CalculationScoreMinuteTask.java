@@ -39,7 +39,7 @@ public class CalculationScoreMinuteTask {
         }
         Date start = DateUtil.getFutureMinute(startDate,-10);
         Date end = DateUtil.getFutureMinute(startDate,-5);
-        Result<Void> rs =  calculationFacadeService.calculationByTime(start,end, CalculationEnum.all,null);
+        Result<Void> rs =  calculationFacadeService.calculationByTime(start,end, CalculationEnum.all,null,null);
         if(!rs.isSuccess()){
             log.error("[calculationByTime] error result:{}",rs);
         }
