@@ -119,7 +119,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             videoQuery.setId(rs.getValue().getRows().get(0).getVideoId());
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
             if(!rz.hasValue()){
-                log.error("[getVideo] error id:{} result:{}",videoQuery.getVideoId(),rz);
+                log.error("[getVideo] error thirdVideoId:{} result:{}",thirdVideoId,rz);
                 return Result.error(rz.getError());
             }
             VideoDO videoDO = rz.getValue();
@@ -128,7 +128,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             videoDO.setScore(videoDO.getInitScore()+count.getScore());
             videoDO.setWeight(videoDO.getInitWeight()+count.getNum());
             Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
-            if(uptRs.hasValue()){
+            if(!uptRs.hasValue()){
                 log.error("[updateVideoScore] error param:{} result:{}", GsonUtil.toJson(videoDO),uptRs);
                 return Result.error(uptRs.getError());
             }
