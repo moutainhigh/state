@@ -63,12 +63,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     @Resource
     private ScoreMapper scoreMapper;
 
-    private Map<String, UserBaseInfoDO> userMap;
-
-    private Map<String,VideoDO> videoDOMap;
-
-    private Map<Long,Long> userNumMap;
-
     @Resource
     private CalculationFacadeService calculationFacadeService;
 
@@ -78,11 +72,9 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
 
     private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
 
-    @PostConstruct
-    public void init(){
-        userMap = new HashMap<>(800000);
-        videoDOMap = new HashMap<>(20000);
-        userNumMap = new ConcurrentHashMap<>(800000);
+
+    private String getRedisUidKey(String mobile){
+        return String.format("MIGU_FIX_SCORE_USERBASEINFO_%s",mobile);
     }
 
 
@@ -110,7 +102,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         VideoDO video = videoMapper.get(query);
         double initScore = iter.getScore()*iter.getWeight();
         if(video!=null){
-            videoDOMap.put(video.getVideoId(),video);
             video.setInitScore(new Double(initScore).longValue());
             video.setInitWeight(iter.getWeight());
             if(StringUtils.isBlank(iter.getVideoName())){
@@ -141,7 +132,6 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 log.error("[insertOrUpdateVideo] insertError iter:{}", GsonUtil.toJson(iter));
                 return false;
             }
-            videoDOMap.put(video.getVideoId(),video);
         }
         return true;
     }
@@ -191,26 +181,21 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     }
 
     private boolean insert(List<UserTmp>userList, VideoTmp tmp){
+
         VideoQuery query = new VideoQuery();
+        query.setVideoId(tmp.getXmVideoId());
+        VideoDO newVideoDO = videoMapper.get(query);
+        if(newVideoDO == null){
+            log.error("[video] not exist id:{}",tmp.getXmVideoId());
+            return false;
+        }
         ScoreQuery tmpQuery = new ScoreQuery();
+        ScoreQuery numQuery = new ScoreQuery();
         for(UserTmp iter:userList){
             ScoreDO domain = new ScoreDO();
             domain.setStatus(1);
-            VideoDO videoDO = videoDOMap.get(tmp.getXmVideoId());
-            if(videoDO!=null){
-                domain.setVideoId(videoDO.getId());
-            }else{
-                query.setVideoId(tmp.getXmVideoId());
-                VideoDO newVideoDO = videoMapper.get(query);
-                if(newVideoDO!=null){
-                    domain.setVideoId(newVideoDO.getId());
-                    videoDOMap.put(tmp.getXmVideoId(),newVideoDO);
-                }else{
-                    log.error("[video] not exist id:{}",tmp.getXmVideoId());
-                    continue;
-                }
-            }
-            UserBaseInfoDO userBaseInfoDO = userMap.get(iter.getMobile());
+            domain.setVideoId(newVideoDO.getId());
+            UserBaseInfoDO userBaseInfoDO = redisService.get(getRedisUidKey(iter.getMobile()),UserBaseInfoDO.class);
             if(userBaseInfoDO!=null){
                 domain.setUid(userBaseInfoDO.getId());
             }else{
@@ -220,7 +205,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                     continue;
                 }
                 domain.setUid(rs.getValue().getId());
-                userMap.put(iter.getMobile(),rs.getValue());
+                redisService.set(getRedisUidKey(iter.getMobile()),rs.getValue(),3600);
             }
             tmpQuery.setUid(domain.getUid());
             tmpQuery.setVideoId(domain.getVideoId());
@@ -234,13 +219,18 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             domain.setScore(iter.getScore());
             domain.setVersion(1L);
             domain.setThirdVideoId(tmp.getXmVideoId());
-            Long num = userNumMap.get(domain.getUid());
-            if(num == null){
-                num = 1L;
+            numQuery.setUid(domain.getUid());
+            ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(numQuery);
+            if(scoreDO!=null){
+                domain.setNum(scoreDO.getNum()+1);
+            }else{
+                domain.setNum(1L);
             }
-            domain.setNum(num);
-            scoreTempMapper.insert(domain);
-            userNumMap.put(domain.getUid(),num+1);
+            try {
+                scoreTempMapper.insert(domain);
+            } catch (Exception e) {
+                log.error("[getScoreByMaxNum] error domain:{}",GsonUtil.toJson(domain));
+            }
         }
         return true;
     }
