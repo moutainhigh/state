@@ -229,10 +229,35 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             try {
                 scoreTempMapper.insert(domain);
             } catch (Exception e) {
-                log.error("[getScoreByMaxNum] error domain:{}",GsonUtil.toJson(domain));
+                domain.setNum(domain.getNum()+1);
+                try {
+                    scoreTempMapper.insert(domain);
+                } catch (Exception ex) {
+                    int i = 0;
+                    while (i < 10){
+                        if (insert(domain)) {
+                            break;
+                        }
+                        i++;
+                        if(i==10){
+                            log.error("[getScoreByMaxNum] error param:{}",GsonUtil.toJson(domain));
+                        }
+                    }
+                }
             }
         }
         return true;
+    }
+
+    private boolean insert(ScoreDO domain){
+        domain.setNum(domain.getNum()+1);
+        try {
+            scoreTempMapper.insert(domain);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+
     }
 
     private void subOnine(List<ScoreDO> list,String videoId){
