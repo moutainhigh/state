@@ -1,5 +1,6 @@
 package com.shinemo.score.core.score.facade.impl;
 
+import com.google.common.collect.Lists;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.util.DateUtil;
@@ -33,10 +34,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -72,7 +70,10 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private RedisService redisService;
 
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(30);
+
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
+
+
 
 
     private String getRedisUidKey(String mobile){
@@ -206,6 +207,41 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         log.info("[fixScoreNum] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
     }
 
+    public static  void main(String args[]){
+
+
+        ScoreDO a = new ScoreDO();
+        a.setId(1L);
+        a.setNum(null);
+        ScoreDO b= new ScoreDO();
+        b.setId(2L);
+        b.setNum(2L);
+        ScoreDO c = new ScoreDO();
+        c.setId(3L);
+        c.setNum(3L);
+
+        ScoreDO d = new ScoreDO();
+        d.setId(3L);
+        d.setNum(null);
+        List<ScoreDO> scoreDOList = Lists.newArrayList(a,b,c,d);
+        Collections.sort(scoreDOList, new Comparator<ScoreDO>() {
+            public int compare(ScoreDO arg0, ScoreDO arg1) {
+                if( arg0.getNum() == null){
+                    return 1;
+                }
+                if(arg1.getNum() == null){
+                    return -1;
+                }
+                if(arg0.getNum() > arg1.getNum()){
+                    return 1;
+                }
+                return -1;
+            }
+        });
+        System.out.println(GsonUtil.toJson(scoreDOList));
+
+    }
+
     private void updateNum(List<Long>list,int j){
         long startTime = System.currentTimeMillis();
         log.info("[updateNum] page:{} start:{}",j,startTime);
@@ -214,12 +250,29 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         for(Long iter:list){
             query.setUid(iter);
             List<ScoreDO> scoreDOList = scoreTempMapper.find(query);
+            Collections.sort(scoreDOList, new Comparator<ScoreDO>() {
+                public int compare(ScoreDO arg0, ScoreDO arg1) {
+                    if( arg0.getNum() == null){
+                        return 1;
+                    }
+                    if(arg1.getNum() == null){
+                        return -1;
+                    }
+                    if(arg0.getNum() > arg1.getNum()){
+                        return 1;
+                    }
+                    return -1;
+                }
+            });
             for(int i=0;i<scoreDOList.size();i++){
+                if(scoreDOList.get(i).getNum()!=null){
+                    continue;
+                }
                 long num = i+1;
                 ScoreDO scoreDO = new ScoreDO();
                 scoreDO.setId(scoreDOList.get(i).getId());
-                scoreDO.setNum(num);
                 scoreDO.setVersion(scoreDOList.get(i).getVersion());
+                scoreDO.setNum(num);
                 int upt = scoreTempMapper.update(scoreDO);
                 if(upt<1){
                     log.error("[update] error:{}",upt);
@@ -298,19 +351,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             videoMapper.insert(newVideoDO);
         }
         Long id = newVideoDO.getId();
-        long count = 0;
-        int size = list.size();
-        if (size % 300 == 0) {
-            count = size / 300;
-        } else {
-            count =  size / 300 +1; ;
-        }
-        for (int i = 0; i < count; i++) {
-            List<ScoreDO> subList = list.subList(i * 300, ((i + 1) * 300 > size ? size : 300 * (i + 1)));
-            poolExecutor.execute(()->{
-                subAndSubRun(subList,id);
-            });
-        }
+        subAndSubRun(list,id);;
     }
 
 
@@ -318,6 +359,14 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         ScoreQuery tempQuery = new ScoreQuery();
         for(ScoreDO iter:list){
             tempQuery.setUid(iter.getUid());
+            tempQuery.setVideoId(videoId);
+            ScoreDO check = scoreTempMapper.get(tempQuery);
+            if(check!=null){
+                log.error("[check] score domain:{}",GsonUtil.toJson(iter));
+                continue;
+            }
+            iter.setId(null);
+            tempQuery.setVideoId(null);
             ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(tempQuery);
             if(scoreDO!=null){
                 iter.setNum(scoreDO.getNum()+1);
@@ -325,22 +374,29 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 iter.setNum(1L);
             }
             iter.setVideoId(videoId);
-            scoreTempMapper.insert(iter);
+            try {
+                scoreTempMapper.insert(iter);
+            } catch (Exception e) {
+                log.error("[scoreTempMapper] inserrt error",e);
+            }
         }
     }
 
     @Override
     public Result<Void> addOnlineScore(Long minId){
+
+        long startTime = System.currentTimeMillis();
+        log.info("[addOnlineScore] start:{}",startTime);
         ScoreQuery query = new ScoreQuery();
         query.setPageEnable(false);
         query.setMinId(minId);
         List<ScoreDO> list = scoreMapper.find(query);
         Map<String,List<ScoreDO>> vMap = list.stream().collect(Collectors.groupingBy(ScoreDO::getThirdVideoId));
         vMap.forEach((K,V)-> {
-            poolExecutor.execute(()->{
-                subOnine(V,K);
-            });
+            subOnine(V,K);
         });
+        long endTime = System.currentTimeMillis();
+        log.info("[addOnlineScore] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
         return Result.success();
     }
 
