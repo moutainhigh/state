@@ -351,25 +351,14 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             videoMapper.insert(newVideoDO);
         }
         Long id = newVideoDO.getId();
-        long count = 0;
-        int size = list.size();
-        if (size % 300 == 0) {
-            count = size / 300;
-        } else {
-            count =  size / 300 +1; ;
-        }
-        for (int i = 0; i < count; i++) {
-            List<ScoreDO> subList = list.subList(i * 300, ((i + 1) * 300 > size ? size : 300 * (i + 1)));
-            poolExecutor.execute(()->{
-                subAndSubRun(subList,id);
-            });
-        }
+        subAndSubRun(list,id);;
     }
 
 
     private void subAndSubRun(List<ScoreDO> list,Long videoId){
         ScoreQuery tempQuery = new ScoreQuery();
         for(ScoreDO iter:list){
+            iter.setId(null);
             tempQuery.setUid(iter.getUid());
             ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(tempQuery);
             if(scoreDO!=null){
@@ -390,9 +379,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         List<ScoreDO> list = scoreMapper.find(query);
         Map<String,List<ScoreDO>> vMap = list.stream().collect(Collectors.groupingBy(ScoreDO::getThirdVideoId));
         vMap.forEach((K,V)-> {
-            poolExecutor.execute(()->{
-                subOnine(V,K);
-            });
+            subOnine(V,K);
         });
         return Result.success();
     }
