@@ -192,13 +192,13 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         List<Long> list = scoreTempMapper.findUid(query);
         long count=0;
         int size = list.size();
-        if (size % 2000 == 0) {
-            count = size / 2000;
+        if (size % 10000 == 0) {
+            count = size / 10000;
         } else {
-            count =  size / 2000 +1; ;
+            count =  size / 10000 +1; ;
         }
         for (int i = 0; i < count; i++) {
-            List<Long> subList = list.subList(i * 2000, ((i + 1) * 2000 > size ? size : 2000 * (i + 1)));
+            List<Long> subList = list.subList(i * 10000, ((i + 1) * 10000 > size ? size : 10000 * (i + 1)));
             int j = i;
             poolExecutor.execute(()->{
                 updateNum(subList,j);
