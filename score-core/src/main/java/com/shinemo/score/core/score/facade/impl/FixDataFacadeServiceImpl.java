@@ -374,12 +374,19 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 iter.setNum(1L);
             }
             iter.setVideoId(videoId);
-            scoreTempMapper.insert(iter);
+            try {
+                scoreTempMapper.insert(iter);
+            } catch (Exception e) {
+                log.error("[scoreTempMapper] inserrt error",e);
+            }
         }
     }
 
     @Override
     public Result<Void> addOnlineScore(Long minId){
+
+        long startTime = System.currentTimeMillis();
+        log.info("[addOnlineScore] start:{}",startTime);
         ScoreQuery query = new ScoreQuery();
         query.setPageEnable(false);
         query.setMinId(minId);
@@ -388,6 +395,8 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         vMap.forEach((K,V)-> {
             subOnine(V,K);
         });
+        long endTime = System.currentTimeMillis();
+        log.info("[addOnlineScore] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
         return Result.success();
     }
 
