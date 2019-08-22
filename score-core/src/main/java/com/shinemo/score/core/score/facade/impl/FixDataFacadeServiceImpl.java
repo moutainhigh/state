@@ -1,5 +1,6 @@
 package com.shinemo.score.core.score.facade.impl;
 
+import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.util.DateUtil;
 import com.shinemo.client.util.GsonUtil;
@@ -27,6 +28,7 @@ import com.shinemo.score.dal.video.mapper.VideoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -70,7 +72,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private RedisService redisService;
 
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(20);
 
 
     private String getRedisUidKey(String mobile){
@@ -178,6 +180,54 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             });
         }
         return Result.success();
+    }
+
+    @Override
+    public void fixScoreNum() {
+        long startTime = System.currentTimeMillis();
+        ScoreQuery query = new ScoreQuery();
+        query.setPageEnable(false);
+        List<Long> list = scoreTempMapper.findUid(query);
+        long count=0;
+        int size = list.size();
+        if (size % 20000 == 0) {
+            count = size / 20000;
+        } else {
+            count =  size / 20000 +1; ;
+        }
+        for (int i = 0; i < count; i++) {
+            List<Long> subList = list.subList(i * 20000, ((i + 1) * 20000 > size ? size : 20000 * (i + 1)));
+            int j = i;
+            poolExecutor.execute(()->{
+                updateNum(subList,j);
+            });
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("[fixScoreNum] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
+    }
+
+    private void updateNum(List<Long>list,int j){
+        long startTime = System.currentTimeMillis();
+        log.info("[updateNum] page:{} start:{}",j,startTime);
+        ScoreQuery query = new ScoreQuery();
+        query.setPageEnable(false);
+        for(Long iter:list){
+            query.setUid(iter);
+            List<ScoreDO> scoreDOList = scoreTempMapper.find(query);
+            for(int i=0;i<scoreDOList.size();i++){
+                long num = i+1;
+                ScoreDO scoreDO = new ScoreDO();
+                scoreDO.setId(scoreDOList.get(i).getId());
+                scoreDO.setNum(num);
+                scoreDO.setVersion(scoreDOList.get(i).getVersion());
+                int upt = scoreTempMapper.update(scoreDO);
+                if(upt<1){
+                    log.error("[update] error:{}",upt);
+                }
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("[updateNum] page:{} start:{},end:{} cost:{}",j,startTime,endTime,endTime-startTime);
     }
 
     private boolean insert(List<UserTmp>userList, VideoTmp tmp){
@@ -320,7 +370,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         long start = System.currentTimeMillis();
         log.info("[subCalculate] page:{} start:{}",j,start);
         for(VideoTmp iter:list){
-            Result<Void> ret = calculationFacadeService.calculationByThirdId(null,iter.getXmVideoId());
+            Result<Void> ret = calculationFacadeService.calculationByThirdId(iter.getXmVideoId());
             if(!ret.isSuccess()){
                 log.error("[calculateScore] error videoId:{}",iter.getXmVideoId());
             }

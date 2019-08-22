@@ -107,19 +107,18 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
 
 
     @Override
-    public Result<Void> calculationByThirdId(Long videoId,String thirdVideoId) {
+    public Result<Void> calculationByThirdId(String thirdVideoId) {
         ScoreQuery query = new ScoreQuery();
-        query.setVideoId(videoId);
         query.setThirdVideoId(thirdVideoId);
         query.setPageEnable(false);
-        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
-        if(rs.hasValue() && !CollectionUtils.isEmpty(rs.getValue().getRows())){
-            ScoreCountDO count = initCountDO(rs.getValue().getRows());
+        List<ScoreDO> rs = scoreTempMapper.find(query);
+        if(!CollectionUtils.isEmpty(rs)){
+            ScoreCountDO count = initCountDO(rs);
             VideoQuery videoQuery = new VideoQuery();
-            videoQuery.setId(rs.getValue().getRows().get(0).getVideoId());
+            videoQuery.setVideoId(thirdVideoId);
             Result<VideoDO> rz = videoService.getVideo(videoQuery);
             if(!rz.hasValue()){
-                log.error("[getVideo] error id:{} result:{}",videoQuery.getVideoId(),rz);
+                log.error("[getVideo] error thirdVideoId:{} result:{}",thirdVideoId,rz);
                 return Result.error(rz.getError());
             }
             VideoDO videoDO = rz.getValue();
@@ -128,7 +127,7 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             videoDO.setScore(videoDO.getInitScore()+count.getScore());
             videoDO.setWeight(videoDO.getInitWeight()+count.getNum());
             Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
-            if(uptRs.hasValue()){
+            if(!uptRs.hasValue()){
                 log.error("[updateVideoScore] error param:{} result:{}", GsonUtil.toJson(videoDO),uptRs);
                 return Result.error(uptRs.getError());
             }

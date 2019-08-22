@@ -189,6 +189,11 @@
         group by video_id
     </select>
 
+
+    <select id="findUid" resultType="long" parameterType="com.shinemo.score.client.score.query.ScoreQuery">
+        select uid  from <include refid="table"/> where num is null group by uid
+    </select>
+
     <select id="getScoreByMaxNum" resultType="com.shinemo.score.client.score.domain.ScoreDO"
             parameterType="com.shinemo.score.client.score.query.ScoreQuery">
         select
