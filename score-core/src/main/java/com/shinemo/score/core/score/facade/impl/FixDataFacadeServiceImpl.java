@@ -1,5 +1,6 @@
 package com.shinemo.score.core.score.facade.impl;
 
+import com.google.common.collect.Lists;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.util.DateUtil;
@@ -33,10 +34,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -209,6 +207,41 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         log.info("[fixScoreNum] start:{},end:{} cost:{}",startTime,endTime,endTime-startTime);
     }
 
+    public static  void main(String args[]){
+
+
+        ScoreDO a = new ScoreDO();
+        a.setId(1L);
+        a.setNum(null);
+        ScoreDO b= new ScoreDO();
+        b.setId(2L);
+        b.setNum(2L);
+        ScoreDO c = new ScoreDO();
+        c.setId(3L);
+        c.setNum(3L);
+
+        ScoreDO d = new ScoreDO();
+        d.setId(3L);
+        d.setNum(null);
+        List<ScoreDO> scoreDOList = Lists.newArrayList(a,b,c,d);
+        Collections.sort(scoreDOList, new Comparator<ScoreDO>() {
+            public int compare(ScoreDO arg0, ScoreDO arg1) {
+                if( arg0.getNum() == null){
+                    return 1;
+                }
+                if(arg1.getNum() == null){
+                    return -1;
+                }
+                if(arg0.getNum() > arg1.getNum()){
+                    return 1;
+                }
+                return -1;
+            }
+        });
+        System.out.println(GsonUtil.toJson(scoreDOList));
+
+    }
+
     private void updateNum(List<Long>list,int j){
         long startTime = System.currentTimeMillis();
         log.info("[updateNum] page:{} start:{}",j,startTime);
@@ -217,16 +250,29 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         for(Long iter:list){
             query.setUid(iter);
             List<ScoreDO> scoreDOList = scoreTempMapper.find(query);
+            Collections.sort(scoreDOList, new Comparator<ScoreDO>() {
+                public int compare(ScoreDO arg0, ScoreDO arg1) {
+                    if( arg0.getNum() == null){
+                        return 1;
+                    }
+                    if(arg1.getNum() == null){
+                        return -1;
+                    }
+                    if(arg0.getNum() > arg1.getNum()){
+                        return 1;
+                    }
+                    return -1;
+                }
+            });
             for(int i=0;i<scoreDOList.size();i++){
+                if(scoreDOList.get(i).getNum()!=null){
+                    continue;
+                }
+                long num = i+1;
                 ScoreDO scoreDO = new ScoreDO();
                 scoreDO.setId(scoreDOList.get(i).getId());
-                ScoreDO rz = scoreTempMapper.getScoreByMaxNum(query);
-                if (rz !=null) {
-                    scoreDO.setNum(rz.getNum() + 1);
-                } else {
-                    scoreDO.setNum(1L);
-                }
                 scoreDO.setVersion(scoreDOList.get(i).getVersion());
+                scoreDO.setNum(num);
                 int upt = scoreTempMapper.update(scoreDO);
                 if(upt<1){
                     log.error("[update] error:{}",upt);
