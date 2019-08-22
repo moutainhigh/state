@@ -31,7 +31,7 @@ public class SensitiveWordFilter {
     public static boolean isContaintSensitiveWord(String txt, int matchType) {
 
         // 全部小写,并去除所有的符号
-        txt = txt.toLowerCase().replaceAll("[\\s*\\pP\\p{Punct}]", "");
+        txt = replaceChar(txt);
 
         boolean flag = false;
         for (int i = 0; i < txt.length(); i++) {
@@ -71,7 +71,7 @@ public class SensitiveWordFilter {
     public static String replaceSensitiveWord(String txt, int matchType, String replaceChar) {
 
         // 全部小写,并去除所有的符号
-        txt = txt.toLowerCase().replaceAll("[\\s*\\pP\\p{Punct}]", "");
+        txt = replaceChar(txt);
 
         String resultTxt = txt;
 
@@ -138,9 +138,14 @@ public class SensitiveWordFilter {
         return matchFlag;
     }
 
+    private static String replaceChar(String txt){
+        // 小写，去除所有符号，并保留[ ]中括号,因为安卓的表情含有[],不用去除
+        return txt.toLowerCase().replaceAll("(?!\\[)(?!])[\\s*\\pP\\p{Punct}]", "");
+    }
+
     public static void main(String[] args) {
         System.out.println("敏感词的数量：" + sensitiveWord.size());
-        String string = "wow,,,,习,,,近 平 hah,，，，含有习近平";
+        String string = "[色]情";
         System.out.println(string.toLowerCase());
         System.out.println(SensitiveWordFilter.isContaintSensitiveWord(string, 1));
 //        System.out.println("待检测语句字数：" + string.length());
