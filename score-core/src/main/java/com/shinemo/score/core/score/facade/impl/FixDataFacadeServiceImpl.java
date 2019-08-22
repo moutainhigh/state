@@ -358,8 +358,15 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private void subAndSubRun(List<ScoreDO> list,Long videoId){
         ScoreQuery tempQuery = new ScoreQuery();
         for(ScoreDO iter:list){
-            iter.setId(null);
             tempQuery.setUid(iter.getUid());
+            tempQuery.setVideoId(iter.getVideoId());
+            ScoreDO check = scoreTempMapper.get(tempQuery);
+            if(check!=null){
+                log.error("[check] score domain:{}",GsonUtil.toJson(iter));
+                continue;
+            }
+            iter.setId(null);
+            tempQuery.setVideoId(null);
             ScoreDO scoreDO = scoreTempMapper.getScoreByMaxNum(tempQuery);
             if(scoreDO!=null){
                 iter.setNum(scoreDO.getNum()+1);
