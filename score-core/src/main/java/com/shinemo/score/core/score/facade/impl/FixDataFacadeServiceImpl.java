@@ -72,7 +72,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private RedisService redisService;
 
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(200);
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(20);
 
 
     private String getRedisUidKey(String mobile){
