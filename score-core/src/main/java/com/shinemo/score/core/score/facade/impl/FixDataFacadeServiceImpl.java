@@ -374,7 +374,11 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
                 iter.setNum(1L);
             }
             iter.setVideoId(videoId);
-            scoreTempMapper.insert(iter);
+            try {
+                scoreTempMapper.insert(iter);
+            } catch (Exception e) {
+                log.error("[scoreTempMapper] inserrt error",e);
+            }
         }
     }
 
