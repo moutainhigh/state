@@ -32,7 +32,7 @@
 	</sql>
 
     <sql id="table">
-        score
+        score_new
     </sql>
 
     <!-- 查询条件 -->
