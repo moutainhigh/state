@@ -2,6 +2,7 @@ package com.shinemo.score.core.configuration;
 
 import com.shinemo.jce.spring.AaceConsumerBean;
 import com.shinemo.mgsuggest.client.facade.DistributeConfigFacadeService;
+import com.shinemo.muic.client.token.facade.TokenFacadeService;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.dal.configuration.ShineMoProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,4 +51,17 @@ public class ConsumerConfiguration {
         aaceConsumerBean.setInterfaceName(DistributeConfigFacadeService.class.getName());
         return aaceConsumerBean;
     }
+
+
+    @Bean(initMethod = "init")
+    public AaceConsumerBean tokenFacadeService() {
+        ShineMoProperties.Proxy proxy = shineMoProperties.getJce().getConsumer().getProxy();
+        AaceConsumerBean aaceConsumerBean = new AaceConsumerBean();
+        aaceConsumerBean.setProxy(proxy.getMuic());
+        aaceConsumerBean.setInterfaceName(TokenFacadeService.class.getName());
+        return aaceConsumerBean;
+    }
+
+
+
 }

@@ -52,4 +52,6 @@ public class ScoreQuery extends QueryBase {
 	 * 视频id
 	 */
 	private List<Long> videoIds;
+
+	private Long minId;
 }

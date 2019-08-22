@@ -2,6 +2,7 @@ package com.shinemo.score.core.score.facade.impl;
 
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
+import com.shinemo.client.util.GsonUtil;
 import com.shinemo.score.client.comment.domain.CalculationEnum;
 import com.shinemo.score.client.score.domain.ScoreCountDO;
 import com.shinemo.score.client.score.domain.ScoreDO;
@@ -12,6 +13,7 @@ import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
 import com.shinemo.score.core.score.service.ScoreService;
 import com.shinemo.score.core.video.service.VideoService;
+import com.shinemo.score.dal.score.mapper.ScoreTempMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -31,14 +33,17 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
     @Resource
     private VideoService videoService;
 
+    @Resource
+    private ScoreTempMapper scoreTempMapper;
+
     @Override
-    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum,Long id) {
+    public Result<Void> calculationByTime(Date startTime, Date endTime,CalculationEnum calculationEnum) {
 
         ScoreQuery query = new ScoreQuery();
         query.setStartModifyTime(startTime);
         query.setEndModifyTime(endTime);
-        query.setVideoId(id);
-        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);
+        query.setPageEnable(false);
+        Result<ListVO<ScoreDO>> rs = scoreService.findScores(query);//全量找到昨日所有电影分组取电影id,增量直接根据这次结果计算
         if(!rs.hasValue() ){
             log.error("[calculationByHours]  findScores result:{}",rs);
             return Result.error(rs.getError());
@@ -49,9 +54,12 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
         }
         Map<Long,List<ScoreDO>> map =  rs.getValue().getRows().stream().collect(Collectors.groupingBy(ScoreDO::getVideoId));
         Map<Long,ScoreCountDO> countMap = new HashMap<>();
-        if(CalculationEnum.all == calculationEnum){//全量更新
+        if(CalculationEnum.all == calculationEnum){//全量更新 TODO 如果id数组非常大 是否多线程处理更好
             ScoreQuery countQuery = new ScoreQuery();
             List<Long> ids = new ArrayList<>(map.keySet());
+            if(ids.size()>100){
+                log.error("[calculationSize] error needChange idSize:{}",ids.size());
+            }
             countQuery.setPageEnable(false);
             countQuery.setVideoIds(ids);
             Result<ListVO<ScoreDO>> countRs = scoreService.findScores(countQuery);
@@ -91,6 +99,37 @@ public class CalculationFacadeServiceImpl implements CalculationFacadeService {
             Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
             if(!uptRs.hasValue()){
                 log.error("[updateVideoScore] upt result:{}",uptRs);
+            }
+        }
+        return Result.success();
+    }
+
+
+
+    @Override
+    public Result<Void> calculationByThirdId(String thirdVideoId) {
+        ScoreQuery query = new ScoreQuery();
+        query.setThirdVideoId(thirdVideoId);
+        query.setPageEnable(false);
+        List<ScoreDO> rs = scoreTempMapper.find(query);
+        if(!CollectionUtils.isEmpty(rs)){
+            ScoreCountDO count = initCountDO(rs);
+            VideoQuery videoQuery = new VideoQuery();
+            videoQuery.setVideoId(thirdVideoId);
+            Result<VideoDO> rz = videoService.getVideo(videoQuery);
+            if(!rz.hasValue()){
+                log.error("[getVideo] error thirdVideoId:{} result:{}",thirdVideoId,rz);
+                return Result.error(rz.getError());
+            }
+            VideoDO videoDO = rz.getValue();
+            videoDO.setYesterdayScore(videoDO.getScore());
+            videoDO.setYesterdayWeight(videoDO.getWeight());
+            videoDO.setScore(videoDO.getInitScore()+count.getScore());
+            videoDO.setWeight(videoDO.getInitWeight()+count.getNum());
+            Result<VideoDO> uptRs = videoService.updateVideoScore(videoDO);
+            if(!uptRs.hasValue()){
+                log.error("[updateVideoScore] error param:{} result:{}", GsonUtil.toJson(videoDO),uptRs);
+                return Result.error(uptRs.getError());
             }
         }
         return Result.success();
