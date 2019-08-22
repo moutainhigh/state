@@ -72,7 +72,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
     private RedisService redisService;
 
 
-    private static final Executor poolExecutor = Executors.newFixedThreadPool(20);
+    private static final Executor poolExecutor = Executors.newFixedThreadPool(50);
 
 
     private String getRedisUidKey(String mobile){
@@ -190,10 +190,10 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         List<Long> list = scoreTempMapper.findUid(query);
         long count=0;
         int size = list.size();
-        if (size % 20000 == 0) {
-            count = size / 20000;
+        if (size % 2000 == 0) {
+            count = size / 2000;
         } else {
-            count =  size / 20000 +1; ;
+            count =  size / 2000 +1; ;
         }
         for (int i = 0; i < count; i++) {
             List<Long> subList = list.subList(i * 20000, ((i + 1) * 20000 > size ? size : 20000 * (i + 1)));
@@ -215,10 +215,14 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             query.setUid(iter);
             List<ScoreDO> scoreDOList = scoreTempMapper.find(query);
             for(int i=0;i<scoreDOList.size();i++){
-                long num = i+1;
                 ScoreDO scoreDO = new ScoreDO();
                 scoreDO.setId(scoreDOList.get(i).getId());
-                scoreDO.setNum(num);
+                ScoreDO rz = scoreTempMapper.getScoreByMaxNum(query);
+                if (rz !=null) {
+                    scoreDO.setNum(rz.getNum() + 1);
+                } else {
+                    scoreDO.setNum(1L);
+                }
                 scoreDO.setVersion(scoreDOList.get(i).getVersion());
                 int upt = scoreTempMapper.update(scoreDO);
                 if(upt<1){
