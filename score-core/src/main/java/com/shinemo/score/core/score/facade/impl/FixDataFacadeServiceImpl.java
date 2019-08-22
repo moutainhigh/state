@@ -196,7 +196,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
             count =  size / 2000 +1; ;
         }
         for (int i = 0; i < count; i++) {
-            List<Long> subList = list.subList(i * 20000, ((i + 1) * 20000 > size ? size : 20000 * (i + 1)));
+            List<Long> subList = list.subList(i * 2000, ((i + 1) * 2000 > size ? size : 2000 * (i + 1)));
             int j = i;
             poolExecutor.execute(()->{
                 updateNum(subList,j);
