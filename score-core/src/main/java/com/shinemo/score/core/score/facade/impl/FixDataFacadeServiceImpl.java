@@ -359,7 +359,7 @@ public class FixDataFacadeServiceImpl implements FixDataFacadeService {
         ScoreQuery tempQuery = new ScoreQuery();
         for(ScoreDO iter:list){
             tempQuery.setUid(iter.getUid());
-            tempQuery.setVideoId(iter.getVideoId());
+            tempQuery.setVideoId(videoId);
             ScoreDO check = scoreTempMapper.get(tempQuery);
             if(check!=null){
                 log.error("[check] score domain:{}",GsonUtil.toJson(iter));
