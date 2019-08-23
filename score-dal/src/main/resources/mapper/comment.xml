@@ -50,7 +50,12 @@
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
                     <if test="uid != null">and uid = #{uid}</if>
-                    <if test="videoId != null">and video_id = #{videoId}</if>
+                    <choose>
+                        <when test="realVideoId != null">and (real_video_id = #{realVideoId} or video_id = #{videoId})</when>
+                        <otherwise>
+                            <if test="videoId != null">and video_id = #{videoId}</if>
+                        </otherwise>
+                    </choose>
                     <if test="videoType != null">and video_type = #{videoType}</if>
                     <if test="status != null">and status = #{status}</if>
                     <if test="mobile != null">and mobile = #{mobile}</if>

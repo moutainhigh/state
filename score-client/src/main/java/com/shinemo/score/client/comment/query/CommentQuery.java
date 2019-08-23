@@ -80,6 +80,8 @@ public class CommentQuery extends QueryBase {
 
 	private Long commentId;
 
+	private String realVideoId;
+
 	/**
 	 * 保留自己的敏感词
 	 */

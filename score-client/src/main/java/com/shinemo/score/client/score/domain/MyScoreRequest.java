@@ -13,5 +13,6 @@ public class MyScoreRequest extends BaseDO{
     private String videoId;
     private String videoName;
     private String extend;
+    private String realVideoId;
 
 }

@@ -176,6 +176,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         request.setUid(extend.getUid());
         request.setMobile(extend.getMobile());
         request.setIp(param.getIp());
+        request.setRealVideoId(param.getRealVideoId());
 
         CommentDO commentDO = commentService.create(request);
 

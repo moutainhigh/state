@@ -102,4 +102,6 @@ public class CommentRequest extends BaseDO {
     private FlagHelper commentFlag = FlagHelper.build();
 
     private String ip;
+
+    private String realVideoId;
 }

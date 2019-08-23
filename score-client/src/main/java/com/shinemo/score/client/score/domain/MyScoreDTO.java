@@ -15,6 +15,7 @@ public class MyScoreDTO extends BaseDO{
 
     private Long number;
     private String videoId;
+    private String realVideoId;
     private Double score;
     private List<CommentVO> comments;
 

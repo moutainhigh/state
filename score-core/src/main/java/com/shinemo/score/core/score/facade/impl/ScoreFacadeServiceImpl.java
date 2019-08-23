@@ -126,16 +126,19 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         //查询我评论过的音频信息
         if (!StringUtils.isBlank(request.getVideoId())) {
             query.setThirdVideoId(request.getVideoId());
+            query.setRealVideoId(request.getRealVideoId());
             Result<ScoreDO> rt = scoreService.getScore(query);
             if (rt.hasValue()) {
                 ret.setNumber(rt.getValue().getNum());
                 ret.setVideoId(request.getVideoId());
+                ret.setRealVideoId(request.getRealVideoId());
                 ret.setScore(Double.valueOf(rt.getValue().getScore()));
             }
             CommentQuery commentQuery = new CommentQuery();
             commentQuery.setUid(UserExtend.getUserId());
             commentQuery.setVideoId(request.getVideoId());
             commentQuery.setPageEnable(false);
+            commentQuery.setRealVideoId(request.getRealVideoId());
             WebResult<ListVO<CommentVO>> commentRs = commentFacadeService.findListVO(commentQuery);
             if (commentRs.isSuccess() && commentRs.getData() != null && !CollectionUtils.isEmpty(commentRs.getData().getRows())) {
                 ret.setComments(commentRs.getData().getRows());
@@ -155,11 +158,13 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         }
         VideoQuery query = new VideoQuery();
         query.setVideoId(request.getVideoId());
+        query.setRealVideoId(request.getRealVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
         if (!rs.hasValue()) {
             ScoreRequest scoreRequest = new ScoreRequest();
             scoreRequest.setVideoName(request.getVideoName());
             scoreRequest.setVideoId(request.getVideoId());
+            scoreRequest.setRealVideoId(request.getRealVideoId());
             scoreRequest.setExtend(request.getExtend());
             scoreRequest.setFlag(VideoFlag.GRADE.getIndex());
             Result<VideoDO> initRs = videoService.initVideo(scoreRequest);
@@ -174,6 +179,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         BigDecimal scoreDecimal = new BigDecimal(score);
         dto.setScore(scoreDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
         dto.setVideoId(request.getVideoId());
+        dto.setRealVideoId(request.getRealVideoId());
         dto.setWeight(rs.getValue().getWeight());
         setCache(dto);
 
