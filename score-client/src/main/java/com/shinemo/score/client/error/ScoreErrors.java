@@ -35,8 +35,11 @@ public interface ScoreErrors {
     ErrorInfo VIDEO_NOT_EXIST = new ErrorInfo(100005L, "VIDEO_NOT_EXIST", "视频不存在");
     ErrorInfo DO_NOT_REPEAT_OPERATE = new ErrorInfo(100006L, "DO_NOT_REPEAT_OPERATE", "请勿重复操作");
     ErrorInfo COMMENT_IS_CLOSED = new ErrorInfo(100007L, "COMMENT_IS_CLOSE", "评论关闭");
+    ErrorInfo AUTH_NOT_PASS = new ErrorInfo(100008L, "AUTH_NOT_PASS", "您无权评论");
+
 
     ErrorInfo PARAM_ERROR = new ErrorInfo(300001L, "PARAM_ERROR", "参数错误");
+
 
 
 }

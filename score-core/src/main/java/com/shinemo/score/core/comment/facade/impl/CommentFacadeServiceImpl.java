@@ -12,6 +12,7 @@ import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
+import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
@@ -53,6 +54,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     private LikeService likeService;
     @Resource
     private ReplyService replyService;
+
+    private static final String BLACK_MOBILE = "13858231746";
+
 
     @Override
     public Result<CommentDO> getById(Long commentId) {
@@ -160,6 +164,10 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         Assert.hasText(param.getComment(), "comment not be empty");
         Assert.notNull(extend.getUid(), "uid not be empty");
         Assert.notNull(param.getVideoId(), "videoId not be empty");
+
+        if(BLACK_MOBILE.equals(extend.getMobile())){
+            return Result.error(ScoreErrors.AUTH_NOT_PASS);
+        }
 
         // 评论
         CommentRequest request = new CommentRequest();
