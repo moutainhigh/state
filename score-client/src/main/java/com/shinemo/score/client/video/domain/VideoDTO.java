@@ -13,4 +13,6 @@ public class VideoDTO extends BaseDO{
     private double score;
     private long weight;
 
+    private String realVideoId;
+
 }

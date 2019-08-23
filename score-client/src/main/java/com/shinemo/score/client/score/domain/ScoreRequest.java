@@ -24,5 +24,9 @@ public class ScoreRequest extends BaseDO {
     private String fullDevice;
     // 真实ip,华为校验移动网络后返回的值
     private String ip;
+    /**
+     * 外部真实唯一视频id
+     */
+    private String realVideoId;
 
 }
