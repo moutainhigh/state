@@ -73,7 +73,7 @@ public class ScoreServiceImpl implements ScoreService {
     private Result<ScoreDO> uptFourTimes(ScoreDO domain, boolean uptNum) {
         int i = 0;
         while (i < MAX_TIMES) {//保证一定更新成功,并发4以下,如果还失败需要查看日志例如extend 长度超过限制
-            if (updateScore(domain, uptNum)) {
+            if (updateScore(domain, false)) {
                 break;
             }
             i++;
