@@ -129,6 +129,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
                             result.add(replyVO);
                         });
                         commentVO.setReply(result);
+                    }else{
+                        commentVO.setReply(replys);
                     }
                 }
             }
