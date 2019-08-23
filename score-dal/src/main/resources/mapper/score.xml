@@ -42,7 +42,12 @@
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
 					<if test="status != null">and status = #{status}</if>
-					<if test="videoId != null">and video_id = #{videoId}</if>
+                    <choose>
+                        <when test="realVideoId != null">and (real_video_id = #{realVideoId} or video_id = #{videoId})</when>
+                        <otherwise>
+                            <if test="videoId != null">and video_id = #{videoId}</if>
+                        </otherwise>
+                    </choose>
                     <if test="thirdVideoId != null">and third_video_id = #{thirdVideoId}</if>
 					<if test="uid != null">and uid = #{uid}</if>
                     <if test="videoIds != null and videoIds.size() > 0">

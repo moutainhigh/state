@@ -39,9 +39,11 @@ public class ScoreServiceImpl implements ScoreService {
         ScoreQuery query = new ScoreQuery();
         query.setUid(domain.getUid());
         query.setVideoId(domain.getVideoId());
+        query.setRealVideoId(domain.getRealVideoId());
         Result<ScoreDO> rs = scoreWrapper.get(query);
         if (!rs.hasValue()) {
             try {
+                query.setRealVideoId(null);
                 query.setVideoId(null);
                 Result<ScoreDO> rz = scoreWrapper.getScoreByMaxNum(query);
                 if (rz.hasValue()) {
@@ -62,7 +64,7 @@ public class ScoreServiceImpl implements ScoreService {
             scoreDO.setScore(domain.getScore());
             Result<ScoreDO> rt = scoreWrapper.update(scoreDO);
             if (!rt.hasValue()) {
-                return uptFourTimes(domain, false);
+                return uptFourTimes(scoreDO, false);
             }
         }
         return Result.success(domain);
@@ -71,7 +73,7 @@ public class ScoreServiceImpl implements ScoreService {
     private Result<ScoreDO> uptFourTimes(ScoreDO domain, boolean uptNum) {
         int i = 0;
         while (i < MAX_TIMES) {//保证一定更新成功,并发4以下,如果还失败需要查看日志例如extend 长度超过限制
-            if (updateScore(domain, true)) {
+            if (updateScore(domain, uptNum)) {
                 break;
             }
             i++;
@@ -110,15 +112,16 @@ public class ScoreServiceImpl implements ScoreService {
         ScoreQuery query = new ScoreQuery();
         query.setUid(domain.getUid());
         query.setVideoId(domain.getVideoId());
+        query.setRealVideoId(domain.getRealVideoId());
         Result<ScoreDO> rs = scoreWrapper.get(query, Errors.FAILURE);
         if (!rs.hasValue()) {
             throw new BizException(rs.getError());
         }
         if (uptNum) {
             query.setVideoId(null);
-            Result<Long> rz = scoreWrapper.count(query);
+            Result<ScoreDO> rz = scoreWrapper.getScoreByMaxNum(query);
             if (rz.hasValue()) {
-                domain.setNum(rz.getValue() + INIT_VERSION);
+                domain.setNum(rz.getValue().getNum() + INIT_VERSION);
             } else {
                 domain.setNum(INIT_VERSION);
             }

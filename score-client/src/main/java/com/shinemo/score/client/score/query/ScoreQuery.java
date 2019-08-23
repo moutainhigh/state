@@ -54,4 +54,6 @@ public class ScoreQuery extends QueryBase {
 	private List<Long> videoIds;
 
 	private Long minId;
+
+	private String realVideoId;
 }
