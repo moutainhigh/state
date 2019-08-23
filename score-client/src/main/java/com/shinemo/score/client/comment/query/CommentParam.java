@@ -26,6 +26,8 @@ public class CommentParam extends BaseDO {
     // 真实ip
     private String ip;
 
+    private String realVideoId;
+
     public boolean showDeviceType() {
         if (showDevice == null || showDevice == 2) {
             return false;

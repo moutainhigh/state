@@ -79,7 +79,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         }
         //评分 或者更新评分
         if (FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE) && request.getScore() != null && request.getScore() > 0) {
-            ScoreDO scoreDomain = initScoreDO(request, rs.getValue().getId());
+            ScoreDO scoreDomain = initScoreDO(request, rs.getValue());
             Result<ScoreDO> rt = scoreService.insertScore(scoreDomain);
             if (!rt.hasValue()) {
                 return WebResult.error(rt.getError());
@@ -197,12 +197,13 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         }
     }
 
-    private ScoreDO initScoreDO(ScoreRequest request, Long id) {
+    private ScoreDO initScoreDO(ScoreRequest request,VideoDO videoDO) {
         ScoreDO scoreDomain = new ScoreDO();
         scoreDomain.setScore(request.getScore());
         scoreDomain.setStatus(DeleteStatusEnum.NORMAL.getId());
         scoreDomain.setUid(UserExtend.getUserId());
-        scoreDomain.setVideoId(id);
+        scoreDomain.setVideoId(videoDO.getId());
+        scoreDomain.setRealVideoId(videoDO.getRealVideoId());
         scoreDomain.setThirdVideoId(request.getVideoId());
         //scoreDomain.setExtend(request.getExtend());
         return scoreDomain;
@@ -217,6 +218,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         param.setShowDevice(request.getShowDevice());
         param.setFullDevice(request.getFullDevice());
         param.setIp(request.getIp());
+        param.setRealVideoId(request.getRealVideoId());
         return param;
     }
 }

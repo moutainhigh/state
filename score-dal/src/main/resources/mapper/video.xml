@@ -39,7 +39,12 @@
                 <when test="id != null">and id = #{id}</when>
                 <otherwise>
 					<if test="status != null">and status = #{status}</if>
-					<if test="videoId != null">and video_id = #{videoId}</if>
+                    <choose>
+                        <when test="realVideoId != null">and (real_video_id = #{realVideoId} or video_id = #{videoId})</when>
+                        <otherwise>
+                            <if test="videoId != null">and video_id = #{videoId}</if>
+                        </otherwise>
+                    </choose>
 					<if test="videoType != null">and video_type = #{videoType}</if>
 					<if test="videoName != null">and video_name = #{videoName}</if>
 					<if test="version != null">and version = #{version}</if>

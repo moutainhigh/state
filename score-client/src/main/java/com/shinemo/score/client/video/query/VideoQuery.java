@@ -74,6 +74,8 @@ public class VideoQuery extends QueryBase {
     */
 	private Long flag;
 
+	private String realVideoId;
+
 	private FlagHelper flagHelper = FlagHelper.build();
 
 

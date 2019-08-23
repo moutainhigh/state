@@ -50,4 +50,6 @@ public class ScoreDO extends BaseDO {
 	private Long num;
 
 	private String thirdVideoId;
+
+	private  String realVideoId;
 }

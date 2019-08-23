@@ -78,6 +78,9 @@ public class VideoDO extends BaseDO {
 	private FlagHelper flagHelper = FlagHelper.build();
 
 
+	private String realVideoId;
+
+
 	public void addVideoFlag(VideoFlag flag){
 		this.flagHelper.add(flag);
 	}
