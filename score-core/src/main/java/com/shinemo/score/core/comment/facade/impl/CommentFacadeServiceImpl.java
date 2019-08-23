@@ -165,7 +165,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         Assert.notNull(extend.getUid(), "uid not be empty");
         Assert.notNull(param.getVideoId(), "videoId not be empty");
 
-        if(BLACK_MOBILE.equals(extend.getMobile())){
+        if(BLACK_MOBILE.equals(extend.getMobile())){//TODO 这里需要黑名单功能 用表存起来  
             return Result.error(ScoreErrors.AUTH_NOT_PASS);
         }
 
