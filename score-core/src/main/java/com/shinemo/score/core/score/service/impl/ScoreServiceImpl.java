@@ -114,7 +114,7 @@ public class ScoreServiceImpl implements ScoreService {
         query.setVideoId(domain.getVideoId());
         query.setRealVideoId(domain.getRealVideoId());
         Result<ScoreDO> rs = scoreWrapper.get(query, Errors.FAILURE);
-        if (!rs.hasValue()) {
+        if (!rs.hasValue()) {//TODO 如果不存在 这里进行num 自增然后插入 下面num代码挪上来
             throw new BizException(rs.getError());
         }
         if (uptNum) {
