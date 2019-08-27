@@ -221,11 +221,13 @@ public class CommentServiceImpl implements CommentService {
                 throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
             }
         }
-        //这里可以改为一次性把所有的限制视频全拉过来 再判断是否在里面可以省去经常查
-        Result<BarrageSwitch> rs = barrageFacadeService.getSwitch(realVideoId,oldId);
-        if(rs.hasValue()){
-            log.info("[getSwitch] video close rs:{}", rs);
-            throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
+        if(!StringUtils.isBlank(realVideoId)||!StringUtils.isBlank(oldId)){
+            //这里可以改为一次性把所有的限制视频全拉过来 再判断是否在里面可以省去经常查
+            Result<BarrageSwitch> rs = barrageFacadeService.getSwitch(realVideoId,oldId);
+            if(rs.hasValue()){
+                log.info("[getSwitch] video close rs:{}", rs);
+                throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
+            }
         }
     }
 
