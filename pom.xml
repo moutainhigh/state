@@ -50,6 +50,7 @@
         <git-commit-id-plugin-version>2.2.3</git-commit-id-plugin-version>
         <maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
         <versions-maven-plugin-version>2.2</versions-maven-plugin-version>
+        <barrage-client-version>1.0.0-SNAPSHOT</barrage-client-version>
     </properties>
 
     <dependencyManagement>
@@ -179,6 +180,12 @@
                 <groupId>com.shinemo.muic</groupId>
                 <artifactId>muic-client</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.shinemo.barrage</groupId>
+                <artifactId>barrage-client</artifactId>
+                <version>${barrage-client-version}</version>
             </dependency>
 
             <dependency>

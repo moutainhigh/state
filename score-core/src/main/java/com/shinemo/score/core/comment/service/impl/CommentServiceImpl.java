@@ -1,5 +1,7 @@
 package com.shinemo.score.core.comment.service.impl;
 
+import com.shinemo.barrage.client.barrage.client.BarrageSwitch;
+import com.shinemo.barrage.client.barrage.facade.BarrageFacadeService;
 import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.client.common.Errors;
 import com.shinemo.client.common.ListVO;
@@ -42,12 +44,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Resource
     private CommentWrapper commentWrapper;
+
     @Resource
     private CommentCache commentCache;
+
     @Resource
     private InternalEventBus internalEventBus;
+
     @Resource
     private DistributeConfigFacadeService distributeConfigFacadeService;
+
+    @Resource
+    private BarrageFacadeService barrageFacadeService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -194,6 +202,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void checkCommentOpen(String realVideoId,String oldId){
+
         //统一开关
         if(commentCache.getCommonSwitch() == null){
             Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
@@ -212,8 +221,12 @@ public class CommentServiceImpl implements CommentService {
                 throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
             }
         }
-        //单个电影开关 TODO
-
+        //这里可以改为一次性把所有的限制视频全拉过来 再判断是否在里面可以省去经常查
+        Result<BarrageSwitch> rs = barrageFacadeService.getSwitch(realVideoId,oldId);
+        if(rs.hasValue()){
+            log.info("[getSwitch] video close rs:{}", rs);
+            throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
+        }
     }
 
     @Override

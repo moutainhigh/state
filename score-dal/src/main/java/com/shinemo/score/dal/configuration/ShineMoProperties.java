@@ -189,5 +189,8 @@ public class ShineMoProperties {
         @NotNull
         private String muic;
 
+        @NotNull
+        private String barrage;
+
     }
 }

@@ -89,6 +89,11 @@
             <groupId>com.shinemo.muic</groupId>
             <artifactId>muic-client</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.shinemo.barrage</groupId>
+            <artifactId>barrage-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

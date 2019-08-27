@@ -1,5 +1,6 @@
 package com.shinemo.score.core.configuration;
 
+import com.shinemo.barrage.client.barrage.facade.BarrageFacadeService;
 import com.shinemo.jce.spring.AaceConsumerBean;
 import com.shinemo.mgsuggest.client.facade.DistributeConfigFacadeService;
 import com.shinemo.muic.client.token.facade.TokenFacadeService;
@@ -61,6 +62,17 @@ public class ConsumerConfiguration {
         aaceConsumerBean.setInterfaceName(TokenFacadeService.class.getName());
         return aaceConsumerBean;
     }
+
+    @Bean(initMethod = "init")
+    public AaceConsumerBean barrageFacadeService() {
+        ShineMoProperties.Proxy proxy = shineMoProperties.getJce().getConsumer().getProxy();
+        AaceConsumerBean aaceConsumerBean = new AaceConsumerBean();
+        aaceConsumerBean.setProxy(proxy.getBarrage());
+        aaceConsumerBean.setInterfaceName(BarrageFacadeService.class.getName());
+        return aaceConsumerBean;
+    }
+
+
 
 
 
