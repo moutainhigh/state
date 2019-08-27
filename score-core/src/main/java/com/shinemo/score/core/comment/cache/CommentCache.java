@@ -27,6 +27,18 @@ public class CommentCache {
     // comment redis key expired time 1天
     private final static Integer COMMENT_KEY_EXPIRE = 60 * 60 * 24;
 
+    private final static  String COMMON_SWITCH_KEY = "migu_common_switch";
+
+
+    public Boolean getCommonSwitch(){
+        Boolean ret = redisService.get(COMMON_SWITCH_KEY,Boolean.class);
+        return ret;
+    }
+
+    public void setCommonSwitch(Boolean commonSwitch){
+        redisService.set(COMMON_SWITCH_KEY,commonSwitch,60*10);
+    }
+
 
     public CommentDO get(Long key) {
         try {

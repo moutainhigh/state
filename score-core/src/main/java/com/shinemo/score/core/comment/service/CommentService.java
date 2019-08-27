@@ -60,7 +60,7 @@ public interface CommentService {
     /**
      * throw 评论关闭，则code 100007
      */
-    void checkCommentOpen();
+    void checkCommentOpen(String realVideoId,String oldId);
 
     /**
      * 删除评论

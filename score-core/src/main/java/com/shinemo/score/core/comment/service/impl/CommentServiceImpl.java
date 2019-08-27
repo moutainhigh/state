@@ -193,17 +193,27 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void checkCommentOpen() {
-        Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
-        if (!configRs.hasValue()) {
-            // 这边不处理
-            log.error("[checkCommentOpen]get config has error,rs:{}", configRs);
-            return;
+    public void checkCommentOpen(String realVideoId,String oldId){
+        //统一开关
+        if(commentCache.getCommonSwitch() == null){
+            Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
+            if (!configRs.hasValue()) {
+                // 这边不处理
+                log.error("[checkCommentOpen]get config has error,rs:{}", configRs);
+                return;
+            }
+            DistributeConfig config = configRs.getValue();
+            if (!config.isCommentOpen()) {
+                throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
+            }
+            commentCache.setCommonSwitch(true);
+        }else{
+            if(!commentCache.getCommonSwitch()){//关闭
+                throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
+            }
         }
-        DistributeConfig config = configRs.getValue();
-        if (!config.isCommentOpen()) {
-            throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
-        }
+        //单个电影开关 TODO
+
     }
 
     @Override
