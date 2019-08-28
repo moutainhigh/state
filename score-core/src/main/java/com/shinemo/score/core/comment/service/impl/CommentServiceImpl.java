@@ -255,7 +255,7 @@ public class CommentServiceImpl implements CommentService {
         CommentDO commentDO = new CommentDO();
         commentDO.setId(request.getCommentId());
         commentDO.setVersion(oldDO.getVersion());
-        if (request.getHistoryReply() != null && !request.getHistoryReply().isEmpty()) {
+        if (request.getHistoryReply() != null) {
             commentDO.setHistoryReply(GsonUtil.toJson(request.getHistoryReply()));
         }
         if (request.getLikeAction() != null) {
