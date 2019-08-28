@@ -204,22 +204,15 @@ public class CommentServiceImpl implements CommentService {
     public void checkCommentOpen(String realVideoId,String oldId){
 
         //统一开关
-        if(commentCache.getCommonSwitch() == null){
-            Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
-            if (!configRs.hasValue()) {
-                // 这边不处理
-                log.error("[checkCommentOpen]get config has error,rs:{}", configRs);
-                return;
-            }
-            DistributeConfig config = configRs.getValue();
-            if (!config.isCommentOpen()) {
-                throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
-            }
-            commentCache.setCommonSwitch(true);
-        }else{
-            if(!commentCache.getCommonSwitch()){//关闭
-                throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
-            }
+        Result<DistributeConfig> configRs = distributeConfigFacadeService.load();
+        if (!configRs.hasValue()) {
+            // 这边不处理
+            log.error("[checkCommentOpen]get config has error,rs:{}", configRs);
+            return;
+        }
+        DistributeConfig config = configRs.getValue();
+        if (!config.isCommentOpen()) {
+            throw new BizException(ScoreErrors.COMMENT_IS_CLOSED);
         }
         if(!StringUtils.isBlank(realVideoId)||!StringUtils.isBlank(oldId)){
             //这里可以改为一次性把所有的限制视频全拉过来 再判断是否在里面可以省去经常查
