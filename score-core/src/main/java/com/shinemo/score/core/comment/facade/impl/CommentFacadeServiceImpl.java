@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -55,7 +56,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     @Resource
     private ReplyService replyService;
 
-    private static final String BLACK_MOBILE = "13858231746";
+    private static final String[] BLACK_MOBILE = new String[]{"13858231746", "18868877486"};
 
 
     @Override
@@ -165,7 +166,8 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         Assert.notNull(extend.getUid(), "uid not be empty");
         Assert.notNull(param.getVideoId(), "videoId not be empty");
 
-        if(BLACK_MOBILE.equals(extend.getMobile())){//TODO 这里需要黑名单功能 用表存起来  
+        if(Arrays.stream(BLACK_MOBILE).anyMatch(value -> value.equals(extend.getMobile()))){
+            //TODO 这里需要黑名单功能 用表存起来
             return Result.error(ScoreErrors.AUTH_NOT_PASS);
         }
 
