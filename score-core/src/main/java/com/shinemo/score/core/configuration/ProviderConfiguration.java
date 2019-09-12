@@ -1,5 +1,6 @@
 package com.shinemo.score.core.configuration;
 
+import com.shinemo.score.client.comment.facade.AdminCommentFacadeService;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.jce.spring.AaceProviderBean;
 import com.shinemo.score.client.like.facade.LikeFacadeService;
@@ -53,6 +54,15 @@ public class ProviderConfiguration {
         AaceProviderBean aaceProviderBean = new AaceProviderBean();
         aaceProviderBean.setInterfaceName(ReplyFacadeService.class.getName());
         aaceProviderBean.setTarget(replyFacadeService);
+        return aaceProviderBean;
+    }
+
+    @Bean(initMethod = "init")
+    @DependsOn("adminCommentFacadeService")
+    public AaceProviderBean providerAdminCommentFacadeService(@Qualifier("adminCommentFacadeService") AdminCommentFacadeService adminCommentFacadeService) {
+        AaceProviderBean aaceProviderBean = new AaceProviderBean();
+        aaceProviderBean.setInterfaceName(AdminCommentFacadeService.class.getName());
+        aaceProviderBean.setTarget(adminCommentFacadeService);
         return aaceProviderBean;
     }
 }

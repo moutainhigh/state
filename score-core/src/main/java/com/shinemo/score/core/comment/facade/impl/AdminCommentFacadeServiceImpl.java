@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 
 
-@Service
+@Service("adminCommentFacadeService")
 @Slf4j
 public class AdminCommentFacadeServiceImpl implements AdminCommentFacadeService {
 
@@ -63,7 +63,6 @@ public class AdminCommentFacadeServiceImpl implements AdminCommentFacadeService 
     @Transactional(rollbackFor = Exception.class)
     public Result<Void> deleteComment(VerifyRequest request){
 
-        //TODO 填补xml 补齐表结构
         Assert.notNull(request,"request is null");
         Assert.isTrue(!CollectionUtils.isEmpty(request.getCommentIds()),"id is null");
         CommentQuery commentQuery = new CommentQuery();
