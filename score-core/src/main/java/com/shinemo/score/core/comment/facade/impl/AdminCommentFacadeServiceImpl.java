@@ -52,7 +52,7 @@ public class AdminCommentFacadeServiceImpl implements AdminCommentFacadeService 
         CommentQuery query = new CommentQuery();
         query.setCommentIds(request.getCommentIds());
         Result<ListVO<CommentDO>> result = commentWrapper.find(query);
-        if(!result.hasValue()||!result.getValue().getTotalCount().equals(request.getCommentIds().size())){
+        if(!result.hasValue()||result.getValue().getTotalCount().intValue()!=request.getCommentIds().size()){
             log.error("[verifyComment] result:{} requestSize:{}",result,request.getCommentIds().size());
             return Result.error(ScoreErrors.PARAM_ERROR);
         }
@@ -68,8 +68,8 @@ public class AdminCommentFacadeServiceImpl implements AdminCommentFacadeService 
         CommentQuery commentQuery = new CommentQuery();
         commentQuery.setCommentIds(request.getCommentIds());
         Result<ListVO<CommentDO>> result = commentWrapper.find(commentQuery);
-        if(!result.hasValue()||!result.getValue().getTotalCount().equals(request.getCommentIds().size())){
-            log.error("[verifyComment] result:{} requestSize:{}",result,request.getCommentIds().size());
+        if(!result.hasValue()||result.getValue().getTotalCount().intValue()!=request.getCommentIds().size()){
+            log.error("[deleteComment] result:{} requestSize:{}",result,request.getCommentIds().size());
             return Result.error(ScoreErrors.PARAM_ERROR);
         }
         CommentDO delete = new CommentDO();
