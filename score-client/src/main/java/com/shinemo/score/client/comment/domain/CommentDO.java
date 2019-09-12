@@ -103,6 +103,7 @@ public class CommentDO extends BaseDO {
 
     private String realVideoId;
 
+    private Integer verifyStatus;
     private Long operateUid;
     private String operateUserName;
 
