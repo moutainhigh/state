@@ -87,6 +87,10 @@ public class CommentQuery extends QueryBase {
 
 	private String realVideoId;
 
+	private Integer verifyStatus;
+	private Long operateUid;
+	private String operateUserName;
+
 	/**
 	 * 保留自己的敏感词
 	 */
