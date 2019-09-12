@@ -103,6 +103,9 @@ public class CommentDO extends BaseDO {
 
     private String realVideoId;
 
+    private Long operateUid;
+    private String operateUserName;
+
     /**
      *
      * @return 是否含有敏感词

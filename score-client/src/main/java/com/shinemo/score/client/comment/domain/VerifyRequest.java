@@ -12,4 +12,6 @@ public class VerifyRequest extends BaseDO {
 
     private List<Long> commentIds;
     private Integer verifyStatus;
+    private Long operateUid;
+    private String operateUserName;
 }
