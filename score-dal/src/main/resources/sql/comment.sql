@@ -31,3 +31,9 @@ CREATE TABLE `comment`
 alter table `comment` add `full_device` varchar(256) DEFAULT  null comment '完整机型';
 alter table `comment` add `flag` bigint(20) DEFAULT  '0' comment '评论标位';
 alter table `comment` add `ip` varchar(60) DEFAULT  null comment 'ip地址';
+
+## 4.2
+alter table comment add verify_status int(4) default '3' comment '评论审核状态 0-未审核 3-已审核';
+alter table comment add operate_uid bigint default null comment '操作者id';
+alter table comment add operate_user_name varchar(32) default null comment '操作者名称';
+alter table comment add key `idx_o_u`(`operate_uid`);

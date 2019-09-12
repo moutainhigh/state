@@ -30,6 +30,9 @@
         <result property="fullDevice" column="full_device"/>
         <result property="ip" column="ip"/>
         <result property="realVideoId" column="real_video_id"/>
+        <result property="verifyStatus" column="verify_status"/>
+        <result property="operateUid" column="operate_uid"/>
+        <result property="operateUserName" column="operate_user_name"/>
 
     </resultMap>
 
@@ -37,7 +40,7 @@
     <sql id="columns">
         id, gmt_create, gmt_modified, status, video_id, video_type, content,
         like_num, reply_num, uid, mobile, name, avatar_url, device, net_type, sort, extend, history_reply, version,
-        flag, full_device,ip,real_video_id
+        flag, full_device,ip,real_video_id,verify_status,operate_uid,operate_user_name
     </sql>
 
     <sql id="table">
@@ -65,6 +68,9 @@
                     <if test="netType != null">and net_type = #{netType}</if>
                     <if test="sort != null">and sort = #{sort}</if>
                     <if test="version != null">and version = #{version}</if>
+                    <if test="verifyStatus != null">and version = #{verifyStatus}</if>
+                    <if test="operateUid != null">and operate_uid = #{operateUid}</if>
+                    <if test="operateUserName != null">and operate_user_name = #{operateUserName}</if>
                     <if test="commentIds != null and commentIds.size()>0">
                         and id in
                         <foreach collection="commentIds" open="(" separator=","
@@ -158,6 +164,32 @@
         </if>
     </select>
 
+
+
+    <update id="verfiyComment" parameterType="com.shinemo.score.client.comment.domain.VerifyRequest">
+        update
+        <include refid="table"/>
+        <set>
+            gmt_modified = now(),
+            <if test="verifyStatus != null">
+                verify_status = #{verifyStatus},
+            </if>
+            <if test="operateUid != null">
+                operate_uid = #{operateUid},
+            </if>
+            <if test="operateUserName != null">
+                operate_user_name = #{operateUserName}
+            </if>
+        </set>
+        WHERE id in
+        <foreach collection="commentIds" open="(" separator=","
+                 close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
+
+
+
     <!-- 插入 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="com.shinemo.score.client.comment.domain.CommentDO">
@@ -229,6 +261,16 @@
             <if test="realVideoId != null">
                 real_video_id,
             </if>
+            <if test="verifyStatus != null">
+                verify_status,
+            </if>
+            <if test="operateUid != null">
+                operate_uid,
+            </if>
+            <if test="operateUserName != null">
+                operate_user_name,
+            </if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -296,6 +338,16 @@
             <if test="realVideoId != null">
                 #{realVideoId},
             </if>
+            <if test="verifyStatus != null">
+                #{verifyStatus},
+            </if>
+            <if test="operateUid != null">
+                #{operateUid},
+            </if>
+            <if test="operateUserName != null">
+                #{operateUserName},
+            </if>
+
         </trim>
     </insert>
 
@@ -362,7 +414,16 @@
                 ip = #{ip, jdbcType=VARCHAR},
             </if>
             <if test="realVideoId != null">
-                real_video_id = #{realVideoId}
+                real_video_id = #{realVideoId},
+            </if>
+            <if test="verifyStatus != null">
+                verify_status = #{verifyStatus},
+            </if>
+            <if test="operateUid != null">
+                operate_uid = #{operateUid},
+            </if>
+            <if test="operateUserName != null">
+                operate_user_name = #{operateUserName}
             </if>
         </set>
         WHERE
