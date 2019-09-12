@@ -3,6 +3,7 @@ package com.shinemo.score.dal.comment.mapper;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.dal.mapper.Mapper;
 import com.shinemo.score.client.comment.domain.CommentDO;
+import com.shinemo.score.client.comment.domain.VerifyRequest;
 import com.shinemo.score.client.comment.query.CommentQuery;
 
 import java.util.List;
@@ -17,4 +18,6 @@ import java.util.List;
 public interface CommentMapper extends Mapper<CommentQuery, CommentDO> {
 
     List<Long> findIds(CommentQuery query);
+
+    long verfiyComment(VerifyRequest request);
 }

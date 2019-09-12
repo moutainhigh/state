@@ -65,6 +65,13 @@
                     <if test="netType != null">and net_type = #{netType}</if>
                     <if test="sort != null">and sort = #{sort}</if>
                     <if test="version != null">and version = #{version}</if>
+                    <if test="commentIds != null and commentIds.size()>0">
+                        and id in
+                        <foreach collection="commentIds" open="(" separator=","
+                                 close=")" item="item">
+                            #{item}
+                        </foreach>
+                    </if>
                     <choose>
                         <when test="flag!=null">
                             and flag = #{flag}

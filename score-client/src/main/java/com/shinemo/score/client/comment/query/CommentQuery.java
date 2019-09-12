@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import com.shinemo.client.common.QueryBase;
 
+import java.util.List;
+
 /**
  * 查询类
  * @ClassName: CommentQuery
@@ -79,6 +81,9 @@ public class CommentQuery extends QueryBase {
 	private Long version;
 
 	private Long commentId;
+
+
+	private List<Long> commentIds;
 
 	private String realVideoId;
 
