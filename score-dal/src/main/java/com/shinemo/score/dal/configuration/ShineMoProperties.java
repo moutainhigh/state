@@ -192,5 +192,8 @@ public class ShineMoProperties {
         @NotNull
         private String barrage;
 
+        @NotNull
+        private String management;
+
     }
 }

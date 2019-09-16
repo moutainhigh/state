@@ -82,6 +82,16 @@ public class BackdoorController {
         return "success";
     }
 
+    @GetMapping("/comment/removeModel")
+    public String removeModel(HttpServletRequest request,Boolean off) {
+        String ip = request.getRemoteAddr();
+        if (!ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
+            return "error";
+        }
+        commentCache.delCommentConfig();
+        return "success";
+    }
+
     @GetMapping("/calculatTest")
     public String calculatTest(HttpServletRequest request, Long id) {
 

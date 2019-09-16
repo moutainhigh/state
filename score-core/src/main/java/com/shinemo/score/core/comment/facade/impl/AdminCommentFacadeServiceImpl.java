@@ -4,6 +4,7 @@ import com.shinemo.client.async.InternalEventBus;
 import com.shinemo.client.common.ListVO;
 import com.shinemo.client.common.Result;
 import com.shinemo.client.exception.BizException;
+import com.shinemo.management.client.config.domain.SystemConfigEnum;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.VerifyRequest;
 import com.shinemo.score.client.comment.domain.VerifyStatusEnum;
@@ -55,6 +56,9 @@ public class AdminCommentFacadeServiceImpl implements AdminCommentFacadeService 
         if(!result.hasValue()||result.getValue().getTotalCount().intValue()!=request.getCommentIds().size()){
             log.error("[verifyComment] result:{} requestSize:{}",result,request.getCommentIds().size());
             return Result.error(ScoreErrors.PARAM_ERROR);
+        }
+        if(commentCache.getCommentConfig() == SystemConfigEnum.COMMENT_VERIFY_LAST.getId()){
+            request.setStatus(DeleteStatusEnum.DELETE.getId());
         }
         return commentWrapper.verfiyComment(request);
     }

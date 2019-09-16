@@ -1,5 +1,10 @@
 package com.shinemo.score.core.comment.cache;
 
+import com.shinemo.client.common.Result;
+import com.shinemo.management.client.config.domain.SystemConfig;
+import com.shinemo.management.client.config.domain.SystemConfigEnum;
+import com.shinemo.management.client.config.domain.SystemConfigRequest;
+import com.shinemo.management.client.config.facade.SystemConfigFacadeService;
 import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.core.comment.service.CommentService;
@@ -22,6 +27,9 @@ public class CommentCache {
     @Resource
     private RedisService redisService;
 
+    @Resource
+    private SystemConfigFacadeService systemConfigFacadeService;
+
     // comment redis key
     private final static String COMMENT_KEY = "migu_comment_%s";
     // comment redis key expired time 1天
@@ -29,6 +37,26 @@ public class CommentCache {
 
     private final static  String COMMON_SWITCH_KEY = "migu_common_switch";
 
+    private final static  String COMMON_MODEL_KEY = "migu_model_switch";
+
+    public void delCommentConfig(){
+        redisService.del(COMMON_MODEL_KEY);
+    }
+
+    public Integer getCommentConfig(){
+        Integer ret = redisService.get(COMMON_MODEL_KEY,Integer.class);
+        if(ret == null){
+            SystemConfigRequest request = new SystemConfigRequest();
+            request.setSysKey(SystemConfigEnum.COMMENT_VERIFY_FIRST.getKey());
+            Result<SystemConfig> result = systemConfigFacadeService.getSysConfig(request);
+            if(!result.hasValue()){
+                log.error("[getSysConfig] error ret:{}",result);
+                return SystemConfigEnum.COMMENT_VERIFY_LAST.getId();
+            }
+            redisService.set(COMMON_MODEL_KEY,result.getValue(),60*60*60);
+        }
+        return ret;
+    }
 
     public Boolean getCommonSwitch(){
         Boolean ret = redisService.get(COMMON_SWITCH_KEY,Boolean.class);

@@ -35,6 +35,12 @@
             <groupId>com.shinemo.score</groupId>
             <artifactId>score-dal</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.shinemo.management</groupId>
+            <artifactId>management-client</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

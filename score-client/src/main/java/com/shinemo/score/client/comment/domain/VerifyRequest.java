@@ -14,4 +14,5 @@ public class VerifyRequest extends BaseDO {
     private Integer verifyStatus;
     private Long operateUid;
     private String operateUserName;
+    private Integer status;
 }
