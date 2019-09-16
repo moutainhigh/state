@@ -13,6 +13,7 @@ import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
 import com.shinemo.score.client.comment.query.CommentQuery;
 import com.shinemo.score.client.comment.query.CommentRequest;
+import com.shinemo.score.client.common.domain.DeleteStatusEnum;
 import com.shinemo.score.client.error.ScoreErrors;
 import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
@@ -81,6 +82,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     @Override
     public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
+        query.setStatus(DeleteStatusEnum.NORMAL.getId());
         // 校验评论是否打开
         commentService.checkCommentOpen(query.getRealVideoId(),query.getVideoId());
 
