@@ -94,6 +94,10 @@ public class CommentRequest extends BaseDO {
      */
     private String fullDevice;
     /**
+     * 审核状态
+     */
+    private Integer verifyStatus;
+    /**
      * 打标
      * @see CommentFlag
      */

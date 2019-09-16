@@ -7,6 +7,7 @@ import com.shinemo.client.common.WebResult;
 import com.shinemo.client.util.GsonUtil;
 import com.shinemo.jce.Constant;
 import com.shinemo.jce.common.config.JceHolder;
+import com.shinemo.management.client.config.domain.SystemConfigEnum;
 import com.shinemo.score.client.comment.domain.*;
 import com.shinemo.score.client.comment.facade.CommentFacadeService;
 import com.shinemo.score.client.comment.query.CommentParam;
@@ -17,6 +18,7 @@ import com.shinemo.score.client.reply.domain.ReplyDO;
 import com.shinemo.score.client.reply.domain.ReplyVO;
 import com.shinemo.score.client.reply.query.ReplyQuery;
 import com.shinemo.score.client.reply.query.ReplyRequest;
+import com.shinemo.score.core.comment.cache.CommentCache;
 import com.shinemo.score.core.comment.service.CommentService;
 import com.shinemo.score.core.like.service.LikeService;
 import com.shinemo.score.core.reply.service.ReplyService;
@@ -48,6 +50,9 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
     private static final int DeleteTypeCommentType = 1;
     private static final int DeleteTypeReplyType = 2;
+
+    @Resource
+    private CommentCache commentCache;
 
     @Resource
     private CommentService commentService;
@@ -87,6 +92,10 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
 
         if (extend != null) {
             query.setSensitiveUid(extend.getUid());
+        }
+        //先审后发模式下面只能查看已经审核通过的评论
+        if(SystemConfigEnum.COMMENT_VERIFY_FIRST.getId() == commentCache.getCommentConfig()){
+            query.setVerifyStatus(VerifyStatusEnum.pass.getId());
         }
         ListVO<Long> idsRs = commentService.findIdsByQuery(query);
 
@@ -187,6 +196,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
         request.setMobile(extend.getMobile());
         request.setIp(param.getIp());
         request.setRealVideoId(param.getRealVideoId());
+        request.setVerifyStatus(VerifyStatusEnum.wait.getId());
 
         CommentDO commentDO = commentService.create(request);
 
