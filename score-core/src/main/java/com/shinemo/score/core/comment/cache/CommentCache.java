@@ -53,7 +53,7 @@ public class CommentCache {
                 log.error("[getSysConfig] error ret:{}",result);
                 return SystemConfigEnum.COMMENT_VERIFY_LAST.getId();
             }
-            redisService.set(COMMON_MODEL_KEY,result.getValue(),60*60*60);
+            redisService.set(COMMON_MODEL_KEY,result.getValue().getSysValue(),60*60*60);
         }
         return ret;
     }
