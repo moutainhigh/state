@@ -51,6 +51,9 @@ public class VideoServiceImpl implements VideoService{
             if(StringUtils.isBlank(videoDO.getRealVideoId())){//存量数据有客户端提交的数据没有真实id的 这里要修正掉
                 videoDO.setRealVideoId(request.getRealVideoId());
             }
+            if(videoDO.getScore()==null && FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE) ){
+                initVideoDOScore(videoDO);
+            }
             Result<VideoDO> uptRs = videoWrapper.update(videoDO,ScoreErrors.SQL_ERROR_UPDATE);
             if(!uptRs.hasValue()){//这里补全音频信息 即使失败不影响评分主流程
                 log.error("[video] completInfo error result:{}",uptRs);
@@ -67,6 +70,17 @@ public class VideoServiceImpl implements VideoService{
         return Result.success(videoDO);
 
 
+    }
+
+    private void initVideoDOScore(VideoDO videoDO) {
+        videoDO.addVideoFlag(VideoFlag.GRADE);
+        long score = shineMoProperties.getInitScore() * shineMoProperties.getInitWeight();
+        videoDO.setInitScore(score);
+        videoDO.setInitWeight(shineMoProperties.getInitWeight());
+        videoDO.setWeight(shineMoProperties.getInitWeight());
+        videoDO.setScore(score);
+        videoDO.setYesterdayScore(score);
+        videoDO.setYesterdayWeight(shineMoProperties.getInitWeight());
     }
 
     @Override
@@ -91,14 +105,7 @@ public class VideoServiceImpl implements VideoService{
         videoDO.setVideoId(request.getVideoId());
         videoDO.setRealVideoId(request.getRealVideoId());
         if(FlagHelper.hasFlag(request.getFlag(), VideoFlag.GRADE)){
-            videoDO.addVideoFlag(VideoFlag.GRADE);
-            long score = shineMoProperties.getInitScore() * shineMoProperties.getInitWeight();
-            videoDO.setInitScore(score);
-            videoDO.setInitWeight(shineMoProperties.getInitWeight());
-            videoDO.setWeight(shineMoProperties.getInitWeight());
-            videoDO.setScore(score);
-            videoDO.setYesterdayScore(score);
-            videoDO.setYesterdayWeight(shineMoProperties.getInitWeight());
+            initVideoDOScore(videoDO);
         }
         return videoDO;
     }

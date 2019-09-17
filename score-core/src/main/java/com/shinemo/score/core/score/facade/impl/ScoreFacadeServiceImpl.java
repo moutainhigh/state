@@ -160,7 +160,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
         query.setVideoId(request.getVideoId());
         query.setRealVideoId(request.getRealVideoId());
         Result<VideoDO> rs = videoService.getVideo(query);
-        if (!rs.hasValue()) {
+        if (!rs.hasValue()||rs.getValue().getScore()==null){//兼容历史数据评分为空的情况
             ScoreRequest scoreRequest = new ScoreRequest();
             scoreRequest.setVideoName(request.getVideoName());
             scoreRequest.setVideoId(request.getVideoId());
