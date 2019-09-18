@@ -83,6 +83,7 @@ public class CommentFacadeServiceImpl implements CommentFacadeService {
     public WebResult<ListVO<CommentVO>> findListVO(CommentQuery query) {
 
         query.setStatus(DeleteStatusEnum.NORMAL.getId());
+        query.setNoVerifyStatus(VerifyStatusEnum.refuse.getId());
         // 校验评论是否打开
         commentService.checkCommentOpen(query.getRealVideoId(),query.getVideoId());
 

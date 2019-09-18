@@ -2,6 +2,7 @@ package com.shinemo.score.client.comment.query;
 
 
 import com.shinemo.client.common.FlagHelper;
+import com.shinemo.score.client.comment.domain.VerifyStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -88,6 +89,7 @@ public class CommentQuery extends QueryBase {
 	private String realVideoId;
 
 	private Integer verifyStatus;
+	private Integer noVerifyStatus;
 	private Long operateUid;
 	private String operateUserName;
 

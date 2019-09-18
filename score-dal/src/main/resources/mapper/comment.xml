@@ -69,6 +69,7 @@
                     <if test="sort != null">and sort = #{sort}</if>
                     <if test="version != null">and version = #{version}</if>
                     <if test="verifyStatus != null">and verify_status = #{verifyStatus}</if>
+                    <if test="noVerifyStatus != null">and verify_status != #{noVerifyStatus}</if>
                     <if test="operateUid != null">and operate_uid = #{operateUid}</if>
                     <if test="operateUserName != null">and operate_user_name = #{operateUserName}</if>
                     <if test="commentIds != null and commentIds.size()>0">
