@@ -23,6 +23,7 @@ import com.shinemo.score.client.video.domain.VideoDO;
 import com.shinemo.score.client.video.domain.VideoDTO;
 import com.shinemo.score.client.video.domain.VideoFlag;
 import com.shinemo.score.client.video.query.VideoQuery;
+import com.shinemo.score.core.comment.cache.CommentCache;
 import com.shinemo.score.core.score.service.ScoreService;
 import com.shinemo.score.core.video.service.VideoService;
 import com.shinemo.ygw.client.migu.UserExtend;
@@ -53,6 +54,9 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     @Resource
     private VideoService videoService;
+
+    @Resource
+    private CommentCache commentCache;
 
     @Resource
     private ScoreService scoreService;
@@ -95,7 +99,7 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             ScoreDTO result = new ScoreDTO();
             CommentDO commentDO = commentRs.getValue();
             result.setCommentId(commentDO.getId());
-
+            result.setCommentConfig(commentCache.getCommentConfig());
             // 含有敏感词则返回处理后的内容
             if (commentDO.hasSensitiveWord()) {
                 CommentExtend replyExtend = GsonUtil.fromGson2Obj(commentDO.getExtend(), CommentExtend.class);

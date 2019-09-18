@@ -44,18 +44,24 @@ public class CommentCache {
     }
 
     public Integer getCommentConfig(){
-        Integer ret = redisService.get(COMMON_MODEL_KEY,Integer.class);
-        if(ret == null){
-            SystemConfigRequest request = new SystemConfigRequest();
-            request.setSysKey(SystemConfigEnum.COMMENT_VERIFY_FIRST.getKey());
-            Result<SystemConfig> result = systemConfigFacadeService.getSysConfig(request);
-            if(!result.hasValue()){
-                log.error("[getSysConfig] error ret:{}",result);
-                return SystemConfigEnum.COMMENT_VERIFY_LAST.getId();
+        try {
+            Integer ret = redisService.get(COMMON_MODEL_KEY,Integer.class);
+            if(ret == null){
+                SystemConfigRequest request = new SystemConfigRequest();
+                request.setSysKey(SystemConfigEnum.COMMENT_VERIFY_FIRST.getKey());
+                Result<SystemConfig> result = systemConfigFacadeService.getSysConfig(request);
+                if(!result.hasValue()){
+                    log.error("[getSysConfig] error ret:{}",result);
+                    return SystemConfigEnum.COMMENT_VERIFY_LAST.getId();
+                }
+                ret = result.getValue().getSysValue();
+                redisService.set(COMMON_MODEL_KEY,result.getValue().getSysValue(),60*60*60);
             }
-            redisService.set(COMMON_MODEL_KEY,result.getValue().getSysValue(),60*60*60);
+            return ret;
+        } catch (Exception e) {
+            log.error("[getSysConfig] error:",e);
+            return SystemConfigEnum.COMMENT_VERIFY_LAST.getId();
         }
-        return ret;
     }
 
     public Boolean getCommonSwitch(){

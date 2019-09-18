@@ -13,4 +13,8 @@ public class ScoreDTO {
 
     // 评论内容
     private String content;
+    /**
+     * 评论模式
+     */
+    private Integer commentConfig;
 }
