@@ -6,6 +6,7 @@ import com.shinemo.client.common.Result;
 import com.shinemo.client.common.WebResult;
 import com.shinemo.client.exception.BizException;
 import com.shinemo.client.util.GsonUtil;
+import com.shinemo.management.client.config.domain.SystemConfigEnum;
 import com.shinemo.my.redis.service.RedisService;
 import com.shinemo.score.client.comment.domain.CommentDO;
 import com.shinemo.score.client.comment.domain.CommentExtend;
@@ -66,6 +67,8 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
 
     private static final String KEY = "MIGU_SCORE_VIDEO_ID_%s";
 
+    private static final String TIP_MSG = "您评论的内容将会在审核后展现!";
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -100,6 +103,9 @@ public class ScoreFacadeServiceImpl implements ScoreFacadeService {
             CommentDO commentDO = commentRs.getValue();
             result.setCommentId(commentDO.getId());
             result.setCommentConfig(commentCache.getCommentConfig());
+            if(SystemConfigEnum.COMMENT_VERIFY_FIRST.getId() == result.getCommentConfig()){
+                result.setTipsMsg(TIP_MSG);
+            }
             // 含有敏感词则返回处理后的内容
             if (commentDO.hasSensitiveWord()) {
                 CommentExtend replyExtend = GsonUtil.fromGson2Obj(commentDO.getExtend(), CommentExtend.class);

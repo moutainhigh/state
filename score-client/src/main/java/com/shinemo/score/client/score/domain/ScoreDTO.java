@@ -17,4 +17,8 @@ public class ScoreDTO {
      * 评论模式
      */
     private Integer commentConfig;
+    /**
+     * 提示语
+     */
+    private String tipsMsg;
 }
