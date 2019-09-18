@@ -57,7 +57,8 @@ public class AdminCommentFacadeServiceImpl implements AdminCommentFacadeService 
             log.error("[verifyComment] result:{} requestSize:{}",result,request.getCommentIds().size());
             return Result.error(ScoreErrors.PARAM_ERROR);
         }
-        if(commentCache.getCommentConfig() == SystemConfigEnum.COMMENT_VERIFY_LAST.getId()){
+        if(commentCache.getCommentConfig() == SystemConfigEnum.COMMENT_VERIFY_LAST.getId() &&
+               VerifyStatusEnum.refuse.getId() == request.getVerifyStatus()){
             request.setStatus(DeleteStatusEnum.DELETE.getId());
         }
         return commentWrapper.verfiyComment(request);
