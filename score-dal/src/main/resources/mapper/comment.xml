@@ -106,6 +106,8 @@
                         <if test="netType != null">and net_type = #{netType}</if>
                         <if test="sort != null">and sort = #{sort}</if>
                         <if test="version != null">and version = #{version}</if>
+                        <if test="verifyStatus != null">and verify_status = #{verifyStatus}</if>
+                        <if test="noVerifyStatus != null">and verify_status != #{noVerifyStatus}</if>
                         )
                     </if>
                 </otherwise>
