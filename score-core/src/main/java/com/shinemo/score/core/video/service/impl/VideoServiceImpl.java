@@ -43,11 +43,9 @@ public class VideoServiceImpl implements VideoService{
         query.setVideoId(request.getVideoId());
         Result<VideoDO> rs = videoWrapper.get(query);
         if(rs.hasValue()){
-            VideoDO videoDO = new VideoDO();
+            VideoDO videoDO = rs.getValue();
             videoDO.setVideoName(request.getVideoName());
             videoDO.setExtend(request.getExtend());
-            videoDO.setId(rs.getValue().getId());
-            videoDO.setVersion(rs.getValue().getVersion());
             if(StringUtils.isBlank(videoDO.getRealVideoId())){//存量数据有客户端提交的数据没有真实id的 这里要修正掉
                 videoDO.setRealVideoId(request.getRealVideoId());
             }
