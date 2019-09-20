@@ -55,7 +55,7 @@ public class CommentCache {
                     return SystemConfigEnum.COMMENT_VERIFY_LAST.getId();
                 }
                 ret = result.getValue().getSysValue();
-                redisService.set(COMMON_MODEL_KEY,result.getValue().getSysValue(),24*60*60);
+                redisService.set(COMMON_MODEL_KEY,result.getValue().getSysValue(),60*60);
             }
             return ret;
         } catch (Exception e) {
